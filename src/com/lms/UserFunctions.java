@@ -10,7 +10,7 @@ public class UserFunctions {
     // variables for the respective functions
     static String username, searchQuery;
     static ListIterator dbReader;
-    static int ProDbIndex;
+    static int ProUserIndex;
 
     // function to display all books
     public static void displayBooks(@NotNull ArrayList<Book> books) {
@@ -111,12 +111,12 @@ public class UserFunctions {
             if (!Main.userAccount.returnCheck()) {
                 Main.userAccount.showBorrowedBooks(books);
                 System.out.print("Choose the book (number) to be returned: ");
-                ProDbIndex = getInput();
-                if (ProDbIndex == -9999) {
+                ProUserIndex = getInput();
+                if (ProUserIndex == -9999) {
                     System.out.println("!-- Enter a valid input --!");
                     return false;
                 }
-                Main.searchedBook = books.get(ProDbIndex - 1);
+                Main.searchedBook = books.get(ProUserIndex - 1);
             }
         }
         return true;

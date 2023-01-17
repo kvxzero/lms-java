@@ -27,15 +27,15 @@ public class AdminFunctions extends UserFunctions {
                 if(Main.searchedBook.getBorrowedUser() != -9999) {
                     RegUser user = users.get(Main.searchedBook.getBorrowedUser()-1);
                     if(user.getAccountType() == Main.AccountType.PRO) {
-                        ProDbIndex = 0;
-                        while(ProDbIndex < 3) {
-                            if (Main.searchedBook.getId() == user.getBorrowedBookId(ProDbIndex)) {
+                        ProUserIndex = 0;
+                        while(ProUserIndex < 3) {
+                            if (Main.searchedBook.getId() == user.getBorrowedBookId(ProUserIndex)) {
                                 break;
                             }
-                            ProDbIndex++;
+                            ProUserIndex++;
                         }
                     }
-                    ProDbIndex++;
+                    ProUserIndex++;
                     Main.execReturnBook(user, Main.searchedBook);
                 }
                 dbReader.remove();

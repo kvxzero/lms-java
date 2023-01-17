@@ -13,7 +13,7 @@ import static com.lms.AdminFunctions.*;
 public class Main {
     // enum for account types
     enum AccountType {
-        ADMIN, USER, PRO;
+        ADMIN, USER, PRO
     }
 
     // public scanner for all the functions
@@ -84,7 +84,7 @@ public class Main {
             }
         }
         else {
-            if (user.returnBook(ProDbIndex - 1)) {
+            if (user.returnBook(ProUserIndex - 1)) {
                 book.bookReturned();
                 System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
                 borrowedHistory.add(user.getName() + " has returned " + book.getName());
@@ -233,7 +233,7 @@ public class Main {
                     case 1: // Add a book, ADMIN CASE
                         System.out.print("Enter the number of books to be added: ");
                         multipleBooks = getInput();
-                        if (multipleBooks == - 9999) {
+                        if (multipleBooks == -9999) {
                             System.out.println("!-- Enter a valid input --!");
                             break;
                         }
