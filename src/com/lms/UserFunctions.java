@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import org.jetbrains.annotations.NotNull;
 
-import static com.lms.Main.sc;
+import static com.lms.Main.*;
 
 public class UserFunctions {
     // variables for the respective functions
     static String username, searchQuery;
     static ListIterator dbReader;
+    static int ProDbIndex;
 
     // function to display all books
     public static void displayBooks(@NotNull ArrayList<Book> books) {
@@ -100,13 +101,23 @@ public class UserFunctions {
     // function to return borrowed books
     public static boolean initReturn(ArrayList<Book> books) {
         username = Main.userAccount.getName();
-        if(Main.userAccount.getBorrowedBookId() == -9999) {
-            return false;
+        if (Main.userAccount.getAccountType() == Main.AccountType.USER) {
+            if (Main.userAccount.getBorrowedBookId() == -9999) {
+                return false;
+            }
+            Main.searchedBook = books.get(Main.userAccount.getBorrowedBookId()-1);
         }
         else {
-            Main.searchedBook = books.get(Main.userAccount.getBorrowedBookId()-1);
-            return true;
+            if (!Main.userAccount.returnCheck()) {
+                Main.userAccount.showBorrowedBooks(books);
+                System.out.print("Choose the book (number) to be returned: ");
+                ProDbIndex = getInput();
+                if (ProDbIndex == -9999)
+                    return false;
+                Main.searchedBook = books.get(ProDbIndex - 1);
+            }
         }
+        return true;
     }
     // function to find out nearby libraries
     public static void nearbyLibraries(ArrayList<Location> locations) {
@@ -114,7 +125,13 @@ public class UserFunctions {
         dbReader = locations.listIterator();
         while(dbReader.hasNext()) {
             Main.selectedLocation = (Location) dbReader.next();
-            if (Main.selectedLocation.getLibCity().equals(Main.userAccount.getLocation())) {
+            if (userAccount.getAccountType() == AccountType.USER) {
+                if (Main.selectedLocation.getLibCity().equals(Main.userAccount.getLocation())) {
+                    System.out.println(dbIndex + ". " + Main.selectedLocation);
+                    dbIndex++;
+                }
+            }
+            else {
                 System.out.println(dbIndex + ". " + Main.selectedLocation);
                 dbIndex++;
             }

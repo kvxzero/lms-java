@@ -1,6 +1,7 @@
 package com.lms;
 import org.jetbrains.annotations.NotNull;
 import static com.lms.Main.sc;
+import static com.lms.Main.userAccount;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class AdminFunctions extends UserFunctions {
         return new Book(bookName, bookGenre);
     }
     // function to delete a book (also removes the user associated with the book)
-    public static void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books) {
+    public static <User> void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books) {
         Main.searchFlag = false;
         System.out.print("Enter the book to be deleted: ");
         searchQuery = sc.next();
@@ -23,8 +24,20 @@ public class AdminFunctions extends UserFunctions {
         while (dbReader.hasNext()) {
             Main.searchedBook = (Book) dbReader.next();
             if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                if(Main.searchedBook.getBorrowedUser() != -9999)
-                    Main.execReturnBook(users.get(Main.searchedBook.getBorrowedUser()-1), Main.searchedBook);
+                if(Main.searchedBook.getBorrowedUser() != -9999) {
+                    RegUser user = users.get(Main.searchedBook.getBorrowedUser()-1);
+                    if(user.getAccountType() == Main.AccountType.PRO) {
+                        ProDbIndex = 0;
+                        while(ProDbIndex < 3) {
+                            if (Main.searchedBook.getId() == user.getBorrowedBookId(ProDbIndex)) {
+                                break;
+                            }
+                            ProDbIndex++;
+                        }
+                    }
+                    ProDbIndex++;
+                    Main.execReturnBook(user, Main.searchedBook);
+                }
                 dbReader.remove();
                 System.out.println("Deleted successfully");
                 Main.searchFlag = true;
@@ -58,8 +71,18 @@ public class AdminFunctions extends UserFunctions {
         while (dbReader.hasNext()) {
             Main.userAccount = (RegUser) dbReader.next();
             if (Main.userAccount.getName().equalsIgnoreCase(searchQuery)) {
-                if(Main.userAccount.getBorrowedBookId() != -9999)
-                    Main.execReturnBook(Main.userAccount, books.get(Main.userAccount.getBorrowedBookId()-1));
+                if(Main.userAccount.getAccountType() == Main.AccountType.USER) {
+                    if(Main.userAccount.getBorrowedBookId() != -9999)
+                         books.get(Main.userAccount.getBorrowedBookId()-1).bookReturned();
+                }
+                else {
+                    if (userAccount.getBorrowedBookId(0) != -9999)
+                        books.get(userAccount.getBorrowedBookId(0)-1).bookReturned();
+                    if (userAccount.getBorrowedBookId(1) != -9999)
+                        books.get(userAccount.getBorrowedBookId(1)-1).bookReturned();
+                    if (userAccount.getBorrowedBookId(2) != -9999)
+                        books.get(userAccount.getBorrowedBookId(2)-1).bookReturned();
+                }
                 dbReader.remove();
                 System.out.println("Deleted successfully");
                 Main.searchFlag = true;
@@ -96,7 +119,15 @@ public class AdminFunctions extends UserFunctions {
             if(Main.userAccount.getBorrowedBookId() == -9999)
                 bookStat = "Currently no borrowed books";
             else
-                bookStat = "Currently borrowed: " + books.get(Main.userAccount.getBorrowedBookId()-1).getName();
+                if(userAccount.getAccountType() == Main.AccountType.USER)
+                    bookStat = "Currently borrowed: " + books.get(Main.userAccount.getBorrowedBookId()-1).getName();
+                else {
+                    bookStat = "Currently borrowed: " + books.get(Main.userAccount.getBorrowedBookId(0) - 1).getName();
+                    if (userAccount.getBorrowedBookId(1) != -9999)
+                        bookStat += ", " + books.get(Main.userAccount.getBorrowedBookId(1)-1).getName();
+                    if (userAccount.getBorrowedBookId(2) != -9999)
+                        bookStat += ", " + books.get(Main.userAccount.getBorrowedBookId(2)-1).getName();
+                }
             System.out.println(dbIndex + ". " + Main.userAccount + " | " + bookStat);
             dbIndex++;
         }
@@ -234,7 +265,6 @@ public class AdminFunctions extends UserFunctions {
     }
     // function to view current status of the user
     public static void getStatus(ArrayList<Book> books) {
-        System.out.println("Current user: " + Main.userAccount);
         if(Main.userAccount.getBorrowedBookId() == -9999)
             System.out.println("Current book: null");
         else {

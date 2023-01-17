@@ -46,7 +46,7 @@ public class Main {
             choice = sc.nextInt();
         }
         catch (InputMismatchException e) {
-            choice = 9999;
+            choice = -9999;
             sc.next();
         }
         return choice;
@@ -68,18 +68,27 @@ public class Main {
     // functions for borrowing and returning books
     private static boolean execBorrowBook(@NotNull RegUser user, Book book) {
         if(book.setBorrowedUser(user)) {
-                borrowedHistory.add(user.getName() + " has borrowed " + book.getName());
-                System.out.println(user.getName() + " has borrowed " + book.getName() + " successfully!");
-                user.setBorrowedBook(book);
-                return true;
+            borrowedHistory.add(user.getName() + " has borrowed " + book.getName());
+            System.out.println(user.getName() + " has borrowed " + book.getName() + " successfully!");
+            user.setBorrowedBook(book);
+            return true;
         }
         return false;
     }
     public static void execReturnBook(@NotNull RegUser user, Book book) {
-        if(user.returnBook()) {
-            book.bookReturned();
-            System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
-            borrowedHistory.add(user.getName() + " has returned " + book.getName());
+        if (user.getAccountType() == AccountType.USER) {
+            if (user.returnBook(0)) {
+                book.bookReturned();
+                System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
+                borrowedHistory.add(user.getName() + " has returned " + book.getName());
+            }
+        }
+        else {
+            if (user.returnBook(ProDbIndex - 1)) {
+                book.bookReturned();
+                System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
+                borrowedHistory.add(user.getName() + " has returned " + book.getName());
+            }
         }
     }
 
@@ -330,7 +339,8 @@ public class Main {
                 System.out.println("4. View current status");
                 System.out.println("5. Libraries in my location");
                 System.out.println("6. Change password");
-                System.out.println("7. View my history\n");
+                System.out.println("7. View my history");
+                System.out.println("8. Upgrade account\n");
                 System.out.println("99. Log out\n");
 
                 // switch case ladder
@@ -372,7 +382,7 @@ public class Main {
                         break;
 
                     case 3: // return a book, USER CASE
-                        if(userAccount.getBorrowedBookId() == -9999) {
+                        if(userAccount.returnCheck()) {
                             System.out.println(userAccount.getName() + " has no book borrowed at the moment");
                             break;
                         }
@@ -387,7 +397,11 @@ public class Main {
                         break;
 
                     case 4: // view current status of books, USER CASE
-                        getStatus(books);
+                        System.out.println("Current user: " + Main.userAccount);
+                        if (userAccount.getAccountType() == AccountType.USER)
+                            getStatus(books);
+                        else
+                            userAccount.showBorrowedBooks(books);
                         break;
 
                     case 5: // find nearby Libraries, USER CASE
@@ -402,6 +416,15 @@ public class Main {
 
                     case 7: // view the user's borrowing history
                         viewUserHistory();
+                        break;
+
+                    case 8:
+                        Main.userAccount.upgradeAccount();
+                        storingData(userDb, users);
+                        System.out.println("You have successfully subscribed to premium ^^");
+                        System.out.println("The following are your benefits: ");
+                        System.out.println("1. Can borrow unto 3 books");
+                        System.out.println("2. Can view all libraries irrespective of locations");
                         break;
 
                     case 99: // log out

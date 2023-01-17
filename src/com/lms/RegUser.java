@@ -3,12 +3,12 @@ package com.lms;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class RegUser implements Serializable {
     @Serial
     private static final long serialVersionUID = 193193193;
     private int id;
-    private final int proLimit = 3;
     private static int numOfUsers = 0;
     private String name, password, location;
     private Main.AccountType accountType = Main.AccountType.USER;
@@ -56,6 +56,11 @@ public class RegUser implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+    public void upgradeAccount() {
+        this.accountType = Main.AccountType.PRO;
+        borrowedBook.add(-9999);
+        borrowedBook.add(-9999);
+    }
 
     // functions to log in and for admin account creation
     public static boolean validateLogin(RegUser user, String password) {
@@ -69,27 +74,90 @@ public class RegUser implements Serializable {
     public int getBorrowedBookId() {
         return borrowedBook.get(0);
     }
+    public int getBorrowedBookId(int index) {
+        return borrowedBook.get(index);
+    }
     public void setBorrowedBook(Book book) {
-        this.borrowedBook.set(0, book.getId());
+        if (this.accountType == Main.AccountType.USER)
+            this.borrowedBook.set(0, book.getId());
+        if (this.accountType == Main.AccountType.PRO) {
+            for (int i = 0; i < 3; i++) {
+                if (borrowedBook.get(i) == -9999) {
+                    borrowedBook.set(i, book.getId());
+                    System.out.println("I set " + book + " to " + this + "in " + i + " index");
+                    i = 3;
+                }
+            }
+        }
+    }
+    public void showBorrowedBooks(ArrayList<Book> books) {
+        int dbIndex = 0;
+        System.out.println("Books borrowed at the moment: ");
+        ListIterator dbReader = books.listIterator();
+        while (dbReader.hasNext()) {
+            if (dbIndex > 2) {
+                break;
+            }
+            if (borrowedBook.get(dbIndex) == -9999) {
+                System.out.println(dbIndex+1 + ". None");
+                dbIndex++;
+                continue;
+            }
+            Book book = (Book) dbReader.next();
+            if (book.getId() == borrowedBook.get(dbIndex)) {
+                System.out.println(dbIndex+1 + ". " + book.getName());
+                dbIndex++;
+            }
+        }
+    }
+    public boolean returnCheck() {
+        if (this.accountType == Main.AccountType.USER) {
+            if (borrowedBook.get(0) == -9999) {
+                return true;
+            }
+        }
+        else {
+            if (borrowedBook.get(0) == -9999 && borrowedBook.get(1) == -9999 && borrowedBook.get(2) == -9999) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean canBorrow() {
+//        System.out.println("Im here");
+//        System.out.println(borrowedBook.get(0));
+//        System.out.println(borrowedBook.get(1));
+//        System.out.println(borrowedBook.get(2));
+
+        if (this.accountType == Main.AccountType.USER) {
+            if (borrowedBook.get(0) == -9999)
+                return true;
+        }
+        else {
+           if (borrowedBook.get(0) == -9999)
+               return true;
+           if (borrowedBook.get(1) == -9999)
+               return true;
+           if (borrowedBook.get(2) == -9999)
+               return true;
+        }
+        return false;
+    }
+    public boolean returnBook(int id) {
+        if (borrowedBook.get(id) != -9999) {
+            borrowedBook.set(id, -9999);
+            return true;
+        }
+        else {
+            if (accountType == Main.AccountType.USER)
+                System.out.println(this.getName() + " has no book borrowed at the moment");
+            else
+                System.out.println(this.getName() + " has no borrowed book at that ID");
+            return false;
+        }
     }
 
-    public boolean canBorrow() {
-        if (borrowedBook.get(0) == -9999) {
-            return true;
-        }
-        else {
-            System.out.println(this.name + " should return the existing book before borrowing again");
-            return false;
-        }
-    }
-    public boolean returnBook() {
-        if (borrowedBook.get(0) != -9999) {
-            borrowedBook.set(0, -9999);
-            return true;
-        }
-        else {
-            System.out.println(this.getName() + " has no book borrowed at the moment");
-            return false;
-        }
+    public Main.AccountType getAccountType() {
+        return accountType;
     }
 }
