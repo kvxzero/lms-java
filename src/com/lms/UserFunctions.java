@@ -10,6 +10,8 @@ public class UserFunctions {
     // variables for the respective functions
     static String username, searchQuery;
     static ListIterator dbReader;
+
+    // variable used for indexing the books borrowed by the pro users
     static int ProUserIndex;
 
     // function to display all books
