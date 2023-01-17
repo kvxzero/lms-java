@@ -379,6 +379,13 @@ public class Main {
                                 System.out.println("Requested book doesn't exist in the system");
                             }
                         }
+                        else {
+                            System.out.println(userAccount.getName() + "'s borrow limit has been reached!");
+                            if(userAccount.getAccountType() == AccountType.USER)
+                                System.out.println("Upgrade your account to increase your limit to 3!");
+                            else
+                                System.out.println("You have already borrowed 3 books.");
+                        }
                         break;
 
                     case 3: // return a book, USER CASE
@@ -422,9 +429,6 @@ public class Main {
                         Main.userAccount.upgradeAccount();
                         storingData(userDb, users);
                         System.out.println("You have successfully subscribed to premium ^^");
-                        System.out.println("The following are your benefits: ");
-                        System.out.println("1. Can borrow unto 3 books");
-                        System.out.println("2. Can view all libraries irrespective of locations");
                         break;
 
                     case 99: // log out

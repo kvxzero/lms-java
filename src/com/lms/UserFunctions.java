@@ -126,7 +126,7 @@ public class UserFunctions {
         while(dbReader.hasNext()) {
             Main.selectedLocation = (Location) dbReader.next();
             if (userAccount.getAccountType() == AccountType.USER) {
-                if (Main.selectedLocation.getLibCity().equals(Main.userAccount.getLocation())) {
+                if (Main.selectedLocation.getLibCity().equalsIgnoreCase(Main.userAccount.getLocation())) {
                     System.out.println(dbIndex + ". " + Main.selectedLocation);
                     dbIndex++;
                 }
