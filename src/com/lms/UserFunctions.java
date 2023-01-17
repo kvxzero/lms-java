@@ -112,8 +112,10 @@ public class UserFunctions {
                 Main.userAccount.showBorrowedBooks(books);
                 System.out.print("Choose the book (number) to be returned: ");
                 ProDbIndex = getInput();
-                if (ProDbIndex == -9999)
+                if (ProDbIndex == -9999) {
+                    System.out.println("!-- Enter a valid input --!");
                     return false;
+                }
                 Main.searchedBook = books.get(ProDbIndex - 1);
             }
         }
