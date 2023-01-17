@@ -232,7 +232,11 @@ public class Main {
 
                     case 1: // Add a book, ADMIN CASE
                         System.out.print("Enter the number of books to be added: ");
-                        multipleBooks = sc.nextInt();
+                        multipleBooks = getInput();
+                        if (multipleBooks == - 9999) {
+                            System.out.println("!-- Enter a valid input --!");
+                            break;
+                        }
                         sc.nextLine();
                         while(multipleBooks > 0) {
                             books.add(newBook());

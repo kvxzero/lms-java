@@ -16,7 +16,7 @@ public class AdminFunctions extends UserFunctions {
         return new Book(bookName, bookGenre);
     }
     // function to delete a book (also removes the user associated with the book)
-    public static <User> void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books) {
+    public static void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books) {
         Main.searchFlag = false;
         System.out.print("Enter the book to be deleted: ");
         searchQuery = sc.next();
