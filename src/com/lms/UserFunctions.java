@@ -136,6 +136,10 @@ public class UserFunctions {
                 }
             }
             else {
+                if (Main.selectedLocation.getLibCity().equalsIgnoreCase(Main.userAccount.getLocation())) {
+                    System.out.println(dbIndex + ". " + Main.selectedLocation + "(Nearby)");
+                    dbIndex++;
+                }
                 System.out.println(dbIndex + ". " + Main.selectedLocation);
                 dbIndex++;
             }
