@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.lms.Main.*;
 
-public class UserFunctions {
+public class RegUserFunctions {
     // variables for the respective functions
     static String username, searchQuery;
     static ListIterator dbReader;

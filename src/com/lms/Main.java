@@ -7,7 +7,7 @@ import java.util.InputMismatchException;
 import java.util.ListIterator;
 import java.util.Scanner;
 
-import static com.lms.UserFunctions.*;
+import static com.lms.RegUserFunctions.*;
 import static com.lms.AdminFunctions.*;
 
 public class Main {
@@ -264,7 +264,7 @@ public class Main {
                         System.out.print("\nChoice: ");
                         searchChoice = getInput();
                         System.out.print("Enter your search query: ");
-                        UserFunctions.searchQuery = sc.next();
+                        RegUserFunctions.searchQuery = sc.next();
                         searchBooks(books, users, searchChoice);
                         break;
 
@@ -364,7 +364,7 @@ public class Main {
                         System.out.print("\nChoice: ");
                         searchChoice = getInput();
                         System.out.print("Enter your search query: ");
-                        UserFunctions.searchQuery = sc.next();
+                        RegUserFunctions.searchQuery = sc.next();
                         searchBooks(books, searchChoice);
                         break;
 

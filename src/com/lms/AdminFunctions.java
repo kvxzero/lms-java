@@ -5,7 +5,7 @@ import static com.lms.Main.userAccount;
 
 import java.util.ArrayList;
 
-public class AdminFunctions extends UserFunctions {
+public class AdminFunctions extends RegUserFunctions {
     // function to add a new book
     public static Book newBook() {
         String bookName, bookGenre;
