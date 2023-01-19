@@ -197,12 +197,12 @@ public class Main {
                     break;
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
-                case 4:
-                    System.out.println("!-- Warning! Test feature accessed --!");
-                    System.out.println("Add a new admin (use only on data loss)");
-                    admins.add((Admin) newUser(true));
-                    storingData(adminDb, admins);
-                    break;
+//                case 4:
+//                    System.out.println("!-- Warning! Test feature accessed --!");
+//                    System.out.println("Add a new admin (use only on data loss)");
+//                    admins.add((Admin) newUser(true));
+//                    storingData(adminDb, admins);
+//                    break;
 
                 default:
                     System.out.println("!-- Enter a valid input --!");
@@ -388,7 +388,7 @@ public class Main {
                             if(userAccount.getAccountType() == AccountType.USER)
                                 System.out.println("Upgrade your account to increase your limit to 3!");
                             else
-                                System.out.println("You have already borrowed 3 books.");
+                                System.out.println("You have already borrowed maximum number of books.");
                         }
                         break;
 
