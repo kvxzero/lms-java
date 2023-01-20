@@ -19,7 +19,7 @@ public class LoginHandler {
         RegUser user;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
-        else // accountType == Main.AccountType.USER is true
+        else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
             dbReader = users.listIterator();
         while (dbReader.hasNext()) {
             user = (RegUser) dbReader.next();
