@@ -7,9 +7,6 @@ import java.util.InputMismatchException;
 import java.util.ListIterator;
 import java.util.Scanner;
 
-import static com.lms.RegUserFunctions.*;
-import static com.lms.AdminFunctions.*;
-
 public class Main {
     // enum for account types
     enum AccountType {
@@ -23,21 +20,23 @@ public class Main {
     static Book searchedBook;
     static Admin adminAccount;
     static RegUser userAccount;
-    static Location selectedLocation;
+    static Library selectedLibrary;
+    static ListIterator dbReader;
+
+    // history arraylist
+    private static ArrayList<String> borrowedHistory = new ArrayList<>();
 
     // id of the logged-in user
     static int loginId;
 
     // flags for loops
-    static boolean adminFlag, searchFlag, loginFlag = false;
+    static boolean searchFlag, loginFlag = false;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
-    // history arraylist
-    private static ArrayList<String> borrowedHistory = new ArrayList<>();
 
     // variables to read thru .dat
-    private static ListIterator dbReader;
+    private static ListIterator displayReader;
 
     // function to handle exception handling while getting menu input
     public static int getInput() {
@@ -54,42 +53,15 @@ public class Main {
 
     // functions for storing and reading files
     public static int retrievingData(@NotNull ArrayList loadingType) {
-        dbReader = loadingType.listIterator();
-        while(dbReader.hasNext())
-            dbReader.next();
-        return dbReader.nextIndex();
+        displayReader = loadingType.listIterator();
+        while(displayReader.hasNext())
+            displayReader.next();
+        return displayReader.nextIndex();
     }
     public static void storingData(File file, ArrayList inputData) throws IOException {
         saveData = new ObjectOutputStream(new FileOutputStream(file));
         saveData.writeObject(inputData);
         saveData.close();
-    }
-
-    // functions for borrowing and returning books
-    private static boolean execBorrowBook(@NotNull RegUser user, Book book) {
-        if(book.setBorrowedUser(user)) {
-            borrowedHistory.add(user.getName() + " has borrowed " + book.getName());
-            System.out.println(user.getName() + " has borrowed " + book.getName() + " successfully!");
-            user.setBorrowedBook(book);
-            return true;
-        }
-        return false;
-    }
-    public static void execReturnBook(@NotNull RegUser user, Book book) {
-        if (user.getAccountType() == AccountType.USER) {
-            if (user.returnBook(0)) {
-                book.bookReturned();
-                System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
-                borrowedHistory.add(user.getName() + " has returned " + book.getName());
-            }
-        }
-        else {
-            if (user.returnBook(ProUserIndex - 1)) {
-                book.bookReturned();
-                System.out.println(user.getName() + " has returned " + book.getName() + " successfully!");
-                borrowedHistory.add(user.getName() + " has returned " + book.getName());
-            }
-        }
     }
 
     // function to read the borrow history as ADMIN
@@ -101,7 +73,7 @@ public class Main {
         ObjectInputStream loadData;
 
         // variables for various functions
-        int choice, multipleBooks, searchChoice;
+        int choice;
         String userName, userPassword;
         sc.useDelimiter("\n");
 
@@ -109,7 +81,7 @@ public class Main {
         ArrayList<Book> books = new ArrayList<>();
         ArrayList<Admin> admins = new ArrayList<>();
         ArrayList<RegUser> users = new ArrayList<>();
-        ArrayList<Location> locations = new ArrayList<>();
+        ArrayList<Library> libraries = new ArrayList<>();
 
         // .dat file in which the data is stored
         File bookDb = new File("src/com/lms/res/BooksList.dat");
@@ -143,13 +115,13 @@ public class Main {
         }
         if (locationDb.isFile()) {
             loadData = new ObjectInputStream(new FileInputStream(locationDb));
-            locations = (ArrayList<Location>) loadData.readObject();
+            libraries = (ArrayList<Library>) loadData.readObject();
             loadData.close();
         }
 
         // LoginHandler object and Enum variable for account type
         LoginHandler loginObject = new LoginHandler(users, admins);
-        AccountType accountType;
+        AccountType accountType = null;
 
         // Start of the UI
         System.out.println("--- Welcome to LMS ---");
@@ -172,7 +144,6 @@ public class Main {
                     userPassword = sc.next();
                     if (loginObject.userLoginRequest(userName, userPassword, accountType) == 200) {
                         loginFlag = true;
-                        adminFlag = true;
                         loginId = loginObject.getLoginID(userName, accountType);
                     }
                     break;
@@ -185,30 +156,39 @@ public class Main {
                     userPassword = sc.next();
                     if (loginObject.userLoginRequest(userName, userPassword, accountType) == 200) {
                         loginFlag = true;
-                        adminFlag = false;
                         loginId = loginObject.getLoginID(userName, accountType);
                     }
                     break;
 
                 case 3:
-                    users.add(newUser(false));
+                    users.add((RegUser) User.newUser(false));
                     System.out.println("Signed up successfully! ^^");
                     storingData(userDb, users);
                     break;
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
-//                case 4:
-//                    System.out.println("!-- Warning! Test feature accessed --!");
-//                    System.out.println("Add a new admin (use only on data loss)");
-//                    admins.add((Admin) newUser(true));
-//                    storingData(adminDb, admins);
-//                    break;
+                case 4:
+                    System.out.println("!-- Warning! Test feature accessed --!");
+                    System.out.println("Add a new admin (use only on data loss)");
+                    admins.add((Admin) User.newUser(true));
+                    storingData(adminDb, admins);
+                    break;
 
                 default:
                     System.out.println("!-- Enter a valid input --!");
             }
         } while (!loginFlag);
-        if (adminFlag) {
+        if (accountType == AccountType.ADMIN) {
+            // get the logged-in user account for this session via ID
+            // convert the below code to a function that facilitates both admins and users
+            displayReader = admins.listIterator();
+            while (displayReader.hasNext()) {
+                adminAccount = (Admin) displayReader.next();
+                if (adminAccount.getUsername().equals(admins.get(loginId).getUsername())) {
+                    System.out.println("\nWelcome " + adminAccount);
+                    break;
+                }
+            }
             do {
                 // looped admin dashboard
                 System.out.println("\n--- Admin dashboard ---\n");
@@ -227,10 +207,11 @@ public class Main {
 
                 switch (choice) {
                     case 0: // Borrowing history, ADMIN CASE
-                        viewBorrowingHistory();
+                        adminAccount.viewBorrowingHistory();
                         break;
 
                     case 1: // Add a book, ADMIN CASE
+                        int multipleBooks;
                         System.out.print("Enter the number of books to be added: ");
                         multipleBooks = getInput();
                         if (multipleBooks == -9999) {
@@ -239,7 +220,7 @@ public class Main {
                         }
                         sc.nextLine();
                         while(multipleBooks > 0) {
-                            books.add(newBook());
+                            books.add(adminAccount.newBook());
                             System.out.println();
                             multipleBooks--;
                         }
@@ -247,13 +228,13 @@ public class Main {
                         break;
 
                     case 2: // Delete a book, ADMIN CASE
-                        deleteBook(users, books);
+                        adminAccount.deleteBook(users, books);
                         storingData(userDb, users);
                         storingData(bookDb, books);
                         break;
 
                     case 3: // Display all books, ADMIN CASE
-                        displayBooks(books, users);
+                        adminAccount.displayBooks(books, users);
                         break;
 
                     case 4: // Search for a book, ADMIN AND USER CASE
@@ -262,54 +243,54 @@ public class Main {
                         System.out.println("2. By genre");
                         System.out.println("3. By both");
                         System.out.print("\nChoice: ");
-                        searchChoice = getInput();
+                        int searchChoice = getInput();
                         System.out.print("Enter your search query: ");
-                        RegUserFunctions.searchQuery = sc.next();
-                        searchBooks(books, users, searchChoice);
+                        adminAccount.setSearchQuery(sc.next());
+                        adminAccount.searchBooks(books, users, searchChoice);
                         break;
 
                     case 5: // Add a user, ADMIN CASE
-                        users.add(newUser(false));
+                        users.add((RegUser) User.newUser(false));
                         System.out.println("New user created successfully!");
                         storingData(userDb, users);
                         break;
 
                     case 6: // Delete a user, ADMIN CASE
-                        deleteUser(users, books);
+                        adminAccount.deleteUser(users, books);
                         storingData(userDb, users);
                         storingData(bookDb, books);
                         break;
 
                     case 7: // Add an admin, ADMIN CASE
-                        admins.add((Admin) newUser(true));
+                        admins.add((Admin) User.newUser(true));
                         System.out.println("New admin created successfully!");
                         storingData(adminDb, admins);
                         break;
 
                     case 8: // Remove an admin, ADMIN CASE
-                        deleteAdmin(admins);
+                        adminAccount.deleteAdmin(admins);
                         break;
 
                     case 9: // Display all users, ADMIN CASE
-                        usersList(users, books);
+                        adminAccount.usersList(users, books);
                         break;
 
                     case 10: // Display all admins, ADMIN CASE
-                        adminsList(admins);
+                        adminAccount.adminsList(admins);
                         break;
 
                     case 11: // Add a new library, ADMIN CASE
-                        locations.add(newLocation());
-                        storingData(locationDb, locations);
+                        libraries.add(adminAccount.newLocation());
+                        storingData(locationDb, libraries);
                         break;
 
                     case 12: // Remove a library from the db, ADMIN CASE
-                        deleteLocation(locations);
-                        storingData(locationDb, locations);
+                        adminAccount.deleteLocation(libraries);
+                        storingData(locationDb, libraries);
                         break;
 
                     case 13: // List all libraries available
-                        locationsList(locations);
+                        adminAccount.librariesList(libraries);
                         break;
 
                     case 99: // Log out
@@ -324,10 +305,11 @@ public class Main {
 
         else {
             // get the logged-in user account for this session via ID
-            dbReader = users.listIterator();
-            while (dbReader.hasNext()) {
-                userAccount = (RegUser) dbReader.next();
-                if (Main.userAccount.getName().equals(users.get(loginId).getName())) {
+            // convert the below code to a function that facilitates both admins and users
+            displayReader = users.listIterator();
+            while (displayReader.hasNext()) {
+                userAccount = (RegUser) displayReader.next();
+                if (Main.userAccount.getUsername().equals(users.get(loginId).getUsername())) {
                     System.out.println("\nWelcome " + userAccount);
                     break;
                 }
@@ -353,7 +335,7 @@ public class Main {
 
                 switch (choice) {
                     case 0: // display all books, USER CASE
-                        displayBooks(books);
+                        userAccount.displayBooks(books);
                         break;
 
                     case 1: // search for a book, USER CASE
@@ -362,75 +344,71 @@ public class Main {
                         System.out.println("2. By genre");
                         System.out.println("3. By both");
                         System.out.print("\nChoice: ");
-                        searchChoice = getInput();
+                        int searchChoice = getInput();
                         System.out.print("Enter your search query: ");
-                        RegUserFunctions.searchQuery = sc.next();
-                        searchBooks(books, searchChoice);
+                        userAccount.setSearchQuery(sc.next());
+                        userAccount.searchBooks(books, searchChoice);
                         break;
 
                     case 2: // borrow a book, USER CASE
-                        if(userAccount.canBorrow()) {
-                            if (initBorrow(books)) {
-                                if (execBorrowBook(userAccount, searchedBook)) {
-                                    saveData = new ObjectOutputStream(new FileOutputStream(historyDb));
-                                    saveData.writeObject(borrowedHistory);
-                                    saveData.close();
-                                    storingData(userDb, users);
-                                    storingData(bookDb, books);
-                                }
-                            }
-                            else {
-                                System.out.println("Requested book doesn't exist in the system");
-                            }
-                        }
-                        else {
-                            System.out.println(userAccount.getName() + "'s borrow limit has been reached!");
-                            if(userAccount.getAccountType() == AccountType.USER)
-                                System.out.println("Upgrade your account to increase your limit to 3!");
-                            else
-                                System.out.println("You have already borrowed maximum number of books.");
+                        if (userAccount.borrowBook(books)) {
+                            Main.borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
+                            System.out.println(userAccount.getUsername() + " has borrowed "
+                                    + searchedBook.getName() + " successfully!");
+                            saveData = new ObjectOutputStream(new FileOutputStream(historyDb));
+                            saveData.writeObject(borrowedHistory);
+                            saveData.close();
+                            storingData(userDb, users);
+                            storingData(bookDb, books);
+                        } else {
+                            System.out.println("Borrow operation has failed...");
                         }
                         break;
 
                     case 3: // return a book, USER CASE
-                        if(userAccount.returnCheck()) {
-                            System.out.println(userAccount.getName() + " has no book borrowed at the moment");
+                        if(userAccount.hasNoBooks()) {
+                            System.out.println(userAccount.getUsername() + " has no book borrowed at the moment");
                             break;
                         }
-                        if (initReturn(books)) {
-                            execReturnBook(userAccount, searchedBook);
+                        if (userAccount.executeReturn(books)) {
+                            Main.borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
+                            System.out.println(userAccount.getUsername() + " has returned "
+                                    + searchedBook.getName() + " successfully!");
                             saveData = new ObjectOutputStream(new FileOutputStream(historyDb));
                             saveData.writeObject(borrowedHistory);
                             saveData.close();
                             storingData(userDb, users);
                             storingData(bookDb, books);
                         }
+                        else {
+                            System.out.println("Return operation has failed...");
+                        }
                         break;
 
                     case 4: // view current status of books, USER CASE
                         System.out.println("Current user: " + Main.userAccount);
-                        if (userAccount.getAccountType() == AccountType.USER)
-                            getStatus(books);
+                        if (userAccount.getType() == AccountType.USER)
+                            userAccount.getStatus(books);
                         else
                             userAccount.showBorrowedBooks(books);
                         break;
 
                     case 5: // find nearby Libraries, USER CASE
                         System.out.println("Libraries near you: ");
-                        nearbyLibraries(locations);
+                        userAccount.nearbyLibraries(libraries);
                         break;
 
                     case 6: // change the user-password for login
-                        changePassword();
+                        userAccount.changePassword();
                         storingData(userDb, users);
                         break;
 
                     case 7: // view the user's borrowing history
-                        viewUserHistory();
+                        userAccount.viewUserHistory();
                         break;
 
-                    case 8:
-                        Main.userAccount.upgradeAccount();
+                    case 8: // upgrade account to premium
+                        userAccount.upgradeAccount();
                         storingData(userDb, users);
                         System.out.println("You have successfully subscribed to premium ^^");
                         break;

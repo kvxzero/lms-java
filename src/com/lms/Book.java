@@ -49,10 +49,7 @@ public class Book implements Serializable {
             this.inStock = false;
             return true;
         }
-        else {
-            System.out.println("This book is already borrowed and is unavailable");
-            return false;
-        }
+        return false;
     }
     public void bookReturned() {
         this.inStock = true;

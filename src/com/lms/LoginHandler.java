@@ -16,15 +16,15 @@ public class LoginHandler {
     }
     // function to handle login auth
     public int userLoginRequest(String username, String password, Main.AccountType accountType) {
-        RegUser user;
+        User user;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
             dbReader = users.listIterator();
         while (dbReader.hasNext()) {
-            user = (RegUser) dbReader.next();
-            if (user.getName().equals(username)) {
-                if(RegUser.validateLogin(user, password))
+            user = (User) dbReader.next();
+            if (user.getUsername().equals(username)) {
+                if(User.validateLogin(user, password))
                     return 200;
                 else {
                     System.out.println("Invalid login credentials");
@@ -41,10 +41,10 @@ public class LoginHandler {
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER is true
             dbReader = users.listIterator();
-        RegUser user;
+        User user;
         while(dbReader.hasNext()) {
-            user = (RegUser) dbReader.next();
-            if (user.getName().equals(username)) {
+            user = (User) dbReader.next();
+            if (user.getUsername().equals(username)) {
                 return user.getId()-1;
             }
         }
