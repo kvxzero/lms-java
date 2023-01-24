@@ -3,7 +3,6 @@ package com.lms;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Book implements Serializable {
     @Serial
@@ -14,9 +13,6 @@ public class Book implements Serializable {
     private String genre;
     private String author;
     private int stock;
-
-    // Make this an array list and add all the users
-    // who borrowed this book in the order of borrowing
     private ArrayList<Integer> borrowedUser = new ArrayList<>();
 
     Book (String name, String genre, String author, int stock) {

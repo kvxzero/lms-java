@@ -167,12 +167,12 @@ public class Main {
                     break;
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
-                case 4:
-                    System.out.println("!-- Warning! Test feature accessed --!");
-                    System.out.println("Add a new admin (use only on data loss)");
-                    admins.add((Admin) User.newUser(true));
-                    storingData(adminDb, admins);
-                    break;
+//                case 4:
+//                    System.out.println("!-- Warning! Test feature accessed --!");
+//                    System.out.println("Add a new admin (use only on data loss)");
+//                    admins.add((Admin) User.newUser(true));
+//                    storingData(adminDb, admins);
+//                    break;
 
                 default:
                     System.out.println("!-- Enter a valid input --!");

@@ -2,7 +2,9 @@ package com.lms;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import static com.lms.Main.dbReader;
 import static com.lms.Main.sc;
 
 public class User implements Serializable {
@@ -20,9 +22,6 @@ public class User implements Serializable {
     }
 
     // setters
-    public void setUsername(String username) {
-        this.username = username;
-    }
     public void setPassword(String password) {
         this.password = password;
     }
