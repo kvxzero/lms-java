@@ -2,6 +2,8 @@ package com.lms;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class Book implements Serializable {
     @Serial
@@ -10,23 +12,24 @@ public class Book implements Serializable {
     private static int numOfBooks = 0;
     private String name;
     private String genre;
-    private boolean inStock;
+    private String author;
+    private int stock;
 
     // Make this an array list and add all the users
     // who borrowed this book in the order of borrowing
-    private int borrowedUser;
+    private ArrayList<Integer> borrowedUser = new ArrayList<>();
 
-    Book (String name, String genre) {
+    Book (String name, String genre, String author, int stock) {
         this.name = name;
         this.genre = genre;
         this.id = numOfBooks+1;
-        this.inStock = true;
-        this.borrowedUser = -9999;
+        this.author = author;
+        this.stock = stock;
         numOfBooks++;
     }
     @Override
     public String toString() {
-        return "Name: " + this.name + " | Genre: " + this.genre;
+        return "Name: " + this.name + " | Genre: " + this.genre + " | Author: " + this.author;
     }
     public static void setNumOfBooks(int numOfBooks) {
         Book.numOfBooks = numOfBooks;
@@ -38,25 +41,32 @@ public class Book implements Serializable {
         return id;
     }
     public boolean availability() {
-        return this.inStock;
+        return borrowedUser.isEmpty();
     }
-    public int getBorrowedUser() {
+    public ArrayList<Integer> getBorrowedUser() {
         return this.borrowedUser;
     }
     public boolean setBorrowedUser(RegUser user) {
-        if(this.inStock) {
-            this.borrowedUser = user.getId();
-            this.inStock = false;
+        if(this.stock > 0) {
+            this.borrowedUser.add(user.getId());
+            this.stock--;
             return true;
         }
         return false;
     }
-    public void bookReturned() {
-        this.inStock = true;
-        this.borrowedUser = -9999;
+    public void bookReturned(RegUser user) {
+        this.stock++;
+        this.borrowedUser.remove((Integer) user.getId());
     }
 
     public String getGenre() {
         return this.genre;
+    }
+    public String getAuthor() {
+        return this.author;
+    }
+
+    public int getStock() {
+        return this.stock;
     }
 }

@@ -82,9 +82,12 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         while (dbReader.hasNext()) {
             Main.searchedBook = (Book) dbReader.next();
             if (Main.searchedBook.availability()) {
-                System.out.println(Main.searchedBook + " | Currently: in Library ");
-            } else {
-                System.out.println(Main.searchedBook + " | Currently: Borrowed by a user");
+                System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+            } else if (searchedBook.getStock() == 0) {
+                System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
+            }
+            else {
+                System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
             }
         }
     }
@@ -118,11 +121,13 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         while (dbReader.hasNext()) {
             Main.searchedBook = (Book) dbReader.next();
             if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                if(Main.searchedBook.availability()) {
-                    System.out.println(Main.searchedBook + " | Currently: in Library");
+                if (Main.searchedBook.availability()) {
+                    System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+                } else if (searchedBook.getStock() == 0) {
+                    System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
                 }
                 else {
-                    System.out.println(Main.searchedBook + " | Currently: Borrowed by a user");
+                    System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
                 }
                 Main.searchFlag = true;
             }
@@ -137,11 +142,13 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         while (dbReader.hasNext()) {
             Main.searchedBook = (Book) dbReader.next();
             if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                if(Main.searchedBook.availability()) {
-                    System.out.println(Main.searchedBook + " | Currently: in Library ");
+                if (Main.searchedBook.availability()) {
+                    System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+                } else if (searchedBook.getStock() == 0) {
+                    System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
                 }
                 else {
-                    System.out.println(Main.searchedBook + " | Currently: Borrowed by a user");
+                    System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
                 }
                 Main.searchFlag = true;
             }
@@ -187,7 +194,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         if (this.getType() == AccountType.USER) {
             searchedBook = books.get(this.getBorrowedBookId()-1);
             if (this.returnBook(0)) {
-                searchedBook.bookReturned();
+                searchedBook.bookReturned(this);
                 return true;
             }
         }
@@ -204,7 +211,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
                 searchedBook = books.get(borrowedBook.get(dbIndex - 1) - 1);
                 System.out.println(searchedBook.getName() + "\n");
                 if (this.returnBook(dbIndex - 1)) {
-                    searchedBook.bookReturned();
+                    searchedBook.bookReturned(this);
                     return true;
                 }
             }
