@@ -30,7 +30,7 @@ public class Main {
     static int loginId;
 
     // flags for loops
-    static boolean searchFlag, loginFlag = false;
+    static boolean searchFlag, dupeFlag, loginFlag = false;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
@@ -74,7 +74,7 @@ public class Main {
 
         // variables for various functions
         int choice;
-        String userName, userPassword;
+        String userName, userPassword, userLocation;
         sc.useDelimiter("\n");
 
         // array lists for all the different data persisted
@@ -161,16 +161,63 @@ public class Main {
                     break;
 
                 case 3:
-                    users.add((RegUser) User.newUser(false));
+                    dupeFlag = false;
+                    System.out.print("Enter your username: ");
+                    userName = sc.next();
+                    while(users.iterator().hasNext()) {
+                        if (users.iterator().next().getUsername().equals(userName)) {
+                            System.out.println("Username already exists!");
+                            dupeFlag = true;
+                            break;
+                        }
+                    }
+                    if(dupeFlag)
+                        break;
+                    System.out.print("Enter your password: ");
+                    userPassword = sc.next();
+                    if(userPassword.length() < 5) {
+                        System.out.println("Password must be at least 5 characters long!");
+                        break;
+                    }
+                    System.out.print("Enter your location: ");
+                    userLocation = sc.next();
+                    if(userLocation.equals("")) {
+                        System.out.println("Location can not be blank!");
+                        break;
+                    }
+                    users.add(new RegUser(userName, userPassword, userLocation));
                     System.out.println("Signed up successfully! ^^");
                     storingData(userDb, users);
                     break;
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
 //                case 4:
-//                    System.out.println("!-- Warning! Test feature accessed --!");
-//                    System.out.println("Add a new admin (use only on data loss)");
-//                    admins.add((Admin) User.newUser(true));
+//                    dupeFlag = false;
+//                    System.out.print("Enter your username: ");
+//                    userName = sc.next();
+//                    while(admins.iterator().hasNext()) {
+//                        if (admins.iterator().next().getUsername().equals(userName)) {
+//                            System.out.println("Username already exists!");
+//                            dupeFlag = true;
+//                            break;
+//                        }
+//                    }
+//                    if (dupeFlag)
+//                        break;
+//                    System.out.print("Enter your password: ");
+//                    userPassword = sc.next();
+//                    if(userPassword.length() < 5) {
+//                        System.out.println("Password must be at least 5 characters long!");
+//                        break;
+//                    }
+//                    System.out.print("Enter your location: ");
+//                    userLocation = sc.next();
+//                    if(userLocation.equals("")) {
+//                        System.out.println("Location can not be blank!");
+//                        break;
+//                    }
+//                    users.add(new RegUser(userName, userPassword, userLocation));
+//                    System.out.println("New admin created successfully!");
 //                    storingData(adminDb, admins);
 //                    break;
 
@@ -250,8 +297,31 @@ public class Main {
                         break;
 
                     case 5: // Add a user, ADMIN CASE
-                        users.add((RegUser) User.newUser(false));
-                        System.out.println("New user created successfully!");
+                        dupeFlag = false;
+                        System.out.print("Enter your username: ");
+                        userName = sc.next();
+                        while(users.iterator().hasNext()) {
+                            if (users.iterator().next().getUsername().equals(userName)) {
+                                System.out.println("Username already exists!");
+                                dupeFlag = true;
+                                break;
+                            }
+                        }
+                        if (dupeFlag)
+                            break;
+                        System.out.print("Enter your password: ");
+                        userPassword = sc.next();
+                        if(userPassword.length() < 5) {
+                            System.out.println("Password must be at least 5 characters long!");
+                            break;
+                        }
+                        System.out.print("Enter your location: ");
+                        userLocation = sc.next();
+                        if(userLocation.equals("")) {
+                            System.out.println("Location can not be blank!");
+                            break;
+                        }
+                        users.add(new RegUser(userName, userPassword, userLocation));
                         storingData(userDb, users);
                         break;
 
@@ -262,7 +332,31 @@ public class Main {
                         break;
 
                     case 7: // Add an admin, ADMIN CASE
-                        admins.add((Admin) User.newUser(true));
+                        dupeFlag = false;
+                        System.out.print("Enter your username: ");
+                        userName = sc.next();
+                        while(admins.iterator().hasNext()) {
+                            if (admins.iterator().next().getUsername().equals(userName)) {
+                                System.out.println("Username already exists!");
+                                dupeFlag = true;
+                                break;
+                            }
+                        }
+                        if (dupeFlag)
+                            break;
+                        System.out.print("Enter your password: ");
+                        userPassword = sc.next();
+                        if(userPassword.length() < 5) {
+                            System.out.println("Password must be at least 5 characters long!");
+                            break;
+                        }
+                        System.out.print("Enter your location: ");
+                        userLocation = sc.next();
+                        if(userLocation.equals("")) {
+                            System.out.println("Location can not be blank!");
+                            break;
+                        }
+                        users.add(new RegUser(userName, userPassword, userLocation));
                         System.out.println("New admin created successfully!");
                         storingData(adminDb, admins);
                         break;

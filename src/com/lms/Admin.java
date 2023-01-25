@@ -57,12 +57,20 @@ public class Admin extends User implements Serializable, AdminFunctions {
     // case 1: add a new book
     // function to add a new book
     public Book newBook() {
-        String bookName, bookGenre, author;
-        int stock;
+        String bookName, author;
+        Book.genreLists bookGenre;
+        int stock, indexOfGenre = 1;
         System.out.print("Enter the book name: ");
         bookName = sc.nextLine();
-        System.out.print("Enter the book genre: ");
-        bookGenre = sc.nextLine();
+        System.out.println("Choose the book genre: ");
+        for (Book.genreLists genre: Book.genreLists.values()) {
+            System.out.println(indexOfGenre + ". " + genre);
+            indexOfGenre++;
+        }
+        System.out.print("\nChoice: ");
+        indexOfGenre = sc.nextInt();
+        bookGenre = Book.genreLists.values()[indexOfGenre - 1];
+        sc.nextLine();
         System.out.print("Enter the author name: ");
         author = sc.nextLine();
         System.out.print("Enter the number of copies: ");

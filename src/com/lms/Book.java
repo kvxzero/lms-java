@@ -5,17 +5,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Book implements Serializable {
+
+    enum genreLists {
+        FICTION, NOVEL, NARRATIVE, FANTASY, THRILLER, HORROR,
+        SCIFI, ROMANCE, ADVENTURE, ACTION, COMEDY, CRIME;
+    }
+
     @Serial
     private static final long serialVersionUID = 192192192;
     private int id;
     private static int numOfBooks = 0;
     private String name;
-    private String genre;
+//    private String genre;
+    private genreLists genre;
     private String author;
     private int stock;
     private ArrayList<Integer> borrowedUser = new ArrayList<>();
 
-    Book (String name, String genre, String author, int stock) {
+    Book (String name, genreLists genre, String author, int stock) {
         this.name = name;
         this.genre = genre;
         this.id = numOfBooks+1;
@@ -56,7 +63,7 @@ public class Book implements Serializable {
     }
 
     public String getGenre() {
-        return this.genre;
+        return this.genre.toString();
     }
     public String getAuthor() {
         return this.author;

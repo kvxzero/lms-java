@@ -2,9 +2,7 @@ package com.lms;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 
-import static com.lms.Main.dbReader;
 import static com.lms.Main.sc;
 
 public class User implements Serializable {
@@ -55,22 +53,5 @@ public class User implements Serializable {
     // static function to log in
     public static boolean validateLogin(User user, String password) {
         return user.getPassword().equals(password);
-    }
-
-    // function to add a new user
-    public static User newUser(boolean flag) {
-        String userName, userPassword, userLocation;
-        System.out.print("Enter your username: ");
-        userName = sc.next();
-        System.out.print("Enter your password: ");
-        userPassword = sc.next();
-        System.out.print("Enter your location: ");
-        userLocation = sc.next();
-        if(flag) {
-            return new Admin(userName, userPassword, userLocation);
-        }
-        else {
-            return new RegUser(userName, userPassword, userLocation);
-        }
     }
 }
