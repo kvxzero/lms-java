@@ -458,9 +458,6 @@ public class Main {
                             borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has borrowed "
                                     + searchedBook.getName() + " successfully!");
-                            saveData = new ObjectOutputStream(new FileOutputStream(masterData));
-                            saveData.writeObject(borrowedHistory);
-                            saveData.close();
                             storingData(masterData, data);
                         } else {
                             System.out.println("Borrow operation has failed...");
@@ -476,9 +473,6 @@ public class Main {
                             borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has returned "
                                     + searchedBook.getName() + " successfully!");
-                            saveData = new ObjectOutputStream(new FileOutputStream(masterData));
-                            saveData.writeObject(borrowedHistory);
-                            saveData.close();
                             storingData(masterData, data);
                         }
                         else {

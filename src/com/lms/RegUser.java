@@ -352,7 +352,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         while (dbReader.hasNext()) {
             String line = (String) dbReader.next();
             if (line.indexOf(this.getUsername()) == 0) {
-                System.out.println(dbIndex + ". " + history);
+                System.out.println(dbIndex + ". " + line);
                 dbIndex++;
                 searchFlag = true;
             }
