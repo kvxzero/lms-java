@@ -6,19 +6,19 @@ import org.jetbrains.annotations.NotNull;
 public interface RegUserFunctions {
 
     // case 0: function to display all books
-    void displayBooks(@NotNull ArrayList<Book> books);
+    void displayBooks(@NotNull ArrayList<Library> libraries);
 
     // case 1: function to search books with options
-    void searchBooks(@NotNull ArrayList<Book> books, int option);
+    void searchBooks(@NotNull ArrayList<Library> libraries, int option);
 
     // case 2: function to borrow books
-    boolean borrowBook(ArrayList<Book> books);
+    boolean borrowBook(ArrayList<Library> libraries);
 
     // case 3: function to return borrowed books
-    boolean executeReturn(ArrayList<Book> books);
+    boolean executeReturn();
 
     // case 4: function to view current status
-    void getStatus(ArrayList<Book> books);
+    void getStatus(ArrayList<Library> libraries);
 
     // case 5: function to find out nearby libraries
     void nearbyLibraries(ArrayList<Library> libraries);

@@ -9,28 +9,28 @@ public interface AdminFunctions {
     void viewBorrowingHistory();
 
     // case 1: add a book
-    Book newBook();
+    Book newBook(Library selectedLibrary);
 
     // case 2: delete a book
-    void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books);
+    void deleteBook(ArrayList<RegUser> users);
 
     // case 3: display all books
-    void displayBooks(@NotNull ArrayList<Book> books, ArrayList<RegUser> users);
+    void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<RegUser> users);
 
     // case 4: search books
-    void searchBooks(@NotNull ArrayList<Book> books, ArrayList<RegUser> users, int option);
+    void searchBooks(@NotNull ArrayList<Library> libraries, int option);
 
     // case 5: add a new user
     // it is in parent class
 
     // case 6: delete a user
-    void deleteUser(ArrayList<RegUser> users, ArrayList<Book> books);
+    void deleteUser(ArrayList<RegUser> users, ArrayList<Library> libraries);
 
     // case 8: delete an admin
     void deleteAdmin(ArrayList<Admin> admins);
 
     // case 9: list all the users
-    void usersList(ArrayList<RegUser> users, ArrayList<Book> books);
+    void usersList(ArrayList<RegUser> users, ArrayList<Library> libraries);
 
     // case 10: display all admins
     void adminsList(ArrayList<Admin> admins);

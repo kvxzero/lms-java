@@ -15,19 +15,20 @@ public class Book implements Serializable {
     private static final long serialVersionUID = 192192192;
     private int id;
     private static int numOfBooks = 0;
-    private String name;
+    private String name, author;
+    private Library library;
 //    private String genre;
     private genreLists genre;
-    private String author;
     private int stock;
     private ArrayList<Integer> borrowedUser = new ArrayList<>();
 
-    Book (String name, genreLists genre, String author, int stock) {
+    Book (String name, genreLists genre, String author, int stock, Library library) {
         this.name = name;
         this.genre = genre;
         this.id = numOfBooks+1;
         this.author = author;
         this.stock = stock;
+        this.library = library;
         numOfBooks++;
     }
     @Override
@@ -68,7 +69,9 @@ public class Book implements Serializable {
     public String getAuthor() {
         return this.author;
     }
-
+    public Library getLibrary() {
+        return this.library;
+    }
     public int getStock() {
         return this.stock;
     }

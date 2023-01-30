@@ -33,11 +33,6 @@ public class Admin extends User implements Serializable, AdminFunctions {
         numOfAdmins = retrievedData;
     }
 
-    // static function to log in
-    public static boolean validateLogin(RegUser user, String password) {
-        return user.getPassword().equals(password);
-    }
-
     // implements AdminFunctions
 
     // case 0: view borrowing history
@@ -56,7 +51,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 1: add a new book
     // function to add a new book
-    public Book newBook() {
+    public Book newBook(Library selectedLibrary) {
         String bookName, author;
         Book.genreLists bookGenre;
         int stock, indexOfGenre = 1;
@@ -76,24 +71,31 @@ public class Admin extends User implements Serializable, AdminFunctions {
         System.out.print("Enter the number of copies: ");
         stock = sc.nextInt();
         sc.nextLine();
-        return new Book(bookName, bookGenre, author, stock);
+        return new Book(bookName, bookGenre, author, stock, selectedLibrary);
     }
 
     // case 2: delete a book
     // function to delete a book (also removes the user associated with the book)
-    public void deleteBook(ArrayList<RegUser> users, ArrayList<Book> books) {
-        Main.searchFlag = false;
+    public void deleteBook(ArrayList<RegUser> users) {
+        searchFlag = false;
         System.out.print("Enter the book to be deleted: ");
         searchQuery = sc.next();
-        dbReader = books.listIterator();
+        dbReader = selectedLibrary.getBooks().listIterator();
         while (dbReader.hasNext()) {
-            Main.searchedBook = (Book) dbReader.next();
-            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                if(!Main.searchedBook.getBorrowedUser().isEmpty()) {
+            searchedBook = (Book) dbReader.next();
+            if (searchedBook.getName().equalsIgnoreCase(searchQuery)) {
+                if (!searchedBook.getBorrowedUser().isEmpty()) {
                     ArrayList<Integer> borrowedUsers = searchedBook.getBorrowedUser();
-                    while(borrowedUsers.listIterator().hasNext()) {
-                        RegUser user = users.get(borrowedUsers.listIterator().next());
-                        user.getBorrowedBook().remove((Object) searchedBook.getId());
+                    ListIterator borrowers = borrowedUsers.listIterator();
+                    while (true) {
+                        try {
+                            userAccount = users.get(((Integer) borrowers.next()) - 1);
+                            int index = userAccount.getBorrowedBook().indexOf(searchedBook);
+                            userAccount.getBorrowedBook().remove(index);
+                            userAccount.getBorrowedFrom().remove(index);
+                        } catch (Exception e) {
+                            break;
+                        }
                     }
                 }
                 dbReader.remove();
@@ -107,95 +109,124 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 3: display all books
     // function to display all books
-    public void displayBooks(@NotNull ArrayList<Book> books, ArrayList<RegUser> users) {
-        dbReader = books.listIterator();
+    public void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<RegUser> users) {
+        searchFlag = false;
+        dbReader = libraries.listIterator();
         while (dbReader.hasNext()) {
-            Main.searchedBook = (Book) dbReader.next();
-            if (Main.searchedBook.availability()) {
-                System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-            } else {
-                System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
+            selectedLibrary = (Library) dbReader.next();
+            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + selectedLibrary.getName());
+                searchFlag = true;
+                if (selectedLibrary.getBooks().size() == 0) {
+                    System.out.println("-- No books --");
+                    continue;
+                }
+                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+                while(bookReader.hasNext()) {
+                    searchedBook = (Book) bookReader.next();
+                    if (searchedBook.availability()) {
+                        System.out.println(searchedBook + " | Currently: all copies are in stock");
+                    } else {
+                        System.out.println(searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
+                    }
+                }
             }
+        }
+        if (searchFlag == true) {
+            System.out.println("---- No libraries found! ----");
+            System.out.println("-- Add a library to manage --");
         }
     }
 
     // case 4: search books
     // functions to search books along with borrowers name
-    public void searchBooks(@NotNull ArrayList<Book> books, ArrayList<RegUser> users, int option) {
+    public void searchBooks(@NotNull ArrayList<Library> libraries, int option) {
         switch(option) {
             case 1:
-                searchByName(books, users);
+                searchByName(libraries);
                 break;
 
             case 2:
-                searchByGenre(books, users);
+                searchByGenre(libraries);
                 break;
 
             case 3:
-                searchByName(books, users);
+                searchByName(libraries);
                 System.out.println();
-                searchByGenre(books, users);
+                searchByGenre(libraries);
                 break;
 
             default:
                 System.out.println("!-- Enter a valid input --!");
         }
     }
-    private void searchByGenre(ArrayList<Book> books, ArrayList<RegUser> users) {
-        Main.searchFlag = false;
-        dbReader = books.listIterator();
+    private void searchByGenre(ArrayList<Library> libraries) {
+        dbReader = libraries.listIterator();
         System.out.println("--- Searching by genre ---");
         while (dbReader.hasNext()) {
-            Main.searchedBook = (Book) dbReader.next();
-            if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                if (Main.searchedBook.availability()) {
-                    System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                } else {
-                    System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+            searchFlag = false;
+            selectedLibrary = (Library) dbReader.next();
+            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + selectedLibrary.getName());
+                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+                while (bookReader.hasNext()) {
+                    searchedBook = (Book) bookReader.next();
+                    if(searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                        if (Main.searchedBook.availability()) {
+                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+                        } else {
+                            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+                        }
+                        searchFlag = true;
+                    }
                 }
-                Main.searchFlag = true;
             }
+            if (!Main.searchFlag && selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+                System.out.println("No results found!");
         }
-        if (!Main.searchFlag)
-            System.out.println("No results found!");
     }
-    private void searchByName(@NotNull ArrayList<Book> books, ArrayList<RegUser> users) {
-        Main.searchFlag = false;
-        dbReader = books.listIterator();
+    private void searchByName(@NotNull ArrayList<Library> libraries) {
+        dbReader = libraries.listIterator();
         System.out.println("--- Searching by name ---");
         while (dbReader.hasNext()) {
-            Main.searchedBook = (Book) dbReader.next();
-            if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                if (Main.searchedBook.availability()) {
-                    System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                } else {
-                    System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+            searchFlag = false;
+            selectedLibrary = (Library) dbReader.next();
+            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + selectedLibrary.getName());
+                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+                while (bookReader.hasNext()) {
+                    searchedBook = (Book) bookReader.next();
+                    if(searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                        if (Main.searchedBook.availability()) {
+                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+                        } else {
+                            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+                        }
+                        searchFlag = true;
+                    }
                 }
-                Main.searchFlag = true;
             }
+            if (!Main.searchFlag && selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+                System.out.println("No results found!");
         }
-        if (!Main.searchFlag)
-            System.out.println("No results found!");
     }
 
     // case 5: add a new user
-    // it is in parent
+    // parent class has the function
 
     // case 6: delete a user
     // function to delete a user (also releases the book if it was borrowed by the user)
-    public void deleteUser(ArrayList<RegUser> users, ArrayList<Book> books) {
+    public void deleteUser(ArrayList<RegUser> users, ArrayList<Library> libraries) {
         Main.searchFlag = false;
         System.out.print("Enter the user to be deleted: ");
         searchQuery = sc.next();
         dbReader = users.listIterator();
         while (dbReader.hasNext()) {
             userAccount = (RegUser) dbReader.next();
-            if (userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
-                ListIterator booksReader = userAccount.getBorrowedBook().listIterator();
-                while(booksReader.hasNext()) {
-                    Book book = books.get((Integer) booksReader.next() - 1);
-                    book.bookReturned(userAccount);
-                }
+            if (userAccount.getUsername().equalsIgnoreCase(searchQuery)
+                    && userAccount.getCity().equalsIgnoreCase(adminAccount.getCity())) {
+                if (!userAccount.hasNoBooks())
+                    userAccount.returnAll(libraries);
                 dbReader.remove();
                 System.out.println("Deleted successfully");
                 Main.searchFlag = true;
@@ -230,7 +261,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 9: list all the users
     // function to list all available users
-    public void usersList(ArrayList<RegUser> users, ArrayList<Book> books) {
+    public void usersList(ArrayList<RegUser> users, ArrayList<Library> libraries) {
         int dbIndex = 1;
         String bookStat;
         dbReader = users.listIterator();
@@ -241,11 +272,13 @@ public class Admin extends User implements Serializable, AdminFunctions {
                 bookStat = "Currently no borrowed books";
             else
             if(userAccount.getType() == Main.AccountType.USER)
-                bookStat = "Currently borrowed: " + books.get(Main.userAccount.getBorrowedBookId()-1).getName();
+                bookStat = "Currently borrowed: " +
+                        userAccount.getBorrowedBook().get(0).getName();
             else {
                 bookStat = "Currently borrowed: ";
-                while (userAccount.getBorrowedBook().listIterator().hasNext()) {
-                    Book book = books.get(userAccount.getBorrowedBook().listIterator().next());
+                ListIterator bookReader = userAccount.getBorrowedBook().listIterator();
+                while (bookReader.hasNext()) {
+                    Book book = (Book) bookReader.next();
                     bookStat = bookStat + book.getName() + " | ";
                 }
             }
@@ -269,12 +302,10 @@ public class Admin extends User implements Serializable, AdminFunctions {
     // case 11: add a new library
     // function to add new library location
     public Library newLocation() {
-        String name, city;
+        String name;
         System.out.print("Enter the Library Name: ");
         name = sc.next();
-        System.out.print("Enter the Library City: ");
-        city = sc.next();
-        return new Library(name, city);
+        return new Library(name, this.getCity());
     }
 
     // case 12: delete a library
