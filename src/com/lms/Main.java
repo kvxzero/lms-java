@@ -25,6 +25,7 @@ public class Main {
 
     // id of the logged-in user
     static int loginId;
+    private static String userName, userPassword, userLocation;
 
     // flags for loops
     static boolean searchFlag, dupeFlag, loginFlag = false;
@@ -60,19 +61,54 @@ public class Main {
         saveData.writeObject(inputData);
         saveData.close();
     }
+    public static boolean validateInformation(ArrayList users, boolean signUp) {
+        dupeFlag = false;
+        System.out.print("Enter your username: ");
+        userName = sc.next();
+        if (userName.equals("") | userName.equals("\n")) {
+            System.out.println("Invalid username!");
+            dupeFlag = true;
+        }
+        dbReader = users.listIterator();
+        while(dbReader.hasNext()) {
+            if (((User) dbReader.next()).getUsername().equals(userName)) {
+                System.out.println("Username already exists!");
+                dupeFlag = true;
+                break;
+            }
+        }
+        if(dupeFlag)
+            return false;
+        System.out.print("Enter your password: ");
+        userPassword = sc.next();
+        if(userPassword.length() < 5) {
+            System.out.println("Password must be at least 5 characters long!");
+            return false;
+        }
+        if (signUp) {
+            System.out.print("Enter your location: ");
+            userLocation = sc.next();
+            if(userLocation.equals("") | userLocation.equals("\n")) {
+                System.out.println("Location can not be blank!");
+                return false;
+            }
+        }
+        return true;
+    }
 
     // function to read the borrow history as ADMIN
     public static ArrayList<String> getHistory() {
         return borrowedHistory;
     }
+
     public static void main(String[] args) throws Exception {
+
         // object serialization object for loading data
         ObjectInputStream loadData;
 
         // variables for various functions
         int choice;
         String libChoice;
-        String userName, userPassword, userLocation;
         sc.useDelimiter("\n");
         ListIterator libReader;
 
@@ -147,74 +183,20 @@ public class Main {
                     break;
 
                 case 3:
-                    dupeFlag = false;
-                    System.out.print("Enter your username: ");
-                    userName = sc.next();
-                    if (userName.equals("") | userName.equals("\n")) {
-                        System.out.println("Invalid username!");
-                        dupeFlag = true;
+                    if(validateInformation(users, true)) {
+                        users.add(new RegUser(userName, userPassword, userLocation));
+                        System.out.println("Signed up successfully! ^^");
+                        storingData(masterData, data);
                     }
-                    dbReader = users.listIterator();
-                    while(dbReader.hasNext()) {
-                        if (((RegUser) dbReader.next()).getUsername().equals(userName)) {
-                            System.out.println("Username already exists!");
-                            dupeFlag = true;
-                            break;
-                        }
-                    }
-                    if(dupeFlag)
-                        break;
-                    System.out.print("Enter your password: ");
-                    userPassword = sc.next();
-                    if(userPassword.length() < 5) {
-                        System.out.println("Password must be at least 5 characters long!");
-                        break;
-                    }
-                    System.out.print("Enter your location: ");
-                    userLocation = sc.next();
-                    if(userLocation.equals("") | userLocation.equals("\n")) {
-                        System.out.println("Location can not be blank!");
-                        break;
-                    }
-                    users.add(new RegUser(userName, userPassword, userLocation));
-                    System.out.println("Signed up successfully! ^^");
-                    storingData(masterData, data);
                     break;
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
                 case 4:
-                    dupeFlag = false;
-                    System.out.print("Enter your username: ");
-                    userName = sc.next();
-                    if (userName.equals("") | userName.equals("\n")) {
-                        System.out.println("Invalid username!");
-                        dupeFlag = true;
+                    if(validateInformation(admins, true)) {
+                        admins.add(new Admin(userName, userPassword, userLocation));
+                        System.out.println("New admin created successfully!");
+                        storingData(masterData, data);
                     }
-                    dbReader = admins.listIterator();
-                    while(dbReader.hasNext()) {
-                        if (((Admin) dbReader.next()).getUsername().equals(userName)) {
-                            System.out.println("Username already exists!");
-                            dupeFlag = true;
-                            break;
-                        }
-                    }
-                    if(dupeFlag)
-                        break;
-                    System.out.print("Enter your password: ");
-                    userPassword = sc.next();
-                    if(userPassword.length() < 5) {
-                        System.out.println("Password must be at least 5 characters long!");
-                        break;
-                    }
-                    System.out.print("Enter your location: ");
-                    userLocation = sc.next();
-                    if(userLocation.equals("") | userLocation.equals("\n")) {
-                        System.out.println("Location can not be blank!");
-                        break;
-                    }
-                    admins.add(new Admin(userName, userPassword, userLocation));
-                    System.out.println("New admin created successfully!");
-                    storingData(masterData, data);
                     break;
 
                 default:
@@ -288,7 +270,7 @@ public class Main {
                             }
                         }
                         if (!searchFlag) {
-                            System.out.println("Well, that lib doesn't exist.");
+                            System.out.println("Well, that library doesn't exist.");
                             break;
                         }
                         System.out.print("Enter the number of books to be added: ");
@@ -312,7 +294,7 @@ public class Main {
                         while (libReader.hasNext()) {
                             Library lib = (Library) libReader.next();
                             if (lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
-                                System.out.println(lib.getName());
+                                System.out.println("> " + lib.getName());
                             }
                         }
                         System.out.print("Choice: ");
@@ -352,37 +334,12 @@ public class Main {
                         break;
 
                     case 5: // Add a user, ADMIN CASE
-                        dupeFlag = false;
-                        System.out.print("Enter your username: ");
-                        userName = sc.next();
-                        if (userName.equals("") | userName.equals("\n")) {
-                            System.out.println("Invalid username!");
-                            dupeFlag = true;
+                        if (validateInformation(users, false)) {
+                            userLocation = adminAccount.getCity();
+                            users.add(new RegUser(userName, userPassword, userLocation));
+                            storingData(masterData, data);
+                            System.out.println("New user created successfully!");
                         }
-                        dbReader = users.listIterator();
-                        while(dbReader.hasNext()) {
-                            if (((RegUser) dbReader.next()).getUsername().equals(userName)) {
-                                System.out.println("Username already exists!");
-                                dupeFlag = true;
-                                break;
-                            }
-                        }
-                        if(dupeFlag)
-                            break;
-                        System.out.print("Enter your password: ");
-                        userPassword = sc.next();
-                        if(userPassword.length() < 5) {
-                            System.out.println("Password must be at least 5 characters long!");
-                            break;
-                        }
-                        System.out.print("Enter your location: ");
-                        userLocation = sc.next();
-                        if(userLocation.equals("") | userLocation.equals("\n")) {
-                            System.out.println("Location can not be blank!");
-                            break;
-                        }
-                        users.add(new RegUser(userName, userPassword, userLocation));
-                        storingData(masterData, data);
                         break;
 
                     case 6: // Delete a user, ADMIN CASE // broken for deleting users with borrowed books
@@ -391,33 +348,12 @@ public class Main {
                         break;
 
                     case 7: // Add an admin, ADMIN CASE
-                        dupeFlag = false;
-                        System.out.print("Enter your username: ");
-                        userName = sc.next();
-                        while(admins.iterator().hasNext()) {
-                            if (admins.iterator().next().getUsername().equals(userName)) {
-                                System.out.println("Username already exists!");
-                                dupeFlag = true;
-                                break;
-                            }
+                        if (validateInformation(admins, false)) {
+                            userLocation = adminAccount.getCity();
+                            users.add(new RegUser(userName, userPassword, userLocation));
+                            storingData(masterData, data);
+                            System.out.println("New admin created successfully!");
                         }
-                        if (dupeFlag)
-                            break;
-                        System.out.print("Enter your password: ");
-                        userPassword = sc.next();
-                        if(userPassword.length() < 5) {
-                            System.out.println("Password must be at least 5 characters long!");
-                            break;
-                        }
-                        System.out.print("Enter your location: ");
-                        userLocation = sc.next();
-                        if(userLocation.equals("")) {
-                            System.out.println("Location can not be blank!");
-                            break;
-                        }
-                        users.add(new RegUser(userName, userPassword, userLocation));
-                        System.out.println("New admin created successfully!");
-                        storingData(masterData, data);
                         break;
 
                     case 8: // Remove an admin, ADMIN CASE
@@ -449,7 +385,7 @@ public class Main {
                         break;
 
                     case 12: // Remove a library from the db, ADMIN CASE
-                        adminAccount.deleteLocation(libraries);
+                        adminAccount.deleteLocation(libraries, users);
                         storingData(masterData, data);
                         break;
 
@@ -515,6 +451,8 @@ public class Main {
                         break;
 
                     case 2: // borrow a book, USER CASE
+                        userAccount.displayBooks(libraries);
+                        System.out.println();
                         if (userAccount.borrowBook(libraries)) {
                             Main.borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has borrowed "

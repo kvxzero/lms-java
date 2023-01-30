@@ -33,6 +33,14 @@ public class Admin extends User implements Serializable, AdminFunctions {
         numOfAdmins = retrievedData;
     }
 
+    private void displayAvailability() {
+        if (Main.searchedBook.availability()) {
+            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+        } else {
+            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+        }
+    }
+
     // implements AdminFunctions
 
     // case 0: view borrowing history
@@ -76,6 +84,22 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 2: delete a book
     // function to delete a book (also removes the user associated with the book)
+    private void returnBook(ArrayList<RegUser> users) {
+        if (!searchedBook.getBorrowedUser().isEmpty()) {
+            ArrayList<Integer> borrowedUsers = searchedBook.getBorrowedUser();
+            ListIterator borrowers = borrowedUsers.listIterator();
+            while (true) {
+                try {
+                    userAccount = users.get(((Integer) borrowers.next()) - 1);
+                    int index = userAccount.getBorrowedBook().indexOf(searchedBook);
+                    userAccount.getBorrowedBook().remove(index);
+                    userAccount.getBorrowedFrom().remove(index);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+    }
     public void deleteBook(ArrayList<RegUser> users) {
         searchFlag = false;
         System.out.print("Enter the book to be deleted: ");
@@ -85,18 +109,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
             searchedBook = (Book) dbReader.next();
             if (searchedBook.getName().equalsIgnoreCase(searchQuery)) {
                 if (!searchedBook.getBorrowedUser().isEmpty()) {
-                    ArrayList<Integer> borrowedUsers = searchedBook.getBorrowedUser();
-                    ListIterator borrowers = borrowedUsers.listIterator();
-                    while (true) {
-                        try {
-                            userAccount = users.get(((Integer) borrowers.next()) - 1);
-                            int index = userAccount.getBorrowedBook().indexOf(searchedBook);
-                            userAccount.getBorrowedBook().remove(index);
-                            userAccount.getBorrowedFrom().remove(index);
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
+                    returnBook(users);
                 }
                 dbReader.remove();
                 System.out.println("Deleted successfully");
@@ -124,11 +137,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
                 ListIterator bookReader = selectedLibrary.getBooks().listIterator();
                 while(bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
-                    if (searchedBook.availability()) {
-                        System.out.println(searchedBook + " | Currently: all copies are in stock");
-                    } else {
-                        System.out.println(searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
-                    }
+                    displayAvailability();
                 }
             }
         }
@@ -145,17 +154,14 @@ public class Admin extends User implements Serializable, AdminFunctions {
             case 1:
                 searchByName(libraries);
                 break;
-
             case 2:
                 searchByGenre(libraries);
                 break;
-
             case 3:
                 searchByName(libraries);
                 System.out.println();
                 searchByGenre(libraries);
                 break;
-
             default:
                 System.out.println("!-- Enter a valid input --!");
         }
@@ -172,11 +178,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
                 while (bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
                     if(searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                        if (Main.searchedBook.availability()) {
-                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                        } else {
-                            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
-                        }
+                        displayAvailability();
                         searchFlag = true;
                     }
                 }
@@ -197,11 +199,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
                 while (bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
                     if(searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                        if (Main.searchedBook.availability()) {
-                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                        } else {
-                            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
-                        }
+                        displayAvailability();
                         searchFlag = true;
                     }
                 }
@@ -310,7 +308,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 12: delete a library
     // function to delete a library location
-    public void deleteLocation(ArrayList<Library> locations) {
+    public void deleteLocation(ArrayList<Library> locations, ArrayList<RegUser> users) {
         searchFlag = false;
         System.out.print("Enter the library to be deleted: ");
         sc.nextLine();
@@ -318,7 +316,12 @@ public class Admin extends User implements Serializable, AdminFunctions {
         dbReader = locations.listIterator();
         while (dbReader.hasNext()) {
             selectedLibrary = (Library) dbReader.next();
-            if (selectedLibrary.getName().equals(searchQuery)) {
+            if (selectedLibrary.getName().equalsIgnoreCase(searchQuery)) {
+                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+                while (bookReader.hasNext()) {
+                    searchedBook = (Book) bookReader.next();
+                    returnBook(users);
+                }
                 dbReader.remove();
                 System.out.println("Deleted successfully");
                 searchFlag = true;

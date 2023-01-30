@@ -39,7 +39,7 @@ public interface AdminFunctions {
     Library newLocation();
 
     // case 12: delete a library
-    void deleteLocation(ArrayList<Library> locations);
+    void deleteLocation(ArrayList<Library> locations, ArrayList<RegUser> users);
 
     // case 13: list all libraries
     void librariesList(ArrayList<Library> locations);

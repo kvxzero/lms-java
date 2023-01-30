@@ -84,28 +84,36 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     // implements RegUserFunctions
 
     // case 0: function to display all books
+    private void displayAvailability() {
+        if (Main.searchedBook.availability()) {
+            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+        } else if (searchedBook.getStock() == 0) {
+            System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
+        } else {
+            System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
+        }
+    }
     public void displayBooks(@NotNull ArrayList<Library> libraries) {
+        searchFlag = false;
         dbReader = libraries.listIterator();
         while (dbReader.hasNext()) {
             selectedLibrary = (Library) dbReader.next();
             if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + selectedLibrary.getName());
+                searchFlag = true;
                 if (selectedLibrary.getBooks().size() == 0) {
                     System.out.println("-- No books --");
-                    break;
+                    continue;
                 }
                 ListIterator bookReader = selectedLibrary.getBooks().listIterator();
                 while(bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
-                    if (Main.searchedBook.availability()) {
-                        System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                    } else if (searchedBook.getStock() == 0) {
-                        System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
-                    } else {
-                        System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
-                    }
+                    displayAvailability();
                 }
             }
+        }
+        if (!searchFlag) {
+            System.out.println("--- No libraries found in your location! ---");
         }
     }
 
@@ -116,17 +124,14 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
             case 1:
                 searchByName(libraries);
                 break;
-
             case 2:
                 searchByGenre(libraries);
                 break;
-
             case 3:
                 searchByName(libraries);
                 System.out.println();
                 searchByGenre(libraries);
                 break;
-
             default:
                 System.out.println("!-- Enter a valid input --!");
         }
@@ -143,13 +148,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
                 while (bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
                     if(searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                        if (Main.searchedBook.availability()) {
-                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                        } else if (searchedBook.getStock() == 0) {
-                            System.out.println(Main.searchedBook + " | Currently: no copies are left");
-                        } else {
-                            System.out.println(Main.searchedBook + " | Currently: some copies are left");
-                        }
+                        displayAvailability();
                         searchFlag = true;
                     }
                 }
@@ -170,13 +169,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
                 while (bookReader.hasNext()) {
                     searchedBook = (Book) bookReader.next();
                     if(searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
-                        if (Main.searchedBook.availability()) {
-                            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-                        } else if (searchedBook.getStock() == 0) {
-                            System.out.println(Main.searchedBook + " | Currently: no copies are left");
-                        } else {
-                            System.out.println(Main.searchedBook + " | Currently: some copies are left");
-                        }
+                        displayAvailability();
                         searchFlag = true;
                     }
                 }
@@ -302,17 +295,20 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     // case 5: nearby libraries
     // function to find out nearby libraries
     public void nearbyLibraries(ArrayList<Library> locations) {
+        searchFlag = false;
         int dbIndex = 1;
         dbReader = locations.listIterator();
         while(dbReader.hasNext()) {
             Main.selectedLibrary = (Library) dbReader.next();
             if (this.getType() == AccountType.USER) {
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                    searchFlag = true;
                     System.out.println(dbIndex + ". " + Main.selectedLibrary);
                     dbIndex++;
                 }
             }
             else {
+                searchFlag = true;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                     System.out.println(dbIndex + ". " + Main.selectedLibrary + " (Nearby)");
                     dbIndex++;
@@ -321,6 +317,9 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
                 System.out.println(dbIndex + ". " + Main.selectedLibrary);
                 dbIndex++;
             }
+        }
+        if (!searchFlag) {
+            System.out.println("--- No libraries found in your location! ---");
         }
     }
 
