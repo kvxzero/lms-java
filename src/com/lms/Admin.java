@@ -37,7 +37,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
         if (Main.searchedBook.availability()) {
             System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
         } else {
-            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + "copies left");
+            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
         }
     }
 
@@ -45,15 +45,17 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 0: view borrowing history
     // function to view borrowing history of the library
-    public void viewBorrowingHistory() {
-        ArrayList<String> borrowedHistory = Main.getHistory();
+    public void viewBorrowingHistory(ArrayList<String> history) {
         int dbIndex;
         System.out.println("Borrowing history:");
-        dbReader = borrowedHistory.listIterator();
+        dbReader = history.listIterator();
         dbIndex = 1;
         while (dbReader.hasNext()) {
             System.out.println(dbIndex + ". " + dbReader.next());
             dbIndex++;
+        }
+        if (history.isEmpty()) {
+            System.out.println("-- No records to display --");
         }
     }
 
@@ -67,7 +69,10 @@ public class Admin extends User implements Serializable, AdminFunctions {
         bookName = sc.nextLine();
         System.out.println("Choose the book genre: ");
         for (Book.genreLists genre: Book.genreLists.values()) {
-            System.out.println(indexOfGenre + ". " + genre);
+            System.out.print(indexOfGenre + ". " + genre + "\t\t");
+            if(indexOfGenre % 6 == 0) {
+                System.out.println();
+            }
             indexOfGenre++;
         }
         System.out.print("\nChoice: ");

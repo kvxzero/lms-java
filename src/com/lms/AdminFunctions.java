@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface AdminFunctions {
     // case 0: view borrowing history
-    void viewBorrowingHistory();
+    void viewBorrowingHistory(ArrayList<String> borrowedHistory);
 
     // case 1: add a book
     Book newBook(Library selectedLibrary);

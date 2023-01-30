@@ -20,9 +20,6 @@ public class Main {
     static Library selectedLibrary;
     static ListIterator dbReader;
 
-    // history arraylist
-    private static final ArrayList<String> borrowedHistory = new ArrayList<>();
-
     // id of the logged-in user
     static int loginId;
     private static String userName, userPassword, userLocation;
@@ -97,9 +94,6 @@ public class Main {
     }
 
     // function to read the borrow history as ADMIN
-    public static ArrayList<String> getHistory() {
-        return borrowedHistory;
-    }
 
     public static void main(String[] args) throws Exception {
 
@@ -116,6 +110,7 @@ public class Main {
         ArrayList<Admin> admins;
         ArrayList<RegUser> users;
         ArrayList<Library> libraries;
+        ArrayList<String> borrowedHistory;
         ArrayList[] data;
 
         // .dat file in which the data is stored
@@ -127,6 +122,7 @@ public class Main {
             admins = data[0];
             users = data[1];
             libraries = data[2];
+            borrowedHistory = data[3];
             RegUser.setNumOfUsers(retrievingData(users));
             Admin.setNumOfAdmins(retrievingData(admins));
             loadData.close();
@@ -135,10 +131,12 @@ public class Main {
             admins = new ArrayList<>();
             users = new ArrayList<>();
             libraries = new ArrayList<>();
-            data = new ArrayList[3];
+            borrowedHistory = new ArrayList<>();
+            data = new ArrayList[4];
             data[0] = admins;
             data[1] = users;
             data[2] = libraries;
+            data[3] = borrowedHistory;
         }
 
         // LoginHandler object and Enum variable for account type
@@ -192,6 +190,8 @@ public class Main {
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
                 case 4:
+                    System.out.println("!-- WARNING --!");
+                    System.out.println("!-- PROCEED WITH CAUTION --!");
                     if(validateInformation(admins, true)) {
                         admins.add(new Admin(userName, userPassword, userLocation));
                         System.out.println("New admin created successfully!");
@@ -232,7 +232,7 @@ public class Main {
 
                 switch (choice) {
                     case 0: // Borrowing history, ADMIN CASE
-                        adminAccount.viewBorrowingHistory();
+                        adminAccount.viewBorrowingHistory(borrowedHistory);
                         break;
 
                     case 1: // Add a book, ADMIN CASE
@@ -263,7 +263,8 @@ public class Main {
                         libReader = libraries.listIterator();
                         while (libReader.hasNext()) {
                             Library lib = (Library) libReader.next();
-                            if (lib.getName().equals(libChoice) && lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
+                            if (lib.getName().equalsIgnoreCase(libChoice)
+                                    && lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
                                 selectedLibrary = lib;
                                 searchFlag = true;
                                 break;
@@ -454,7 +455,7 @@ public class Main {
                         userAccount.displayBooks(libraries);
                         System.out.println();
                         if (userAccount.borrowBook(libraries)) {
-                            Main.borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
+                            borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has borrowed "
                                     + searchedBook.getName() + " successfully!");
                             saveData = new ObjectOutputStream(new FileOutputStream(masterData));
@@ -472,7 +473,7 @@ public class Main {
                             break;
                         }
                         if (userAccount.executeReturn()) {
-                            Main.borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
+                            borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has returned "
                                     + searchedBook.getName() + " successfully!");
                             saveData = new ObjectOutputStream(new FileOutputStream(masterData));
@@ -504,7 +505,7 @@ public class Main {
                         break;
 
                     case 7: // view the user's borrowing history
-                        userAccount.viewUserHistory();
+                        userAccount.viewUserHistory(borrowedHistory);
                         break;
 
                     case 8: // upgrade account to premium

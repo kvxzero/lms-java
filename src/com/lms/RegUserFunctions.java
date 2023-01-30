@@ -27,7 +27,7 @@ public interface RegUserFunctions {
     void changePassword();
 
     // case 7: function to view user history
-    void viewUserHistory();
+    void viewUserHistory(ArrayList<String> history);
 
     // case 8: function to upgrade account
     void upgradeAccount();

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -342,19 +343,22 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
 
     // case 7: view borrowing history
     // function to view user borrowing history
-    public void viewUserHistory() {
-        ArrayList<String> borrowedHistory = Main.getHistory();
+    public void viewUserHistory(ArrayList<String> history) {
+        searchFlag = false;
         int dbIndex;
         System.out.println(this.getUsername() + "'s borrowing history:");
-        dbReader = borrowedHistory.listIterator();
+        dbReader = history.listIterator();
         dbIndex = 1;
         while (dbReader.hasNext()) {
-            String history = (String) dbReader.next();
-            if (history.indexOf(this.getUsername()) == 0) {
+            String line = (String) dbReader.next();
+            if (line.indexOf(this.getUsername()) == 0) {
                 System.out.println(dbIndex + ". " + history);
                 dbIndex++;
+                searchFlag = true;
             }
         }
+        if (!searchFlag)
+            System.out.println("-- No records to display --");
     }
 
     // case 8: upgrade account to premium
