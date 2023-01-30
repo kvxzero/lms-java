@@ -8,7 +8,7 @@ public class Book implements Serializable {
 
     enum genreLists {
         FICTION, NOVEL, NARRATIVE, FANTASY, THRILLER, HORROR,
-        SCIFI, ROMANCE, ADVENTURE, ACTION, COMEDY, CRIME;
+        SCIFI, ROMANCE, ADVENTURE, ACTION, COMEDY, CRIME
     }
 
     @Serial

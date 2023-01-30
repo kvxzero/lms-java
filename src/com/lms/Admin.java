@@ -132,7 +132,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
                 }
             }
         }
-        if (searchFlag == true) {
+        if (!searchFlag) {
             System.out.println("---- No libraries found! ----");
             System.out.println("-- Add a library to manage --");
         }

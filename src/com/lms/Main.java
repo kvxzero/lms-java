@@ -21,7 +21,7 @@ public class Main {
     static ListIterator dbReader;
 
     // history arraylist
-    private static ArrayList<String> borrowedHistory = new ArrayList<>();
+    private static final ArrayList<String> borrowedHistory = new ArrayList<>();
 
     // id of the logged-in user
     static int loginId;
@@ -265,7 +265,7 @@ public class Main {
                                 searchFlag = true;
                             }
                         }
-                        if (searchFlag == false) {
+                        if (!searchFlag) {
                             System.out.println("---- No libraries found! ----");
                             System.out.println("-- Add a library to manage --");
                             break;

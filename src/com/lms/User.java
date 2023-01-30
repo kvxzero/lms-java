@@ -3,8 +3,6 @@ package com.lms;
 import java.io.Serial;
 import java.io.Serializable;
 
-import static com.lms.Main.sc;
-
 public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 190190190;
