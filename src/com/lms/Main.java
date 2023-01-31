@@ -106,7 +106,7 @@ public class Main {
             data[3] = borrowedHistory;
         }
 
-        // LoginHandler object and Enum variable for account type
+        // LoginHandler object and enum variable for account type
         LoginHandler loginObject = new LoginHandler(users, admins);
         AccountType accountType = null;
 
