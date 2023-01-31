@@ -4,12 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import static com.lms.Main.*;
-import static com.lms.Main.sc;
 
 public class RegUser extends User implements Serializable, RegUserFunctions {
     @Serial
@@ -31,7 +28,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         setId(numOfUsers+1);
         numOfUsers++;
         bookLimit = 1;
-        this.setType(AccountType.USER);
+        this.setType(Main.AccountType.USER);
     }
 
     // necessary functions
@@ -74,8 +71,8 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
             System.out.println("None");
             return;
         }
-        ListIterator dbReader = borrowedFrom.listIterator();
-        while (dbReader.hasNext()) {
+        Main.dbReader = borrowedFrom.listIterator();
+        while (Main.dbReader.hasNext()) {
             try {
                 System.out.println(index + 1 + ". " + borrowedBook.get(index).getName());
                 index++;
@@ -91,32 +88,32 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     private void displayAvailability() {
         if (Main.searchedBook.availability()) {
             System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-        } else if (searchedBook.getStock() == 0) {
+        } else if (Main.searchedBook.getStock() == 0) {
             System.out.println(Main.searchedBook + " | Currently: no copies are in stock");
         } else {
             System.out.println(Main.searchedBook + " | Currently: some copies are in stock");
         }
     }
     public void displayBooks(@NotNull ArrayList<Library> libraries) {
-        searchFlag = false;
-        dbReader = libraries.listIterator();
-        while (dbReader.hasNext()) {
-            selectedLibrary = (Library) dbReader.next();
-            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println("\nBooks from: " + selectedLibrary.getName());
-                searchFlag = true;
-                if (selectedLibrary.getBooks().size() == 0) {
+        Main.searchFlag = false;
+        Main.dbReader = libraries.listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.selectedLibrary = (Library) Main.dbReader.next();
+            if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
+                Main.searchFlag = true;
+                if (Main.selectedLibrary.getBooks().size() == 0) {
                     System.out.println("-- No books --");
                     continue;
                 }
-                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
                 while(bookReader.hasNext()) {
-                    searchedBook = (Book) bookReader.next();
+                    Main.searchedBook = (Book) bookReader.next();
                     displayAvailability();
                 }
             }
         }
-        if (!searchFlag) {
+        if (!Main.searchFlag) {
             System.out.println("--- No libraries found in your location! ---");
         }
     }
@@ -141,44 +138,44 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
-        dbReader = libraries.listIterator();
+        Main.dbReader = libraries.listIterator();
         System.out.println("--- Searching by genre ---");
-        while (dbReader.hasNext()) {
-            searchFlag = false;
-            selectedLibrary = (Library) dbReader.next();
-            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println("\nBooks from: " + selectedLibrary.getName());
-                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.searchFlag = false;
+            Main.selectedLibrary = (Library) Main.dbReader.next();
+            if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
+                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
                 while (bookReader.hasNext()) {
-                    searchedBook = (Book) bookReader.next();
-                    if(searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                    Main.searchedBook = (Book) bookReader.next();
+                    if(Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
-                        searchFlag = true;
+                        Main.searchFlag = true;
                     }
                 }
             }
-            if (!Main.searchFlag && selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+            if (!Main.searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
                 System.out.println("No results found!");
         }
     }
     private void searchByName(@NotNull ArrayList<Library> libraries) {
-        dbReader = libraries.listIterator();
+        Main.dbReader = libraries.listIterator();
         System.out.println("--- Searching by name ---");
-        while (dbReader.hasNext()) {
-            searchFlag = false;
-            selectedLibrary = (Library) dbReader.next();
-            if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println("\nBooks from: " + selectedLibrary.getName());
-                ListIterator bookReader = selectedLibrary.getBooks().listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.searchFlag = false;
+            Main.selectedLibrary = (Library) Main.dbReader.next();
+            if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
+                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
                 while (bookReader.hasNext()) {
-                    searchedBook = (Book) bookReader.next();
-                    if(searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                    Main.searchedBook = (Book) bookReader.next();
+                    if(Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
-                        searchFlag = true;
+                        Main.searchFlag = true;
                     }
                 }
             }
-            if (!Main.searchFlag && selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+            if (!Main.searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
                 System.out.println("No results found!");
         }
     }
@@ -188,17 +185,17 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     public boolean borrowBook (ArrayList<Library> libraries) {
         if (borrowedBook.size() < bookLimit) {
             System.out.print("Enter the book to be borrowed: ");
-            searchQuery = sc.next();
+            searchQuery = Main.sc.next();
             ListIterator libReader = libraries.listIterator();
             while (libReader.hasNext()) {
-                selectedLibrary = (Library) libReader.next();
-                if (selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
-                    dbReader = selectedLibrary.getBooks().listIterator();
-                while (dbReader.hasNext()) {
-                    searchedBook = (Book) dbReader.next();
-                    if (searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                        if (searchedBook.setBorrowedUser(this)) {
-                            userAccount.setBorrowedBook(searchedBook);
+                Main.selectedLibrary = (Library) libReader.next();
+                if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+                    Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
+                while (Main.dbReader.hasNext()) {
+                    Main.searchedBook = (Book) Main.dbReader.next();
+                    if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
+                        if (Main.searchedBook.setBorrowedUser(this)) {
+                            Main.userAccount.setBorrowedBook(Main.searchedBook);
                             return true;
                         } else {
                             System.out.println("This book is already borrowed and is unavailable");
@@ -218,20 +215,20 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     // case 3: return borrowed books
     // functions to return books
     public void returnAll(ArrayList<Library> libraries) {
-        if (this.getType() == AccountType.USER) {
-            searchedBook = this.getBorrowedBook().get(0);
+        if (this.getType() == Main.AccountType.USER) {
+            Main.searchedBook = this.getBorrowedBook().get(0);
             if (this.returnBook(0)) {
-                searchedBook.bookReturned(this);
+                Main.searchedBook.bookReturned(this);
             }
         }
-        if (this.getType() == AccountType.PRO) {
+        if (this.getType() == Main.AccountType.PRO) {
             this.showBorrowedBooks();
             int dbIndex = 0;
             while (dbIndex < 3) {
                 try {
-                    searchedBook = getBorrowedBook().get(dbIndex);
+                    Main.searchedBook = getBorrowedBook().get(dbIndex);
                     if (this.returnBook(dbIndex)) {
-                        searchedBook.bookReturned(this);
+                        Main.searchedBook.bookReturned(this);
                     }
                     dbIndex++;
                 } catch (Exception e) {
@@ -244,27 +241,27 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
         return borrowedBook.size() == 0;
     }
     public boolean executeReturn() {
-        if (this.getType() == AccountType.USER) {
-            searchedBook = getBorrowedBook().get(0);
+        if (this.getType() == Main.AccountType.USER) {
+            Main.searchedBook = getBorrowedBook().get(0);
             if (this.returnBook(0)) {
-                searchedBook.bookReturned(this);
+                Main.searchedBook.bookReturned(this);
                 return true;
             }
         }
-        if (this.getType() == AccountType.PRO) {
+        if (this.getType() == Main.AccountType.PRO) {
             this.showBorrowedBooks();
             System.out.print("Choose the book (number) to be returned: ");
-            int dbIndex = getInput();
+            int dbIndex = Main.getInput();
             if (dbIndex == -9999) {
                 System.out.println("!-- Enter a valid input --!");
                 return false;
             }
             else {
                 System.out.print("You chose to return: ");
-                searchedBook = getBorrowedBook().get(dbIndex - 1);
-                System.out.println(searchedBook.getName() + "\n");
+                Main.searchedBook = getBorrowedBook().get(dbIndex - 1);
+                System.out.println(Main.searchedBook.getName() + "\n");
                 if (this.returnBook(dbIndex - 1)) {
-                    searchedBook.bookReturned(this);
+                    Main.searchedBook.bookReturned(this);
                     return true;
                 }
             }
@@ -299,20 +296,20 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     // case 5: nearby libraries
     // function to find out nearby libraries
     public void nearbyLibraries(ArrayList<Library> locations) {
-        searchFlag = false;
+        Main.searchFlag = false;
         int dbIndex = 1;
-        dbReader = locations.listIterator();
-        while(dbReader.hasNext()) {
-            Main.selectedLibrary = (Library) dbReader.next();
-            if (this.getType() == AccountType.USER) {
+        Main.dbReader = locations.listIterator();
+        while(Main.dbReader.hasNext()) {
+            Main.selectedLibrary = (Library) Main.dbReader.next();
+            if (this.getType() == Main.AccountType.USER) {
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                    searchFlag = true;
+                    Main.searchFlag = true;
                     System.out.println(dbIndex + ". " + Main.selectedLibrary);
                     dbIndex++;
                 }
             }
             else {
-                searchFlag = true;
+                Main.searchFlag = true;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                     System.out.println(dbIndex + ". " + Main.selectedLibrary + " (Nearby)");
                     dbIndex++;
@@ -322,7 +319,7 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
                 dbIndex++;
             }
         }
-        if (!searchFlag) {
+        if (!Main.searchFlag) {
             System.out.println("--- No libraries found in your location! ---");
         }
     }
@@ -332,10 +329,10 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     public void changePassword() {
         String password;
         System.out.print("Enter your current password: ");
-        password = sc.next();
+        password = Main.sc.next();
         if(password.equals(this.getPassword())) {
             System.out.print("Enter your new password: ");
-            password = sc.next();
+            password = Main.sc.next();
             this.setPassword(password);
             System.out.println("Password change successfully!");
         }
@@ -347,20 +344,20 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     // case 7: view borrowing history
     // function to view user borrowing history
     public void viewUserHistory(ArrayList<String> history) {
-        searchFlag = false;
+        Main.searchFlag = false;
         int dbIndex;
         System.out.println(this.getUsername() + "'s borrowing history:");
-        dbReader = history.listIterator();
+        Main.dbReader = history.listIterator();
         dbIndex = 1;
-        while (dbReader.hasNext()) {
-            String line = (String) dbReader.next();
+        while (Main.dbReader.hasNext()) {
+            String line = (String) Main.dbReader.next();
             if (line.indexOf(this.getUsername()) == 0) {
                 System.out.println(dbIndex + ". " + line);
                 dbIndex++;
-                searchFlag = true;
+                Main.searchFlag = true;
             }
         }
-        if (!searchFlag)
+        if (!Main.searchFlag)
             System.out.println("-- No records to display --");
     }
 

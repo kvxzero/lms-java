@@ -2,8 +2,6 @@ package com.lms;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.ListIterator;
 
 public class User implements Serializable {
     @Serial
