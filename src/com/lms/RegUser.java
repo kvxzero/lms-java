@@ -26,8 +26,8 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     }
 
     // constructor
-    RegUser (String username, String password, String city) {
-        super(username, password, city);
+    RegUser (String username, String password, String city, String email, String phNo) {
+        super(username, password, city, email, phNo);
         setId(numOfUsers+1);
         numOfUsers++;
         bookLimit = 1;
@@ -40,6 +40,9 @@ public class RegUser extends User implements Serializable, RegUserFunctions {
     }
     @Override
     public String toString() {
+        if (this.getUsername().equals("")) {
+            return "Username : " + getPhNo() + " | City: " + getCity();
+        }
         return "Username : " + getUsername() + " | City: " + getCity();
     }
 

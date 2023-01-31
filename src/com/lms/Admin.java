@@ -18,8 +18,8 @@ public class Admin extends User implements Serializable, AdminFunctions {
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
-    Admin(String username, String password, String city) {
-        super(username, password, city);
+    Admin(String username, String password, String city, String email, String phNo) {
+        super(username, password, city, email, phNo);
         setId(numOfAdmins+1);
         numOfAdmins++;
         setType(AccountType.ADMIN);
@@ -27,6 +27,9 @@ public class Admin extends User implements Serializable, AdminFunctions {
     // necessary functions
     @Override
     public String toString() {
+        if (this.getUsername().equals("")) {
+            return this.getPhNo();
+        }
         return this.getUsername();
     }
     public static void setNumOfAdmins(int retrievedData) {
@@ -34,10 +37,10 @@ public class Admin extends User implements Serializable, AdminFunctions {
     }
 
     private void displayAvailability() {
-        if (Main.searchedBook.availability()) {
-            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
+        if (searchedBook.availability()) {
+            System.out.println(searchedBook + " | Currently: all copies are in stock");
         } else {
-            System.out.println(Main.searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
+            System.out.println(searchedBook + " | Currently: " + searchedBook.getStock() + " copies left");
         }
     }
 

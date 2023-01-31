@@ -3,6 +3,8 @@ package com.lms;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
     // enum for account types
@@ -14,6 +16,7 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
 
     // class objects for data inputs
+    static User loginAccount;
     static Book searchedBook;
     static Admin adminAccount;
     static RegUser userAccount;
@@ -22,10 +25,10 @@ public class Main {
 
     // id of the logged-in user
     static int loginId;
-    private static String userName, userPassword, userLocation;
+    protected static String userName, userPassword, userLocation, userEmail, userPhNo;
 
     // flags for loops
-    static boolean searchFlag, dupeFlag, loginFlag = false;
+    static boolean searchFlag, loginFlag = false;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
@@ -57,40 +60,6 @@ public class Main {
         saveData = new ObjectOutputStream(new FileOutputStream(file));
         saveData.writeObject(inputData);
         saveData.close();
-    }
-    public static boolean validateInformation(ArrayList users, boolean signUp) {
-        dupeFlag = false;
-        System.out.print("Enter your username: ");
-        userName = sc.next();
-        if (userName.equals("") | userName.equals("\n")) {
-            System.out.println("Invalid username!");
-            dupeFlag = true;
-        }
-        dbReader = users.listIterator();
-        while(dbReader.hasNext()) {
-            if (((User) dbReader.next()).getUsername().equals(userName)) {
-                System.out.println("Username already exists!");
-                dupeFlag = true;
-                break;
-            }
-        }
-        if(dupeFlag)
-            return false;
-        System.out.print("Enter your password: ");
-        userPassword = sc.next();
-        if(userPassword.length() < 5) {
-            System.out.println("Password must be at least 5 characters long!");
-            return false;
-        }
-        if (signUp) {
-            System.out.print("Enter your location: ");
-            userLocation = sc.next();
-            if(userLocation.equals("") | userLocation.equals("\n")) {
-                System.out.println("Location can not be blank!");
-                return false;
-            }
-        }
-        return true;
     }
 
     // function to read the borrow history as ADMIN
@@ -158,31 +127,19 @@ public class Main {
             switch (choice) {
                 case 1:
                     accountType = AccountType.ADMIN;
-                    System.out.print("Enter your username: ");
-                    userName = sc.next();
-                    System.out.print("Enter your password: ");
-                    userPassword = sc.next();
-                    if (loginObject.userLoginRequest(userName, userPassword, accountType) == 200) {
-                        loginFlag = true;
-                        loginId = loginObject.getLoginID(userName, accountType);
-                    }
+                    loginFlag = loginObject.initiateLogin(accountType);
+                    storingData(masterData, data);
                     break;
 
                 case 2:
                     accountType = AccountType.USER;
-                    System.out.print("Enter your username: ");
-                    userName = sc.next();
-                    System.out.print("Enter your password: ");
-                    userPassword = sc.next();
-                    if (loginObject.userLoginRequest(userName, userPassword, accountType) == 200) {
-                        loginFlag = true;
-                        loginId = loginObject.getLoginID(userName, accountType);
-                    }
+                    loginFlag = loginObject.initiateLogin(accountType);
+                    storingData(masterData, data);
                     break;
 
                 case 3:
-                    if(validateInformation(users, true)) {
-                        users.add(new RegUser(userName, userPassword, userLocation));
+                    if(loginObject.validateInformation(users, true)) {
+                        users.add(new RegUser(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("Signed up successfully! ^^");
                         storingData(masterData, data);
                     }
@@ -192,8 +149,8 @@ public class Main {
                 case 4:
                     System.out.println("!-- WARNING --!");
                     System.out.println("!-- PROCEED WITH CAUTION --!");
-                    if(validateInformation(admins, true)) {
-                        admins.add(new Admin(userName, userPassword, userLocation));
+                    if(loginObject.validateInformation(admins, true)) {
+                        admins.add(new Admin(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("New admin created successfully!");
                         storingData(masterData, data);
                     }
@@ -335,9 +292,9 @@ public class Main {
                         break;
 
                     case 5: // Add a user, ADMIN CASE
-                        if (validateInformation(users, false)) {
+                        if (loginObject.inviteUser(users)) {
                             userLocation = adminAccount.getCity();
-                            users.add(new RegUser(userName, userPassword, userLocation));
+                            users.add(new RegUser(null, null, adminAccount.getCity(), userEmail, userPhNo));
                             storingData(masterData, data);
                             System.out.println("New user created successfully!");
                         }
@@ -349,9 +306,9 @@ public class Main {
                         break;
 
                     case 7: // Add an admin, ADMIN CASE
-                        if (validateInformation(admins, false)) {
+                        if (loginObject.inviteUser(admins)) {
                             userLocation = adminAccount.getCity();
-                            users.add(new RegUser(userName, userPassword, userLocation));
+                            admins.add(new Admin(null, null, adminAccount.getCity(), userEmail, userPhNo));
                             storingData(masterData, data);
                             System.out.println("New admin created successfully!");
                         }
