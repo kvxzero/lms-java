@@ -50,7 +50,7 @@ public class Book implements Serializable {
     public ArrayList<Integer> getBorrowedUser() {
         return this.borrowedUser;
     }
-    public boolean setBorrowedUser(RegUser user) {
+    public boolean setBorrowedUser(User user) {
         if(this.stock > 0) {
             this.borrowedUser.add(user.getId());
             this.stock--;
@@ -58,7 +58,7 @@ public class Book implements Serializable {
         }
         return false;
     }
-    public void bookReturned(RegUser user) {
+    public void bookReturned(User user) {
         this.stock++;
         this.borrowedUser.remove((Integer) user.getId());
     }

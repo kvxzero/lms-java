@@ -3,7 +3,7 @@ package com.lms;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 
-public interface RegUserFunctions {
+public interface UserFunctions {
 
     // case 0: function to display all books
     void displayBooks(@NotNull ArrayList<Library> libraries);

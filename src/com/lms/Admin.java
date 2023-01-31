@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-public class Admin extends User implements Serializable, AdminFunctions {
+public class Admin extends Human implements Serializable, AdminFunctions {
     @Serial
     private static final long serialVersionUID = 191191191;
     private static int numOfAdmins = 0;
@@ -90,7 +90,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 2: delete a book
     // function to delete a book (also removes the user associated with the book)
-    private void returnBook(ArrayList<RegUser> users) {
+    private void returnBook(ArrayList<User> users) {
         if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
             ArrayList<Integer> borrowedUsers = Main.searchedBook.getBorrowedUser();
             ListIterator borrowers = borrowedUsers.listIterator();
@@ -106,7 +106,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
             }
         }
     }
-    public void deleteBook(ArrayList<RegUser> users) {
+    public void deleteBook(ArrayList<User> users) {
         Main.searchFlag = false;
         System.out.print("Enter the book to be deleted: ");
         searchQuery = Main.sc.next();
@@ -128,7 +128,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 3: display all books
     // function to display all books
-    public void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<RegUser> users) {
+    public void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<User> users) {
         Main.searchFlag = false;
         Main.dbReader = libraries.listIterator();
         while (Main.dbReader.hasNext()) {
@@ -220,13 +220,13 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 6: delete a user
     // function to delete a user (also releases the book if it was borrowed by the user)
-    public void deleteUser(ArrayList<RegUser> users, ArrayList<Library> libraries) {
+    public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
         Main.searchFlag = false;
         System.out.print("Enter the user to be deleted: ");
         searchQuery = Main.sc.next();
         Main.dbReader = users.listIterator();
         while (Main.dbReader.hasNext()) {
-            Main.userAccount = (RegUser) Main.dbReader.next();
+            Main.userAccount = (User) Main.dbReader.next();
             if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
                     && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
                 if (!Main.userAccount.hasNoBooks())
@@ -265,13 +265,13 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 9: list all the users
     // function to list all available users
-    public void usersList(ArrayList<RegUser> users, ArrayList<Library> libraries) {
+    public void usersList(ArrayList<User> users, ArrayList<Library> libraries) {
         int dbIndex = 1;
         String bookStat;
         Main.dbReader = users.listIterator();
         System.out.println("List of all the available users:");
         while (Main.dbReader.hasNext()) {
-            Main.userAccount = (RegUser) Main.dbReader.next();
+            Main.userAccount = (User) Main.dbReader.next();
             if(Main.userAccount.getBorrowedBookId() == -9999)
                 bookStat = "Currently no borrowed books";
             else
@@ -314,7 +314,7 @@ public class Admin extends User implements Serializable, AdminFunctions {
 
     // case 12: delete a library
     // function to delete a library location
-    public void deleteLocation(ArrayList<Library> locations, ArrayList<RegUser> users) {
+    public void deleteLocation(ArrayList<Library> locations, ArrayList<User> users) {
         Main.searchFlag = false;
         System.out.print("Enter the library to be deleted: ");
         Main.sc.nextLine();

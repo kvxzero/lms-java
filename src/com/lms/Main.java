@@ -14,10 +14,10 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
 
     // class objects for data inputs
-    static User loginAccount;
+    static Human loginAccount;
     static Book searchedBook;
     static Admin adminAccount;
-    static RegUser userAccount;
+    static User userAccount;
     static Library selectedLibrary;
     static ListIterator dbReader;
 
@@ -75,7 +75,7 @@ public class Main {
 
         // array lists for all the different data persisted
         ArrayList<Admin> admins;
-        ArrayList<RegUser> users;
+        ArrayList<User> users;
         ArrayList<Library> libraries;
         ArrayList<String> borrowedHistory;
         ArrayList[] data;
@@ -90,7 +90,7 @@ public class Main {
             users = data[1];
             libraries = data[2];
             borrowedHistory = data[3];
-            RegUser.setNumOfUsers(retrievingData(users));
+            User.setNumOfUsers(retrievingData(users));
             Admin.setNumOfAdmins(retrievingData(admins));
             loadData.close();
         }
@@ -137,7 +137,7 @@ public class Main {
 
                 case 3:
                     if(loginObject.validateInformation(users, true)) {
-                        users.add(new RegUser(userName, userPassword, userLocation, userEmail, userPhNo));
+                        users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("Signed up successfully! ^^");
                         storingData(masterData, data);
                     }
@@ -292,7 +292,7 @@ public class Main {
                     case 5: // Add a user, ADMIN CASE
                         if (loginObject.inviteUser(users)) {
                             userLocation = adminAccount.getCity();
-                            users.add(new RegUser(null, null, adminAccount.getCity(), userEmail, userPhNo));
+                            users.add(new User(null, null, adminAccount.getCity(), userEmail, userPhNo));
                             storingData(masterData, data);
                             System.out.println("New user created successfully!");
                         }
@@ -364,7 +364,7 @@ public class Main {
             // convert the below code to a function that facilitates both admins and users
             displayReader = users.listIterator();
             while (displayReader.hasNext()) {
-                userAccount = (RegUser) displayReader.next();
+                userAccount = (User) displayReader.next();
                 if (Main.userAccount.getUsername().equals(users.get(loginId).getUsername())) {
                     System.out.println("\nWelcome " + userAccount);
                     break;
