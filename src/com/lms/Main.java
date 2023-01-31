@@ -365,7 +365,7 @@ public class Main {
             displayReader = users.listIterator();
             while (displayReader.hasNext()) {
                 userAccount = (User) displayReader.next();
-                if (Main.userAccount.getUsername().equals(users.get(loginId).getUsername())) {
+                if (userAccount.getUsername().equals(users.get(loginId).getUsername())) {
                     System.out.println("\nWelcome " + userAccount);
                     break;
                 }
@@ -436,7 +436,7 @@ public class Main {
                         break;
 
                     case 4: // view current status of books, USER CASE
-                        System.out.println("Current user: " + Main.userAccount);
+                        System.out.println("Current user: " + userAccount);
                         if (userAccount.getType() == AccountType.USER)
                             userAccount.getStatus(libraries);
                         else
