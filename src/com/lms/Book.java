@@ -8,7 +8,7 @@ public class Book implements Serializable {
 
     enum genreLists {
         FICTION, NOVEL, NARRATIVE, FANTASY, THRILLER, HORROR,
-        SCIFI, ROMANCE, ADVENTURE, ACTION, COMEDY, CRIME
+        MYSTERY, ROMANCE, ADVENTURE, ACTION, COMEDY, CRIME
     }
 
     @Serial
@@ -33,7 +33,7 @@ public class Book implements Serializable {
     }
     @Override
     public String toString() {
-        return "Name: " + this.name + " | Genre: " + this.genre + " | Author: " + this.author + " | ID: " + this.id;
+        return "Name: " + this.name + " | Genre: " + this.genre + " | Author: " + this.author;
     }
     public static void setNumOfBooks(int numOfBooks) {
         Book.numOfBooks = numOfBooks;
