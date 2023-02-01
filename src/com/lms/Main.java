@@ -23,7 +23,8 @@ public class Main {
 
     // id of the logged-in user
     static int loginId;
-    protected static String userName, userPassword, userLocation, userEmail, userPhNo;
+    protected static String userName, userPassword, userEmail, userPhNo;
+    protected static User.cityList userLocation;
 
     // flags for loops
     static boolean searchFlag, loginFlag = false;
@@ -48,15 +49,15 @@ public class Main {
     }
 
     // functions for storing and reading files
-    public static int retrievingData(@NotNull ArrayList loadingType) {
-        displayReader = loadingType.listIterator();
-        while(displayReader.hasNext())
-            displayReader.next();
-        return displayReader.nextIndex();
-    }
-    public static void storingData(File file, ArrayList[] inputData) throws IOException {
-        saveData = new ObjectOutputStream(new FileOutputStream(file));
+    public static void storingData(File masterFile, ArrayList[] inputData, File idFile, int[] idHistory) throws IOException {
+        saveData = new ObjectOutputStream(new FileOutputStream(masterFile));
         saveData.writeObject(inputData);
+        saveData.close();
+        idHistory[0] = User.getNumOfUsers();
+        idHistory[1] = Admin.getNumOfAdmins();
+        idHistory[2] = Book.getNumOfBooks();
+        saveData = new ObjectOutputStream(new FileOutputStream(idFile));
+        saveData.writeObject(idHistory);
         saveData.close();
     }
 
@@ -78,10 +79,12 @@ public class Main {
         ArrayList<User> users;
         ArrayList<Library> libraries;
         ArrayList<String> borrowedHistory;
+        int[] idHistory;
         ArrayList[] data;
 
         // .dat file in which the data is stored
         File masterData = new File("src/com/lms/res/masterData.dat");
+        File idData = new File("src/com/lms/res/idData.dat");
 
         if (masterData.isFile()) {
             loadData = new ObjectInputStream(new FileInputStream(masterData));
@@ -90,11 +93,8 @@ public class Main {
             users = data[1];
             libraries = data[2];
             borrowedHistory = data[3];
-            User.setNumOfUsers(retrievingData(users));
-            Admin.setNumOfAdmins(retrievingData(admins));
             loadData.close();
-        }
-        else {
+        } else {
             admins = new ArrayList<>();
             users = new ArrayList<>();
             libraries = new ArrayList<>();
@@ -104,6 +104,20 @@ public class Main {
             data[1] = users;
             data[2] = libraries;
             data[3] = borrowedHistory;
+        }
+
+        if (idData.isFile()) {
+            loadData = new ObjectInputStream(new FileInputStream(idData));
+            idHistory = (int[]) loadData.readObject();
+            loadData.close();
+            User.setNumOfUsers(idHistory[0]);
+            Admin.setNumOfAdmins(idHistory[1]);
+            Book.setNumOfBooks(idHistory[2]);
+        } else {
+            idHistory = new int[3];
+            idHistory[0] = User.getNumOfUsers();
+            idHistory[1] = Admin.getNumOfAdmins();
+            idHistory[2] = Book.getNumOfBooks();
         }
 
         // LoginHandler object and enum variable for account type
@@ -126,20 +140,20 @@ public class Main {
                 case 1:
                     accountType = AccountType.ADMIN;
                     loginFlag = loginObject.initiateLogin(accountType);
-                    storingData(masterData, data);
+                    storingData(masterData, data, idData, idHistory);
                     break;
 
                 case 2:
                     accountType = AccountType.USER;
                     loginFlag = loginObject.initiateLogin(accountType);
-                    storingData(masterData, data);
+                    storingData(masterData, data, idData, idHistory);
                     break;
 
                 case 3:
                     if(loginObject.validateInformation(users, true)) {
                         users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("Signed up successfully! ^^");
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                     }
                     break;
 
@@ -150,7 +164,7 @@ public class Main {
                     if(loginObject.validateInformation(admins, true)) {
                         admins.add(new Admin(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("New admin created successfully!");
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                     }
                     break;
 
@@ -241,7 +255,7 @@ public class Main {
                             System.out.println();
                             multipleBooks--;
                         }
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 2: // Delete a book, ADMIN CASE
@@ -270,7 +284,7 @@ public class Main {
                             }
                         }
                         adminAccount.deleteBook(users);
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 3: // Display all books, ADMIN CASE
@@ -291,23 +305,23 @@ public class Main {
 
                     case 5: // Add a user, ADMIN CASE
                         if (loginObject.inviteUser(users)) {
-                            userLocation = adminAccount.getCity();
-                            users.add(new User(null, null, adminAccount.getCity(), userEmail, userPhNo));
-                            storingData(masterData, data);
+                            userLocation = adminAccount.getCityEnum();
+                            users.add(new User(null, null, userLocation, userEmail, userPhNo));
+                            storingData(masterData, data, idData, idHistory);
                             System.out.println("New user created successfully!");
                         }
                         break;
 
                     case 6: // Delete a user, ADMIN CASE // broken for deleting users with borrowed books
                         adminAccount.deleteUser(users, libraries);
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 7: // Add an admin, ADMIN CASE
                         if (loginObject.inviteUser(admins)) {
-                            userLocation = adminAccount.getCity();
-                            admins.add(new Admin(null, null, adminAccount.getCity(), userEmail, userPhNo));
-                            storingData(masterData, data);
+                            userLocation = adminAccount.getCityEnum();
+                            admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
+                            storingData(masterData, data, idData, idHistory);
                             System.out.println("New admin created successfully!");
                         }
                         break;
@@ -337,12 +351,12 @@ public class Main {
                             System.out.println();
                             multipleLocation--;
                         }
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 12: // Remove a library from the db, ADMIN CASE
                         adminAccount.deleteLocation(libraries, users);
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 13: // List all libraries available
@@ -413,7 +427,7 @@ public class Main {
                             borrowedHistory.add(userAccount.getUsername() + " has borrowed " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has borrowed "
                                     + searchedBook.getName() + " successfully!");
-                            storingData(masterData, data);
+                            storingData(masterData, data, idData, idHistory);
                         } else {
                             System.out.println("Borrow operation has failed...");
                         }
@@ -428,7 +442,7 @@ public class Main {
                             borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
                             System.out.println(userAccount.getUsername() + " has returned "
                                     + searchedBook.getName() + " successfully!");
-                            storingData(masterData, data);
+                            storingData(masterData, data, idData, idHistory);
                         }
                         else {
                             System.out.println("Return operation has failed...");
@@ -450,7 +464,7 @@ public class Main {
 
                     case 6: // change the user-password for login
                         userAccount.changePassword();
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 7: // view the user's borrowing history
@@ -459,7 +473,7 @@ public class Main {
 
                     case 8: // upgrade account to premium
                         userAccount.upgradeAccount();
-                        storingData(masterData, data);
+                        storingData(masterData, data, idData, idHistory);
                         System.out.println("You have successfully subscribed to premium ^^");
                         break;
 

@@ -16,7 +16,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
-    Admin(String username, String password, String city, String email, String phNo) {
+    Admin(String username, String password, cityList city, String email, String phNo) {
         super(username, password, city, email, phNo);
         setId(numOfAdmins+1);
         numOfAdmins++;
@@ -26,12 +26,15 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     @Override
     public String toString() {
         if (this.getUsername().equals("")) {
-            return this.getPhNo();
+            return this.getPhNo() + " (" + this.getCity() + ")";
         }
-        return this.getUsername();
+        return this.getUsername() + " (" + this.getCity() + ")";
     }
     public static void setNumOfAdmins(int retrievedData) {
         numOfAdmins = retrievedData;
+    }
+    public static int getNumOfAdmins() {
+        return Admin.numOfAdmins;
     }
 
     private void displayAvailability() {

@@ -33,10 +33,13 @@ public class Book implements Serializable {
     }
     @Override
     public String toString() {
-        return "Name: " + this.name + " | Genre: " + this.genre + " | Author: " + this.author;
+        return "Name: " + this.name + " | Genre: " + this.genre + " | Author: " + this.author + " | ID: " + this.id;
     }
     public static void setNumOfBooks(int numOfBooks) {
         Book.numOfBooks = numOfBooks;
+    }
+    public static int getNumOfBooks() {
+        return Book.numOfBooks;
     }
     public String getName() {
         return name;

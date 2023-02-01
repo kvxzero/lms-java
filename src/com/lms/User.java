@@ -9,6 +9,7 @@ import java.util.ListIterator;
 
 
 public class User extends Human implements Serializable, UserFunctions {
+
     @Serial
     private static final long serialVersionUID = 193193193;
     private static int numOfUsers = 0;
@@ -23,7 +24,7 @@ public class User extends Human implements Serializable, UserFunctions {
     }
 
     // constructor
-    User(String username, String password, String city, String email, String phNo) {
+    User(String username, String password, cityList city, String email, String phNo) {
         super(username, password, city, email, phNo);
         setId(numOfUsers+1);
         numOfUsers++;
@@ -38,9 +39,12 @@ public class User extends Human implements Serializable, UserFunctions {
     @Override
     public String toString() {
         if (this.getUsername().equals("")) {
-            return "Username : " + getPhNo() + " | City: " + getCity();
+            return getPhNo() + " (" + getCity() + ")";
         }
-        return "Username : " + getUsername() + " | City: " + getCity();
+        return getUsername() + " (" + getCity() + ")";
+    }
+    public static int getNumOfUsers() {
+        return User.numOfUsers;
     }
 
     // borrowing and returning functions

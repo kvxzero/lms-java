@@ -80,12 +80,18 @@ public class LoginHandler {
         return true;
     }
     private boolean validateCity() {
-        System.out.print("Enter your location: ");
-        Main.userLocation = Main.sc.next();
-        if(Main.userLocation.equals("") | Main.userLocation.equals("\n")) {
-            System.out.println("Location can not be blank!");
+        int indexOfCity = 1;
+        System.out.println("Select your location: ");
+        for (Human.cityList city: Human.cityList.values()) {
+            System.out.println(indexOfCity + ". " + city);
+            indexOfCity++;
+        }
+        System.out.print("\nChoice: ");
+        indexOfCity = Main.getInput();
+        if (indexOfCity == -9999) {
             return false;
         }
+        Main.userLocation = Human.cityList.values() [indexOfCity - 1];
         return true;
     }
     public boolean validateInformation(ArrayList users, boolean signUp) {
