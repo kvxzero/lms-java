@@ -8,9 +8,9 @@ public class Library implements Serializable {
     @Serial
     private static final long serialVersionUID = 194194194;
     private String Name;
-    private String City;
+    private Human.cityList City;
     private ArrayList<Book> books;
-    Library(String Name, String libCity) {
+    Library(String Name, Human.cityList libCity) {
         this.Name = Name;
         this.City = libCity;
         this.books = new ArrayList<>();
@@ -26,6 +26,6 @@ public class Library implements Serializable {
         return books;
     }
     public String getCity() {
-        return City;
+        return City.toString();
     }
 }

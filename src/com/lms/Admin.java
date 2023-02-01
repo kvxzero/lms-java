@@ -358,11 +358,18 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 11: add a new library
     // function to add new library location
-    public Library newLocation() {
-        String name;
-        System.out.print("Enter the Library Name: ");
-        name = Main.sc.next();
-        return new Library(name, this.getCity());
+    public boolean addLibrary (ArrayList<Library> libraries) {
+        System.out.print("Enter the library name: ");
+        Main.libName = Main.sc.nextLine();
+        ListIterator libReader = libraries.listIterator();
+        while (libReader.hasNext()) {
+            Library lib = (Library) libReader.next();
+            if (lib.getName().equalsIgnoreCase(Main.libName)) {
+                System.out.println("Library already exists!");
+                return true;
+            }
+        }
+        return false;
     }
 
     // case 12: delete a library

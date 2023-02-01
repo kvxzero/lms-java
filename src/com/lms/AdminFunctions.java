@@ -38,11 +38,11 @@ public interface AdminFunctions {
     void adminsList(ArrayList<Admin> admins);
 
     // case 11: add a new library
-    Library newLocation();
+    boolean addLibrary(ArrayList<Library> libraries);
 
     // case 12: delete a library
-    void deleteLocation(ArrayList<Library> locations, ArrayList<User> users);
+    void deleteLocation(ArrayList<Library> libraries, ArrayList<User> users);
 
     // case 13: list all libraries
-    void librariesList(ArrayList<Library> locations);
+    void librariesList(ArrayList<Library> libraries);
 }

@@ -23,7 +23,7 @@ public class Main {
 
     // id of the logged-in user
     static int loginId;
-    protected static String userName, userPassword, userEmail, userPhNo, bookName;
+    protected static String userName, userPassword, userEmail, userPhNo, bookName, libName;
     protected static User.cityList userLocation;
 
     // flags for loops
@@ -297,8 +297,10 @@ public class Main {
                         }
                         sc.nextLine();
                         while(multipleLocation > 0) {
-                            libraries.add(adminAccount.newLocation());
-                            multipleLocation--;
+                            if (!adminAccount.addLibrary(libraries)) {
+                                libraries.add(new Library(libName, adminAccount.getCityEnum()));
+                                multipleLocation--;
+                            }
                         }
                         System.out.println("Added successfully!");
                         storingData(masterData, data, idData, idHistory);
