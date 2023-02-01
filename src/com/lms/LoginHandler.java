@@ -25,7 +25,7 @@ public class LoginHandler {
         Pattern numberPattern = Pattern.compile("^\\d{10}$");
         Matcher matcher = numberPattern.matcher(String.valueOf(Main.userPhNo));
         if (!matcher.matches()) {
-            System.out.println("Invalid phone number!");
+            System.out.println("Invalid phone number! (10 digits)");
             return false;
         }
         dbReader = users.listIterator();
@@ -41,7 +41,13 @@ public class LoginHandler {
         System.out.print("Enter your email address: ");
         Main.userEmail = Main.sc.next();
         if (Main.userEmail.equals("") | Main.userEmail.equals("\n")) {
-            System.out.println("Invalid email!");
+            System.out.println("Invalid email address!");
+            return false;
+        }
+        Pattern emailPattern = Pattern.compile("/^([a-zA-Z0-9]+)@([a-z]+)(\\.([a-z]+)){1,2}$/gm");
+        Matcher matcher = emailPattern.matcher(String.valueOf(Main.userEmail));
+        if (!matcher.matches()) {
+            System.out.println("Invalid email address!");
             return false;
         }
         dbReader = users.listIterator();
