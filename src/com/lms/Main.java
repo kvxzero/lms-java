@@ -13,20 +13,20 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
 
     // class objects for data inputs
-    static Human loginAccount;
-    static Book searchedBook;
-    static Admin adminAccount;
-    static User userAccount;
-    static Library selectedLibrary;
-    static ListIterator dbReader;
+    protected static Human loginAccount;
+    protected static Book searchedBook;
+    protected static Admin adminAccount;
+    protected static User userAccount;
+    protected static Library selectedLibrary;
+    protected static ListIterator dbReader;
 
     // id of the logged-in user
-    static int loginId;
+    protected static int loginId;
     protected static String userName, userPassword, userEmail, userPhNo, bookName, libName;
     protected static User.cityList userLocation;
 
     // flags for loops
-    static boolean searchFlag, loginFlag = false;
+    protected static boolean searchFlag, loginFlag = false;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
