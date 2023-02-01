@@ -69,8 +69,8 @@ public class Book implements Serializable {
     public String getGenre() {
         return this.genre.toString();
     }
-    public String getAuthor() {
-        return this.author;
+    public void setStock(int stock) {
+        this.stock = stock;
     }
     public Library getLibrary() {
         return this.library;

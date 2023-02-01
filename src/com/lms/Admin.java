@@ -38,6 +38,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
 
     private void displayAvailability() {
+//        System.out.println(Main.searchedBook + " | Currently: " + Main.searchedBook.getStock() + " copies left");
         if (Main.searchedBook.availability()) {
             System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
         } else {
@@ -46,139 +47,64 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
 
     // implements AdminFunctions
-
-    // case 0: view borrowing history
-    // function to view borrowing history of the library
-    public void viewBorrowingHistory(ArrayList<String> history) {
-        int dbIndex;
-        System.out.println("Borrowing history:");
-        Main.dbReader = history.listIterator();
-        dbIndex = 1;
+    // Managing libraries //
+    // case 0: list all libraries
+    // function to list all libraries
+    public void librariesList(ArrayList<Library> libraries) {
+        int dbIndex = 1;
+        Main.dbReader = libraries.listIterator();
+        System.out.println("List of all the managing libraries:");
         while (Main.dbReader.hasNext()) {
-            System.out.println(dbIndex + ". " + Main.dbReader.next());
-            dbIndex++;
-        }
-        if (history.isEmpty()) {
-            System.out.println("-- No records to display --");
+            Library library = (Library) Main.dbReader.next();
+            if (library.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println(dbIndex + ". " + Main.dbReader.next());
+                dbIndex++;
+            }
         }
     }
 
-    // case 1: add a new book
-    // function to add a new book
-    public boolean searchLibrary(ArrayList<Library> libraries) {
-        System.out.println("Choose the library to be managed: ");
+    // case 1: add a new library
+    // function to add new library location
+    public boolean addLibrary (ArrayList<Library> libraries) {
+        System.out.print("Enter the library name: ");
+        Main.libName = Main.sc.nextLine();
         ListIterator libReader = libraries.listIterator();
         while (libReader.hasNext()) {
             Library lib = (Library) libReader.next();
-            if (lib.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println("> " + lib.getName());
-                Main.searchFlag = true;
-            }
-        }
-        if (!Main.searchFlag) {
-            System.out.println("---- No libraries found! ----");
-            System.out.println("-- Add a library to manage --");
-            return false;
-        }
-        Main.searchFlag = false;
-        System.out.print("Choice: ");
-        Main.sc.nextLine();
-        String libChoice = Main.sc.next();
-        if (libChoice.equals("")) {
-            System.out.println("!-- Enter a valid input --!");
-            return false;
-        }
-        libReader = libraries.listIterator();
-        while (libReader.hasNext()) {
-            Library lib = (Library) libReader.next();
-            if (lib.getName().equalsIgnoreCase(libChoice)
-                    && lib.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
-                Main.selectedLibrary = lib;
-                Main.searchFlag = true;
-                break;
-            }
-        }
-        if (!Main.searchFlag) {
-            System.out.println("Well, that library doesn't exist.");
-            return false;
-        }
-        return true;
-    }
-    public boolean checkBook() {
-        System.out.print("Enter the book name: ");
-        Main.bookName = Main.sc.nextLine();
-        ListIterator booksReader = Main.selectedLibrary.getBooks().listIterator();
-        while (booksReader.hasNext()) {
-            Book book = (Book) booksReader.next();
-            if (book.getName().equalsIgnoreCase(Main.bookName)) {
-                System.out.println("Book already exists in the library!");
+            if (lib.getName().equalsIgnoreCase(Main.libName)) {
+                System.out.println("Library already exists!");
                 return true;
             }
         }
         return false;
     }
-    public Book newBook() {
-        String author;
-        Book.genreLists bookGenre;
-        int stock, indexOfGenre = 1;
-        System.out.println("Choose the book genre: ");
-        for (Book.genreLists genre: Book.genreLists.values()) {
-            System.out.print(indexOfGenre + ". " + genre + "\t\t");
-            if(indexOfGenre % 6 == 0) {
-                System.out.println();
-            }
-            indexOfGenre++;
-        }
-        System.out.print("\nChoice: ");
-        indexOfGenre = Main.sc.nextInt();
-        bookGenre = Book.genreLists.values()[indexOfGenre - 1];
-        Main.sc.nextLine();
-        System.out.print("Enter the author name: ");
-        author = Main.sc.nextLine();
-        System.out.print("Enter the number of copies: ");
-        stock = Main.sc.nextInt();
-        Main.sc.nextLine();
-        return new Book(Main.bookName, bookGenre, author, stock, Main.selectedLibrary);
-    }
 
-    // case 2: delete a book
-    // function to delete a book (also removes the user associated with the book)
-    private void returnBook(ArrayList<User> users) {
-        if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
-            ArrayList<Integer> borrowedUsers = Main.searchedBook.getBorrowedUser();
-            ListIterator borrowers = borrowedUsers.listIterator();
-            while (true) {
-                try {
-                    Main.userAccount = users.get(((Integer) borrowers.next()) - 1);
-                    int index = Main.userAccount.getBorrowedBook().indexOf(Main.searchedBook);
-                    Main.userAccount.getBorrowedBook().remove(index);
-                    Main.userAccount.getBorrowedFrom().remove(index);
-                } catch (Exception e) {
-                    break;
-                }
-            }
-        }
-    }
-    public void deleteBook(ArrayList<User> users) {
+    // case 2: delete a library
+    // function to delete a library location
+    public void deleteLibrary (ArrayList<Library> locations, ArrayList<User> users) {
         Main.searchFlag = false;
-        System.out.print("Enter the book to be deleted: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
+        System.out.print("Enter the library to be deleted: ");
+        Main.sc.nextLine();
+        searchQuery = Main.sc.nextLine();
+        Main.dbReader = locations.listIterator();
         while (Main.dbReader.hasNext()) {
-            Main.searchedBook = (Book) Main.dbReader.next();
-            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
+            Main.selectedLibrary = (Library) Main.dbReader.next();
+            if (Main.selectedLibrary.getName().equalsIgnoreCase(searchQuery)) {
+                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
+                while (bookReader.hasNext()) {
+                    Main.searchedBook = (Book) bookReader.next();
                     returnBook(users);
                 }
                 Main.dbReader.remove();
-                System.out.println("Deleted from successfully");
+                System.out.println("Deleted successfully");
                 Main.searchFlag = true;
             }
         }
         if (!Main.searchFlag)
-            System.out.println("Book doesn't exist in the records");
+            System.out.println("Given library doesn't exist in the records");
     }
 
+    // Managing books //
     // case 3: display all books
     // function to display all books
     public void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<User> users) {
@@ -268,52 +194,159 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
 
-    // case 5: add a new user
-    // parent class has the function
-
-    // case 6: delete a user
-    // function to delete a user (also releases the book if it was borrowed by the user)
-    public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
-        Main.searchFlag = false;
-        System.out.print("Enter the user to be deleted: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = users.listIterator();
-        while (Main.dbReader.hasNext()) {
-            Main.userAccount = (User) Main.dbReader.next();
-            if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
-                    && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
-                if (!Main.userAccount.hasNoBooks())
-                    Main.userAccount.returnAll(libraries);
-                Main.dbReader.remove();
-                System.out.println("Deleted successfully");
+    // case 5: add a new book
+    // functions to add a new book
+    public boolean searchLibrary(ArrayList<Library> libraries) {
+        System.out.println("Choose the library to be managed: ");
+        ListIterator libReader = libraries.listIterator();
+        while (libReader.hasNext()) {
+            Library lib = (Library) libReader.next();
+            if (lib.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("> " + lib.getName());
                 Main.searchFlag = true;
             }
         }
-        if (!Main.searchFlag)
-            System.out.println("User doesn't exist in the records");
+        if (!Main.searchFlag) {
+            System.out.println("---- No libraries found! ----");
+            System.out.println("-- Add a library to manage --");
+            return false;
+        }
+        Main.searchFlag = false;
+        System.out.print("Choice: ");
+        Main.sc.nextLine();
+        String libChoice = Main.sc.next();
+        if (libChoice.equals("")) {
+            System.out.println("!-- Enter a valid input --!");
+            return false;
+        }
+        libReader = libraries.listIterator();
+        while (libReader.hasNext()) {
+            Library lib = (Library) libReader.next();
+            if (lib.getName().equalsIgnoreCase(libChoice)
+                    && lib.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                Main.selectedLibrary = lib;
+                Main.searchFlag = true;
+                break;
+            }
+        }
+        if (!Main.searchFlag) {
+            System.out.println("Well, that library doesn't exist.");
+            return false;
+        }
+        return true;
+    }
+    public boolean checkBook() {
+        System.out.print("Enter the book name: ");
+        Main.bookName = Main.sc.nextLine();
+        ListIterator booksReader = Main.selectedLibrary.getBooks().listIterator();
+        while (booksReader.hasNext()) {
+            Book book = (Book) booksReader.next();
+            if (book.getName().equalsIgnoreCase(Main.bookName)) {
+                System.out.println("Book already exists in the library!");
+                return true;
+            }
+        }
+        return false;
+    }
+    public Book newBook() {
+        String author;
+        Book.genreLists bookGenre;
+        int stock, indexOfGenre = 1;
+        System.out.println("Choose the book genre: ");
+        for (Book.genreLists genre: Book.genreLists.values()) {
+            System.out.print(indexOfGenre + ". " + genre + "\t\t");
+            if(indexOfGenre % 6 == 0) {
+                System.out.println();
+            }
+            indexOfGenre++;
+        }
+        System.out.print("\nChoice: ");
+        indexOfGenre = Main.sc.nextInt();
+        bookGenre = Book.genreLists.values()[indexOfGenre - 1];
+        Main.sc.nextLine();
+        System.out.print("Enter the author name: ");
+        author = Main.sc.nextLine();
+        System.out.print("Enter the number of copies: ");
+        stock = Main.sc.nextInt();
+        Main.sc.nextLine();
+        return new Book(Main.bookName, bookGenre, author, stock, Main.selectedLibrary);
     }
 
-    // case 8: delete an admin
-    // function to delete an admin
-    public void deleteAdmin(ArrayList<Admin> admins) {
-        Main.searchFlag = false;
-        System.out.print("Enter the admin to be deleted: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = admins.listIterator();
-        while (Main.dbReader.hasNext()) {
-            Admin deleteAdminAcc = (Admin) Main.dbReader.next();
-            if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)) {
-                Main.searchFlag = true;
-                if (deleteAdminAcc.getUsername().equals(Main.adminAccount.getUsername())) {
-                    System.out.println("You cannot delete your own account.");
+    // case 6: delete a book
+    // function to delete a book (also removes the user associated with the book)
+    private void returnBook(ArrayList<User> users) {
+        if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
+            ArrayList<Integer> borrowedUsers = Main.searchedBook.getBorrowedUser();
+            ListIterator borrowers = borrowedUsers.listIterator();
+            while (true) {
+                try {
+                    Main.userAccount = users.get(((Integer) borrowers.next()) - 1);
+                    int index = Main.userAccount.getBorrowedBook().indexOf(Main.searchedBook);
+                    Main.userAccount.getBorrowedBook().remove(index);
+                    Main.userAccount.getBorrowedFrom().remove(index);
+                } catch (Exception e) {
                     break;
                 }
+            }
+        }
+    }
+    public void deleteBook(ArrayList<User> users) {
+        Main.searchFlag = false;
+        System.out.print("Enter the book to be deleted: ");
+        searchQuery = Main.sc.next();
+        Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.searchedBook = (Book) Main.dbReader.next();
+            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
+                if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
+                    returnBook(users);
+                }
                 Main.dbReader.remove();
-                System.out.println("Deleted successfully");
+                System.out.println("Deleted from successfully");
+                Main.searchFlag = true;
             }
         }
         if (!Main.searchFlag)
-            System.out.println("Admin doesn't exist in the records");
+            System.out.println("Book doesn't exist in the records");
+    }
+
+    // case 7: view borrowing history
+    // function to view borrowing history of the library
+    public void viewBorrowingHistory(ArrayList<String> history) {
+        int dbIndex;
+        System.out.println("Borrowing history:");
+        Main.dbReader = history.listIterator();
+        dbIndex = 1;
+        while (Main.dbReader.hasNext()) {
+            System.out.println(dbIndex + ". " + Main.dbReader.next());
+            dbIndex++;
+        }
+        if (history.isEmpty()) {
+            System.out.println("-- No records to display --");
+        }
+    }
+
+    // case 8: update number of copies
+    // function to change the number of copies left in the library
+    public void updateCopies() {
+        Main.searchFlag = false;
+        System.out.print("Enter the book to be updated: ");
+        searchQuery = Main.sc.next();
+        Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.searchedBook = (Book) Main.dbReader.next();
+            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
+                System.out.println("\nUpdating: " + Main.searchedBook.getName());
+                System.out.println("Current stock left: " + Main.searchedBook.getStock());
+                System.out.print("\nEnter the updated stock: ");
+                Main.searchedBook.setStock(Main.sc.nextInt());
+                System.out.println("Updated successfully");
+                Main.searchFlag = true;
+                break;
+            }
+        }
+        if (!Main.searchFlag)
+            System.out.println("Book doesn't exist in the records");
     }
 
     // case 9: list all the users
@@ -344,7 +377,32 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
 
-    // case 10: display all admins
+    // case 10: add a new user
+    // parent class constructor
+
+    // case 11: remove a user
+    // function to delete a user (also releases the book if it was borrowed by the user)
+    public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
+        Main.searchFlag = false;
+        System.out.print("Enter the user to be deleted: ");
+        searchQuery = Main.sc.next();
+        Main.dbReader = users.listIterator();
+        while (Main.dbReader.hasNext()) {
+            Main.userAccount = (User) Main.dbReader.next();
+            if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
+                    && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                if (!Main.userAccount.hasNoBooks())
+                    Main.userAccount.returnAll(libraries);
+                Main.dbReader.remove();
+                System.out.println("Deleted successfully");
+                Main.searchFlag = true;
+            }
+        }
+        if (!Main.searchFlag)
+            System.out.println("User doesn't exist in the records");
+    }
+
+    // case 12: display all admins
     // function to list all available admins
     public void adminsList(ArrayList<Admin> admins) {
         int dbIndex = 1;
@@ -356,59 +414,29 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
 
-    // case 11: add a new library
-    // function to add new library location
-    public boolean addLibrary (ArrayList<Library> libraries) {
-        System.out.print("Enter the library name: ");
-        Main.libName = Main.sc.nextLine();
-        ListIterator libReader = libraries.listIterator();
-        while (libReader.hasNext()) {
-            Library lib = (Library) libReader.next();
-            if (lib.getName().equalsIgnoreCase(Main.libName)) {
-                System.out.println("Library already exists!");
-                return true;
-            }
-        }
-        return false;
-    }
+    // case 13: add an admin
+    // just the constructor of this class
 
-    // case 12: delete a library
-    // function to delete a library location
-    public void deleteLocation(ArrayList<Library> locations, ArrayList<User> users) {
+    // case 14: delete an admin
+    // function to delete an admin
+    public void deleteAdmin(ArrayList<Admin> admins) {
         Main.searchFlag = false;
-        System.out.print("Enter the library to be deleted: ");
-        Main.sc.nextLine();
-        searchQuery = Main.sc.nextLine();
-        Main.dbReader = locations.listIterator();
+        System.out.print("Enter the admin to be deleted: ");
+        searchQuery = Main.sc.next();
+        Main.dbReader = admins.listIterator();
         while (Main.dbReader.hasNext()) {
-            Main.selectedLibrary = (Library) Main.dbReader.next();
-            if (Main.selectedLibrary.getName().equalsIgnoreCase(searchQuery)) {
-                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-                while (bookReader.hasNext()) {
-                    Main.searchedBook = (Book) bookReader.next();
-                    returnBook(users);
+            Admin deleteAdminAcc = (Admin) Main.dbReader.next();
+            if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)) {
+                Main.searchFlag = true;
+                if (deleteAdminAcc.getUsername().equals(Main.adminAccount.getUsername())) {
+                    System.out.println("You cannot delete your own account.");
+                    break;
                 }
                 Main.dbReader.remove();
                 System.out.println("Deleted successfully");
-                Main.searchFlag = true;
             }
         }
         if (!Main.searchFlag)
-            System.out.println("Given library doesn't exist in the records");
-    }
-
-    // case 13: list all libraries
-    // function to list all libraries
-    public void librariesList(ArrayList<Library> libraries) {
-        int dbIndex = 1;
-        Main.dbReader = libraries.listIterator();
-        System.out.println("List of all the available libraries:");
-        while (Main.dbReader.hasNext()) {
-            Library library = (Library) Main.dbReader.next();
-            if (library.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println(dbIndex + ". " + Main.dbReader.next());
-                dbIndex++;
-            }
-        }
+            System.out.println("Admin doesn't exist in the records");
     }
 }

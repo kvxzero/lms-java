@@ -184,26 +184,72 @@ public class Main {
             }
             do {
                 // looped admin dashboard
-                System.out.println("\n--- Admin dashboard ---\n");
-                System.out.println("0. Books History\t 7. Add an admin");
-                System.out.println("1. Add book\t\t\t 8. Remove an admin");
-                System.out.println("2. Remove a book\t 9. List all users");
-                System.out.println("3. View books\t\t 10. List all admins");
-                System.out.println("4. Search books\t\t 11. Add new library location");
-                System.out.println("5. Add user\t\t\t 12. Remove library location");
-                System.out.println("6. Remove user\t\t 13. List all libraries\n");
-                System.out.println("99. Logout\n");
+                System.out.println("\n--- Admin dashboard ---");
+                System.out.println("--- Manage libraries ---");
+                System.out.println("0. View libraries");
+                System.out.println("1. Add a new library");
+                System.out.println("2. Remove a library");
+                System.out.println("\n--- Manage books ---");
+                System.out.println("3. View books\t\t\t 6. Delete a book");
+                System.out.println("4. Search books\t\t\t 7. Books history");
+                System.out.println("5. Add books\t\t\t 8. Update book stock");
+                System.out.println("\n--- Manage users ---");
+                System.out.println("9. View users\t\t\t 12. View admins");
+                System.out.println("10. Add new user\t\t 13. Add new admin");
+                System.out.println("11. Remove a user\t\t 14. Remove an admin");
+                System.out.println("\n99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
                 choice = getInput();
 
                 switch (choice) {
-                    case 0: // Borrowing history, ADMIN CASE
-                        adminAccount.viewBorrowingHistory(borrowedHistory);
+                    // Managing libraries //
+                    case 0: // List all libraries available, ADMIN CASE
+                        adminAccount.librariesList(libraries);
                         break;
 
-                    case 1: // Add a book, ADMIN CASE
+                    case 1: // Add a new library, ADMIN CASE
+                        System.out.print("Enter the number of libraries to be added: ");
+                        int multipleLocation = getInput();
+                        if (multipleLocation == -9999) {
+                            System.out.println("!-- Enter a valid input --!");
+                            break;
+                        }
+                        sc.nextLine();
+                        while(multipleLocation > 0) {
+                            if (!adminAccount.addLibrary(libraries)) {
+                                libraries.add(new Library(libName, adminAccount.getCityEnum()));
+                                multipleLocation--;
+                            }
+                        }
+                        System.out.println("Added successfully!");
+                        storingData(masterData, data, idData, idHistory);
+                        break;
+
+                    case 2: // Remove a library from the db, ADMIN CASE
+                        adminAccount.deleteLibrary(libraries, users);
+                        storingData(masterData, data, idData, idHistory);
+                        break;
+
+                    // Managing books //
+                    case 3: // Display all books, ADMIN CASE
+                        adminAccount.displayBooks(libraries, users);
+                        break;
+
+                    case 4: // Search for a book, ADMIN AND USER CASE
+                        System.out.println("How do you want to search?");
+                        System.out.println("1. By name");
+                        System.out.println("2. By genre");
+                        System.out.println("3. By both");
+                        System.out.print("\nChoice: ");
+                        int searchChoice = getInput();
+                        System.out.print("Enter your search query: ");
+                        adminAccount.setSearchQuery(sc.next());
+                        adminAccount.searchBooks(libraries, searchChoice);
+                        break;
+
+                    case 5: // Add books, ADMIN CASE
                         int multipleBooks;
                         searchFlag = false;
                         if (!adminAccount.searchLibrary(libraries)) {
@@ -227,32 +273,32 @@ public class Main {
                         storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 2: // Delete a book, ADMIN CASE
+                    case 6: // Delete a book, ADMIN CASE
                         if (!adminAccount.searchLibrary(libraries)) {
                             break;
                         }
-                        adminAccount.searchLibrary(libraries);
                         adminAccount.deleteBook(users);
                         storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 3: // Display all books, ADMIN CASE
-                        adminAccount.displayBooks(libraries, users);
+                    case 7: // Borrowing history, ADMIN CASE
+                        adminAccount.viewBorrowingHistory(borrowedHistory);
                         break;
 
-                    case 4: // Search for a book, ADMIN AND USER CASE
-                        System.out.println("How do you want to search?");
-                        System.out.println("1. By name");
-                        System.out.println("2. By genre");
-                        System.out.println("3. By both");
-                        System.out.print("\nChoice: ");
-                        int searchChoice = getInput();
-                        System.out.print("Enter your search query: ");
-                        adminAccount.setSearchQuery(sc.next());
-                        adminAccount.searchBooks(libraries, searchChoice);
+                    case 8: // Update the books stock in library, ADMIN CASE
+                        if (!adminAccount.searchLibrary(libraries)) {
+                            break;
+                        }
+                        adminAccount.updateCopies();
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 5: // Add a user, ADMIN CASE
+                    // Managing people //
+                    case 9: // Display all users, ADMIN CASE
+                        adminAccount.usersList(users, libraries);
+                        break;
+
+                    case 10: // Add a user, ADMIN CASE
                         if (loginObject.inviteUser(users)) {
                             userLocation = adminAccount.getCityEnum();
                             users.add(new User(null, null, userLocation, userEmail, userPhNo));
@@ -261,12 +307,16 @@ public class Main {
                         }
                         break;
 
-                    case 6: // Delete a user, ADMIN CASE // broken for deleting users with borrowed books
+                    case 11: // Delete a user, ADMIN CASE // broken for deleting users with borrowed books
                         adminAccount.deleteUser(users, libraries);
                         storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 7: // Add an admin, ADMIN CASE
+                    case 12: // Display all admins, ADMIN CASE
+                        adminAccount.adminsList(admins);
+                        break;
+
+                    case 13: // Add an admin, ADMIN CASE
                         if (loginObject.inviteUser(admins)) {
                             userLocation = adminAccount.getCityEnum();
                             admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
@@ -275,43 +325,8 @@ public class Main {
                         }
                         break;
 
-                    case 8: // Remove an admin, ADMIN CASE
+                    case 14: // Remove an admin, ADMIN CASE
                         adminAccount.deleteAdmin(admins);
-                        break;
-
-                    case 9: // Display all users, ADMIN CASE
-                        adminAccount.usersList(users, libraries);
-                        break;
-
-                    case 10: // Display all admins, ADMIN CASE
-                        adminAccount.adminsList(admins);
-                        break;
-
-                    case 11: // Add a new library, ADMIN CASE
-                        System.out.print("Enter the number of libraries to be added: ");
-                        int multipleLocation = getInput();
-                        if (multipleLocation == -9999) {
-                            System.out.println("!-- Enter a valid input --!");
-                            break;
-                        }
-                        sc.nextLine();
-                        while(multipleLocation > 0) {
-                            if (!adminAccount.addLibrary(libraries)) {
-                                libraries.add(new Library(libName, adminAccount.getCityEnum()));
-                                multipleLocation--;
-                            }
-                        }
-                        System.out.println("Added successfully!");
-                        storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 12: // Remove a library from the db, ADMIN CASE
-                        adminAccount.deleteLocation(libraries, users);
-                        storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 13: // List all libraries available
-                        adminAccount.librariesList(libraries);
                         break;
 
                     case 99: // Log out

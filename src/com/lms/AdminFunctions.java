@@ -5,16 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public interface AdminFunctions {
-    // case 0: view borrowing history
-    void viewBorrowingHistory(ArrayList<String> borrowedHistory);
+    // case 0: view all libraries
+    void librariesList(ArrayList<Library> libraries);
 
-    // case 1: add a book
-    boolean searchLibrary(ArrayList<Library> libraries);
-    boolean checkBook();
-    Book newBook();
+    // case 1: add a new library
+    boolean addLibrary(ArrayList<Library> libraries);
 
-    // case 2: delete a book
-    void deleteBook(ArrayList<User> users);
+    // case 2: delete a library
+    void deleteLibrary(ArrayList<Library> libraries, ArrayList<User> users);
 
     // case 3: display all books
     void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<User> users);
@@ -22,27 +20,35 @@ public interface AdminFunctions {
     // case 4: search books
     void searchBooks(@NotNull ArrayList<Library> libraries, int option);
 
-    // case 5: add a new user
-    // it is in parent class
+    // case 5: add a book
+    boolean searchLibrary(ArrayList<Library> libraries);
+    boolean checkBook();
+    Book newBook();
 
-    // case 6: delete a user
-    void deleteUser(ArrayList<User> users, ArrayList<Library> libraries);
+    // case 6: delete a book
+    void deleteBook(ArrayList<User> users);
 
-    // case 8: delete an admin
-    void deleteAdmin(ArrayList<Admin> admins);
+    // case 7: view borrowing history
+    void viewBorrowingHistory(ArrayList<String> borrowedHistory);
+
+    // case 8: update the stock of existing books
+    void updateCopies();
 
     // case 9: list all the users
     void usersList(ArrayList<User> users, ArrayList<Library> libraries);
 
-    // case 10: display all admins
+    // case 10: add a new user
+    // parent class constructor
+
+    // case 11: delete a user
+    void deleteUser(ArrayList<User> users, ArrayList<Library> libraries);
+
+    // case 12: display all admins
     void adminsList(ArrayList<Admin> admins);
 
-    // case 11: add a new library
-    boolean addLibrary(ArrayList<Library> libraries);
+    // case 13: add an admin
+    // just the constructor of this class
 
-    // case 12: delete a library
-    void deleteLocation(ArrayList<Library> libraries, ArrayList<User> users);
-
-    // case 13: list all libraries
-    void librariesList(ArrayList<Library> libraries);
+    // case 14: delete an admin
+    void deleteAdmin(ArrayList<Admin> admins);
 }
