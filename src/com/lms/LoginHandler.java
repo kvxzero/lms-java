@@ -44,7 +44,7 @@ public class LoginHandler {
             System.out.println("Invalid email address!");
             return false;
         }
-        Pattern emailPattern = Pattern.compile("^(\\w+)@([a-z]+)(\\.([a-z]+)){1,2}$");
+        Pattern emailPattern = Pattern.compile("^[\\w+&&[^_]](\\w+)@([a-z]+)(\\.([a-z]+)){1,2}$");
         Matcher matcher = emailPattern.matcher(String.valueOf(Main.userEmail));
         if (!matcher.matches()) {
             System.out.println("Invalid email address!");
