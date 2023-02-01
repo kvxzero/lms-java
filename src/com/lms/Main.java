@@ -197,7 +197,7 @@ public class Main {
                 System.out.println("9. View users\t\t\t 12. View admins");
                 System.out.println("10. Add new user\t\t 13. Add new admin");
                 System.out.println("11. Remove a user\t\t 14. Remove an admin");
-                System.out.println("\n99. Logout\n");
+                System.out.println("\n\t\t\t\t99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
@@ -354,16 +354,12 @@ public class Main {
             do {
                 // looped user dashboard
                 System.out.println("\n--- User dashboard ---\n");
-                System.out.println("0. Display all books");
-                System.out.println("1. Search books");
-                System.out.println("2. Borrow a book");
-                System.out.println("3. Return borrowed book");
+                System.out.println("0. Display all books\t\t 5. Libraries in my location");
+                System.out.println("1. Search for books\t\t\t 6. Change password");
+                System.out.println("2. Borrow a book\t\t\t 7. View my history");
+                System.out.println("3. Return borrowed book\t\t 8.Upgrade my account");
                 System.out.println("4. View current status");
-                System.out.println("5. Libraries in my location");
-                System.out.println("6. Change password");
-                System.out.println("7. View my history");
-                System.out.println("8. Upgrade account\n");
-                System.out.println("99. Log out\n");
+                System.out.println("\n\t\t\t\t\t99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
