@@ -65,12 +65,62 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 1: add a new book
     // function to add a new book
-    public Book newBook(Library selectedLibrary) {
-        String bookName, author;
+    public boolean searchLibrary(ArrayList<Library> libraries) {
+        System.out.println("Choose the library to be managed: ");
+        ListIterator libReader = libraries.listIterator();
+        while (libReader.hasNext()) {
+            Library lib = (Library) libReader.next();
+            if (lib.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println("> " + lib.getName());
+                Main.searchFlag = true;
+            }
+        }
+        if (!Main.searchFlag) {
+            System.out.println("---- No libraries found! ----");
+            System.out.println("-- Add a library to manage --");
+            return false;
+        }
+        Main.searchFlag = false;
+        System.out.print("Choice: ");
+        Main.sc.nextLine();
+        String libChoice = Main.sc.next();
+        if (libChoice.equals("")) {
+            System.out.println("!-- Enter a valid input --!");
+            return false;
+        }
+        libReader = libraries.listIterator();
+        while (libReader.hasNext()) {
+            Library lib = (Library) libReader.next();
+            if (lib.getName().equalsIgnoreCase(libChoice)
+                    && lib.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                Main.selectedLibrary = lib;
+                Main.searchFlag = true;
+                break;
+            }
+        }
+        if (!Main.searchFlag) {
+            System.out.println("Well, that library doesn't exist.");
+            return false;
+        }
+        return true;
+    }
+    public boolean checkBook() {
+        System.out.print("Enter the book name: ");
+        Main.bookName = Main.sc.nextLine();
+        ListIterator booksReader = Main.selectedLibrary.getBooks().listIterator();
+        while (booksReader.hasNext()) {
+            Book book = (Book) booksReader.next();
+            if (book.getName().equalsIgnoreCase(Main.bookName)) {
+                System.out.println("Book already exists in the library!");
+                return true;
+            }
+        }
+        return false;
+    }
+    public Book newBook() {
+        String author;
         Book.genreLists bookGenre;
         int stock, indexOfGenre = 1;
-        System.out.print("Enter the book name: ");
-        bookName = Main.sc.nextLine();
         System.out.println("Choose the book genre: ");
         for (Book.genreLists genre: Book.genreLists.values()) {
             System.out.print(indexOfGenre + ". " + genre + "\t\t");
@@ -88,7 +138,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         System.out.print("Enter the number of copies: ");
         stock = Main.sc.nextInt();
         Main.sc.nextLine();
-        return new Book(bookName, bookGenre, author, stock, selectedLibrary);
+        return new Book(Main.bookName, bookGenre, author, stock, Main.selectedLibrary);
     }
 
     // case 2: delete a book
@@ -121,7 +171,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                     returnBook(users);
                 }
                 Main.dbReader.remove();
-                System.out.println("Deleted successfully");
+                System.out.println("Deleted from successfully");
                 Main.searchFlag = true;
             }
         }
@@ -342,13 +392,16 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 13: list all libraries
     // function to list all libraries
-    public void librariesList(ArrayList<Library> locations) {
+    public void librariesList(ArrayList<Library> libraries) {
         int dbIndex = 1;
-        Main.dbReader = locations.listIterator();
+        Main.dbReader = libraries.listIterator();
         System.out.println("List of all the available libraries:");
         while (Main.dbReader.hasNext()) {
-            System.out.println(dbIndex + ". " + Main.dbReader.next());
-            dbIndex++;
+            Library library = (Library) Main.dbReader.next();
+            if (library.getCity().equalsIgnoreCase(this.getCity())) {
+                System.out.println(dbIndex + ". " + Main.dbReader.next());
+                dbIndex++;
+            }
         }
     }
 }

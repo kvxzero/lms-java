@@ -9,7 +9,9 @@ public interface AdminFunctions {
     void viewBorrowingHistory(ArrayList<String> borrowedHistory);
 
     // case 1: add a book
-    Book newBook(Library selectedLibrary);
+    boolean searchLibrary(ArrayList<Library> libraries);
+    boolean checkBook();
+    Book newBook();
 
     // case 2: delete a book
     void deleteBook(ArrayList<User> users);

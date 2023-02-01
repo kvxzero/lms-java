@@ -23,7 +23,7 @@ public class Main {
 
     // id of the logged-in user
     static int loginId;
-    protected static String userName, userPassword, userEmail, userPhNo;
+    protected static String userName, userPassword, userEmail, userPhNo, bookName;
     protected static User.cityList userLocation;
 
     // flags for loops
@@ -207,40 +207,7 @@ public class Main {
                     case 1: // Add a book, ADMIN CASE
                         int multipleBooks;
                         searchFlag = false;
-                        System.out.println("Choose the library to be managed: ");
-                        libReader = libraries.listIterator();
-                        while (libReader.hasNext()) {
-                            Library lib = (Library) libReader.next();
-                            if (lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
-                                System.out.println("> " + lib.getName());
-                                searchFlag = true;
-                            }
-                        }
-                        if (!searchFlag) {
-                            System.out.println("---- No libraries found! ----");
-                            System.out.println("-- Add a library to manage --");
-                            break;
-                        }
-                        searchFlag = false;
-                        System.out.print("Choice: ");
-                        sc.nextLine();
-                        libChoice = sc.next();
-                        if (libChoice.equals("")) {
-                            System.out.println("!-- Enter a valid input --!");
-                            break;
-                        }
-                        libReader = libraries.listIterator();
-                        while (libReader.hasNext()) {
-                            Library lib = (Library) libReader.next();
-                            if (lib.getName().equalsIgnoreCase(libChoice)
-                                    && lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
-                                selectedLibrary = lib;
-                                searchFlag = true;
-                                break;
-                            }
-                        }
-                        if (!searchFlag) {
-                            System.out.println("Well, that library doesn't exist.");
+                        if (!adminAccount.searchLibrary(libraries)) {
                             break;
                         }
                         System.out.print("Enter the number of books to be added: ");
@@ -251,38 +218,21 @@ public class Main {
                         }
                         sc.nextLine();
                         while(multipleBooks > 0) {
-                            selectedLibrary.getBooks().add(adminAccount.newBook(selectedLibrary));
-                            System.out.println();
-                            multipleBooks--;
+                            if (!adminAccount.checkBook()) {
+                                selectedLibrary.getBooks().add(adminAccount.newBook());
+                                System.out.println();
+                                multipleBooks--;
+                            }
                         }
+                        System.out.println("Added to " + selectedLibrary + " successfully!");
                         storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 2: // Delete a book, ADMIN CASE
-                        System.out.println("Choose the library to be managed: ");
-                        libReader = libraries.listIterator();
-                        while (libReader.hasNext()) {
-                            Library lib = (Library) libReader.next();
-                            if (lib.getCity().equalsIgnoreCase(adminAccount.getCity())) {
-                                System.out.println("> " + lib.getName());
-                            }
-                        }
-                        System.out.print("Choice: ");
-                        sc.nextLine();
-                        libChoice = sc.next();
-                        if (libChoice.equals("")) {
-                            System.out.println("!-- Enter a valid input --!");
+                        if (!adminAccount.searchLibrary(libraries)) {
                             break;
                         }
-                        libReader = libraries.listIterator();
-                        while (libReader.hasNext()) {
-                            Library lib = (Library) libReader.next();
-                            if (lib.getName().equals(libChoice)) {
-                                selectedLibrary = lib;
-                                searchFlag = true;
-                                break;
-                            }
-                        }
+                        adminAccount.searchLibrary(libraries);
                         adminAccount.deleteBook(users);
                         storingData(masterData, data, idData, idHistory);
                         break;
@@ -348,9 +298,9 @@ public class Main {
                         sc.nextLine();
                         while(multipleLocation > 0) {
                             libraries.add(adminAccount.newLocation());
-                            System.out.println();
                             multipleLocation--;
                         }
+                        System.out.println("Added successfully!");
                         storingData(masterData, data, idData, idHistory);
                         break;
 
