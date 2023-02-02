@@ -77,7 +77,7 @@ public class Main {
         ArrayList<Admin> admins;
         ArrayList<User> users;
         ArrayList<Library> libraries;
-        ArrayList<String> borrowedHistory;
+        ArrayList<String> borrowedHistory, requestList;
         int[] idHistory;
         ArrayList[] data;
 
@@ -92,17 +92,20 @@ public class Main {
             users = data[1];
             libraries = data[2];
             borrowedHistory = data[3];
+            requestList = data[4];
             loadData.close();
         } else {
             admins = new ArrayList<>();
             users = new ArrayList<>();
             libraries = new ArrayList<>();
             borrowedHistory = new ArrayList<>();
-            data = new ArrayList[4];
+            requestList = new ArrayList<>();
+            data = new ArrayList[5];
             data[0] = admins;
             data[1] = users;
             data[2] = libraries;
             data[3] = borrowedHistory;
+            data[4] = requestList;
         }
 
         if (idData.isFile()) {
@@ -194,10 +197,10 @@ public class Main {
                 System.out.println("4. Search books\t\t\t 7. Books history");
                 System.out.println("5. Add books\t\t\t 8. Update book stock");
                 System.out.println("\n--- Manage users ---");
-                System.out.println("9. View users\t\t\t 12. View admins");
-                System.out.println("10. Add new user\t\t 13. Add new admin");
-                System.out.println("11. Remove a user\t\t 14. Remove an admin");
-                System.out.println("\n\t\t\t\t99. Logout\n");
+                System.out.println("9. View users\t\t\t 13. View admins");
+                System.out.println("10. Add new user\t\t 14. Add new admin");
+                System.out.println("11. Remove a user\t\t 15. Remove an admin");
+                System.out.printf("12. Manage requests\t\t 99. Logout\n\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
@@ -312,11 +315,16 @@ public class Main {
                         storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 12: // Display all admins, ADMIN CASE
+                    case 12:
+                        adminAccount.approveRequests(users, requestList);
+                        storingData(masterData, data, idData, idHistory);
+                        break;
+
+                    case 13: // Display all admins, ADMIN CASE
                         adminAccount.adminsList(admins);
                         break;
 
-                    case 13: // Add an admin, ADMIN CASE
+                    case 14: // Add an admin, ADMIN CASE
                         if (loginObject.inviteUser(admins)) {
                             userLocation = adminAccount.getCityEnum();
                             admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
@@ -325,7 +333,7 @@ public class Main {
                         }
                         break;
 
-                    case 14: // Remove an admin, ADMIN CASE
+                    case 15: // Remove an admin, ADMIN CASE
                         adminAccount.deleteAdmin(admins);
                         break;
 
@@ -357,7 +365,11 @@ public class Main {
                 System.out.println("0. Display all books\t\t 5. Libraries in my location");
                 System.out.println("1. Search for books\t\t\t 6. Change password");
                 System.out.println("2. Borrow a book\t\t\t 7. View my history");
-                System.out.println("3. Return borrowed book\t\t 8.Upgrade my account");
+                System.out.print("3. Return borrowed book\t\t");
+                if (userAccount.getType() != AccountType.PRO)
+                    System.out.println(" 8. Upgrade my account");
+                else
+                    System.out.println();
                 System.out.println("4. View current status");
                 System.out.println("\n\t\t\t\t\t99. Logout\n");
 
@@ -414,9 +426,11 @@ public class Main {
                     case 4: // view current status of books, USER CASE
                         System.out.println("Current user: " + userAccount);
                         if (userAccount.getType() == AccountType.USER)
-                            userAccount.getStatus(libraries);
-                        else
+                            userAccount.getStatus(libraries, requestList);
+                        else {
                             userAccount.showBorrowedBooks();
+                            System.out.println("Premium status: Approved");
+                        }
                         break;
 
                     case 5: // find nearby Libraries, USER CASE
@@ -434,9 +448,17 @@ public class Main {
                         break;
 
                     case 8: // upgrade account to premium
-                        userAccount.upgradeAccount();
+                        if (userAccount.getType() == AccountType.PRO) {
+                            System.out.println("!-- Enter a valid input --!");
+                            break;
+                        }
+                        if (requestList.indexOf(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity()) != -1) {
+                            System.out.println("Your request is still pending, Please be patient.");
+                            break;
+                        }
+                        requestList.add(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity());
+                        System.out.println("Request raised successfully!");
                         storingData(masterData, data, idData, idHistory);
-                        System.out.println("You have successfully subscribed to premium ^^");
                         break;
 
                     case 99: // log out

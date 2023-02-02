@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -289,11 +290,23 @@ public class User extends Human implements Serializable, UserFunctions {
 
     // case 4: get user status
     // function to get user's status
-    public void getStatus(ArrayList<Library> libraries) {
+    public void getStatus(ArrayList<Library> libraries, ArrayList<String> requestList) {
         if(this.getBorrowedBookId() == -9999)
             System.out.println("Current book: null");
         else {
             System.out.println("Current book: " + borrowedBook.get(0));
+        }
+        Main.dbReader = requestList.listIterator();
+        String line;
+        while (Main.dbReader.hasNext()) {
+            line = (String) Main.dbReader.next();
+            int i = line.indexOf(':');
+            searchQuery = line.substring(0, i);
+            if (searchQuery.equalsIgnoreCase(this.getUsername())) {
+                System.out.print("Premium status: ");
+                System.out.println(line.substring(i + 2, line.indexOf("~")));
+                break;
+            }
         }
     }
 

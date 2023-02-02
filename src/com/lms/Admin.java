@@ -402,7 +402,77 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             System.out.println("User doesn't exist in the records");
     }
 
-    // case 12: display all admins
+    // case 12: approve requests
+    // function to read the requests AL and handle the requests
+    public void approveRequests(ArrayList<User> users, ArrayList<String> requestList) {
+        Main.dbReader = requestList.listIterator();
+        while (Main.dbReader.hasNext()) {
+            String line = (String) Main.dbReader.next();
+            int i = line.indexOf('~');
+            searchQuery = line.substring(i + 1, line.length());
+            if (searchQuery.equalsIgnoreCase(this.getCity())) {
+                System.out.println("> " + line.substring(0, i));
+            }
+        }
+        System.out.print("Choose the request to be managed: ");
+        searchQuery = Main.sc.next();
+        Main.searchFlag = false;
+        Main.dbReader = requestList.listIterator();
+        while (Main.dbReader.hasNext()) {
+            String line = (String) Main.dbReader.next();
+            int i = line.indexOf(':');
+            String requestUser = line.substring(0, i);
+            if (requestUser.equalsIgnoreCase(searchQuery)) {
+                int j = line.indexOf('~');
+                if (line.substring(j - 7, j -1).equalsIgnoreCase("Denied")) {
+                    Main.searchFlag = false;
+                    System.out.println("Already denied the request!");
+                    System.out.println("Remove request from the list? (Y/N)");
+                    System.out.print("Choice: ");
+                    String input = Main.sc.next();
+                    if (input.equalsIgnoreCase("y")) {
+                        requestList.remove(line);
+                        System.out.println("Removed the request");
+                        break;
+                    } else {
+                        System.out.println("No actions performed");
+                        break;
+                    }
+                } else
+                    Main.searchFlag = true;
+            }
+        }
+        Main.dbReader = users.listIterator();
+        while (Main.dbReader.hasNext()) {
+            if (!Main.searchFlag)
+                break;
+            Main.userAccount = (User) Main.dbReader.next();
+            if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
+                    && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                Main.searchFlag = true;
+                String request = Main.userAccount.getUsername() + ": Request opened ~" + Main.userAccount.getCity();
+                System.out.println("Chosen User Request: " + Main.userAccount);
+                System.out.println("1. Approve");
+                System.out.println("2. Deny");
+                System.out.print("Choice: ");
+                int choice = Main.sc.nextInt();
+                if (choice == 1) {
+                    requestList.remove(request);
+                    Main.userAccount.upgradeAccount();
+                    System.out.println("Approved successfully.");
+                } else if (choice == 2) {
+                    requestList.remove(request);
+                    requestList.add(Main.userAccount.getUsername() + ": Request denied ~" + Main.userAccount.getCity());
+                    System.out.println("Request has been denied.");
+                }
+            }
+        }
+        if (Main.searchFlag = false) {
+            System.out.println("-- Invalid request selected! --");
+        }
+    }
+
+    // case 13: display all admins
     // function to list all available admins
     public void adminsList(ArrayList<Admin> admins) {
         int dbIndex = 1;
@@ -414,10 +484,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
 
-    // case 13: add an admin
+    // case 14: add an admin
     // just the constructor of this class
 
-    // case 14: delete an admin
+    // case 15: delete an admin
     // function to delete an admin
     public void deleteAdmin(ArrayList<Admin> admins) {
         Main.searchFlag = false;

@@ -18,7 +18,7 @@ public interface UserFunctions {
     boolean executeReturn();
 
     // case 4: function to view current status
-    void getStatus(ArrayList<Library> libraries);
+    void getStatus(ArrayList<Library> libraries, ArrayList<String> requestList);
 
     // case 5: function to find out nearby libraries
     void nearbyLibraries(ArrayList<Library> libraries);
