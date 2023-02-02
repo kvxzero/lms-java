@@ -57,7 +57,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         while (Main.dbReader.hasNext()) {
             Library library = (Library) Main.dbReader.next();
             if (library.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println(dbIndex + ". " + Main.dbReader.next());
+                System.out.println(dbIndex + ". " + library);
                 dbIndex++;
             }
         }
