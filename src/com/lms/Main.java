@@ -455,6 +455,10 @@ public class Main {
                         if (requestList.indexOf(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity()) != -1) {
                             System.out.println("Your request is still pending, Please be patient.");
                             break;
+                        } else if (requestList.indexOf(userAccount.getUsername() + ": Request denied ~" + userAccount.getCity()) != -1) {
+                            System.out.println("Your request has been denied!");
+                            System.out.println("Wait until admin reconsiders your request");
+                            break;
                         }
                         requestList.add(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity());
                         System.out.println("Request raised successfully!");

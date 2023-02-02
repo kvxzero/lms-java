@@ -414,61 +414,66 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                 System.out.println("> " + line.substring(0, i));
             }
         }
-        System.out.print("Choose the request to be managed: ");
-        searchQuery = Main.sc.next();
-        Main.searchFlag = false;
-        Main.dbReader = requestList.listIterator();
-        while (Main.dbReader.hasNext()) {
-            String line = (String) Main.dbReader.next();
-            int i = line.indexOf(':');
-            String requestUser = line.substring(0, i);
-            if (requestUser.equalsIgnoreCase(searchQuery)) {
-                int j = line.indexOf('~');
-                if (line.substring(j - 7, j -1).equalsIgnoreCase("Denied")) {
-                    Main.searchFlag = false;
-                    System.out.println("Already denied the request!");
-                    System.out.println("Remove request from the list? (Y/N)");
-                    System.out.print("Choice: ");
-                    String input = Main.sc.next();
-                    if (input.equalsIgnoreCase("y")) {
-                        requestList.remove(line);
-                        System.out.println("Removed the request");
-                        break;
-                    } else {
-                        System.out.println("No actions performed");
-                        break;
-                    }
-                } else
-                    Main.searchFlag = true;
-            }
-        }
-        Main.dbReader = users.listIterator();
-        while (Main.dbReader.hasNext()) {
-            if (!Main.searchFlag)
-                break;
-            Main.userAccount = (User) Main.dbReader.next();
-            if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
-                    && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
-                Main.searchFlag = true;
-                String request = Main.userAccount.getUsername() + ": Request opened ~" + Main.userAccount.getCity();
-                System.out.println("Chosen User Request: " + Main.userAccount);
-                System.out.println("1. Approve");
-                System.out.println("2. Deny");
-                System.out.print("Choice: ");
-                int choice = Main.sc.nextInt();
-                if (choice == 1) {
-                    requestList.remove(request);
-                    Main.userAccount.upgradeAccount();
-                    System.out.println("Approved successfully.");
-                } else if (choice == 2) {
-                    requestList.remove(request);
-                    requestList.add(Main.userAccount.getUsername() + ": Request denied ~" + Main.userAccount.getCity());
-                    System.out.println("Request has been denied.");
+        if (!requestList.isEmpty()) {
+            System.out.print("Choose the request to be managed: ");
+            searchQuery = Main.sc.next();
+            Main.searchFlag = false;
+            Main.dbReader = requestList.listIterator();
+            while (Main.dbReader.hasNext()) {
+                String line = (String) Main.dbReader.next();
+                int i = line.indexOf(':');
+                String requestUser = line.substring(0, i);
+                if (requestUser.equalsIgnoreCase(searchQuery)) {
+                    int j = line.indexOf('~');
+                    if (line.substring(j - 7, j - 1).equalsIgnoreCase("Denied")) {
+                        Main.searchFlag = false;
+                        System.out.println("Already denied the request!");
+                        System.out.println("Remove request from the list? (Y/N)");
+                        System.out.print("Choice: ");
+                        String input = Main.sc.next();
+                        if (input.equalsIgnoreCase("y")) {
+                            requestList.remove(line);
+                            System.out.println("Removed the request");
+                            break;
+                        } else {
+                            System.out.println("No actions performed");
+                            break;
+                        }
+                    } else
+                        Main.searchFlag = true;
                 }
             }
+            Main.dbReader = users.listIterator();
+            while (Main.dbReader.hasNext()) {
+                if (!Main.searchFlag)
+                    break;
+                Main.userAccount = (User) Main.dbReader.next();
+                if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
+                        && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                    Main.searchFlag = true;
+                    String request = Main.userAccount.getUsername() + ": Request opened ~" + Main.userAccount.getCity();
+                    System.out.println("Chosen User Request: " + Main.userAccount);
+                    System.out.println("1. Approve");
+                    System.out.println("2. Deny");
+                    System.out.print("Choice: ");
+                    int choice = Main.sc.nextInt();
+                    if (choice == 1) {
+                        requestList.remove(request);
+                        Main.userAccount.upgradeAccount();
+                        System.out.println("Approved successfully.");
+                    } else if (choice == 2) {
+                        requestList.remove(request);
+                        requestList.add(Main.userAccount.getUsername() + ": Request denied ~" + Main.userAccount.getCity());
+                        System.out.println("Request has been denied.");
+                    }
+                }
+            }
+            if (Main.searchFlag = false) {
+                System.out.println("-- Invalid request selected! --");
+            }
         }
-        if (Main.searchFlag = false) {
-            System.out.println("-- Invalid request selected! --");
+        else {
+            System.out.println("No requests at the moment ^^");
         }
     }
 
