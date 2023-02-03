@@ -36,6 +36,9 @@ public class Human implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+    public void setCity(cityList city) {
+        this.city = city;
+    }
 
     // getters
     public int getId() {

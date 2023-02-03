@@ -24,6 +24,7 @@ public class Main {
     protected static int loginId;
     protected static String userName, userPassword, userEmail, userPhNo, bookName, libName;
     protected static User.cityList userLocation;
+    protected static Main.AccountType userType;
 
     // flags for loops
     protected static boolean searchFlag, loginFlag = false;
@@ -69,9 +70,7 @@ public class Main {
 
         // variables for various functions
         int choice;
-        String libChoice;
         sc.useDelimiter("\n");
-        ListIterator libReader;
 
         // array lists for all the different data persisted
         ArrayList<Admin> admins;
@@ -152,8 +151,8 @@ public class Main {
                     break;
 
                 case 3:
-                    if(loginObject.validateInformation(users, true)) {
-                        users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo));
+                    if(loginObject.validateInformation(users)) {
+                        users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo, userType));
                         System.out.println("Signed up successfully! ^^");
                         storingData(masterData, data, idData, idHistory);
                     }
@@ -163,7 +162,7 @@ public class Main {
                 case 4:
                     System.out.println("!-- WARNING --!");
                     System.out.println("!-- PROCEED WITH CAUTION --!");
-                    if(loginObject.validateInformation(admins, true)) {
+                    if(loginObject.validateInformation(admins)) {
                         admins.add(new Admin(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("New admin created successfully!");
                         storingData(masterData, data, idData, idHistory);
@@ -302,9 +301,9 @@ public class Main {
                         break;
 
                     case 10: // Add a user, ADMIN CASE
-                        if (loginObject.inviteUser(users)) {
+                        if (loginObject.inviteUser(users, true)) {
                             userLocation = adminAccount.getCityEnum();
-                            users.add(new User(null, null, userLocation, userEmail, userPhNo));
+                            users.add(new User(null, null, userLocation, userEmail, userPhNo, userType));
                             storingData(masterData, data, idData, idHistory);
                             System.out.println("New user created successfully!");
                         }
@@ -325,7 +324,7 @@ public class Main {
                         break;
 
                     case 14: // Add an admin, ADMIN CASE
-                        if (loginObject.inviteUser(admins)) {
+                        if (loginObject.inviteUser(admins, false)) {
                             userLocation = adminAccount.getCityEnum();
                             admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
                             storingData(masterData, data, idData, idHistory);
@@ -365,12 +364,12 @@ public class Main {
                 System.out.println("0. Display all books\t\t 5. Libraries in my location");
                 System.out.println("1. Search for books\t\t\t 6. Change password");
                 System.out.println("2. Borrow a book\t\t\t 7. View my history");
-                System.out.print("3. Return borrowed book\t\t");
+                System.out.println("3. Return borrowed book\t\t 8. Change city");
+                System.out.print("4. View current status\t\t");
                 if (userAccount.getType() != AccountType.PRO)
-                    System.out.println(" 8. Upgrade my account");
+                    System.out.println(" 9. Upgrade my account");
                 else
-                    System.out.println();
-                System.out.println("4. View current status");
+                    System.out.println(" 9. Downgrade my account");
                 System.out.println("\n\t\t\t\t\t99. Logout\n");
 
                 // switch case ladder
@@ -447,21 +446,59 @@ public class Main {
                         userAccount.viewUserHistory(borrowedHistory);
                         break;
 
-                    case 8: // upgrade account to premium
+                    case 8: // change current city
+                        if (userAccount.getBorrowedBook().size() != 0) {
+                            System.out.println("Please return your books before switching cities");
+                            while (userAccount.getBorrowedBook().size() != 0) {
+                                if (userAccount.executeReturn()) {
+                                    borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
+                                    System.out.println(userAccount.getUsername() + " has returned "
+                                            + searchedBook.getName() + " successfully!");
+                                    storingData(masterData, data, idData, idHistory);
+                                }
+                                else {
+                                    System.out.println("Return operation has failed...");
+                                }
+                            }
+                            System.out.println();
+                        }
+                        if (loginObject.validateCity()) {
+                            userAccount.setCity(userLocation);
+                        }
+                        System.out.println("City changed successfully!");
+                        break;
+
+                    case 9: // upgrade or downgrade account to premium
                         if (userAccount.getType() == AccountType.PRO) {
-                            System.out.println("!-- Enter a valid input --!");
-                            break;
+                            if (userAccount.getBorrowedBook().size() > 1) {
+                                System.out.println("Please return your books before trying to downgrade");
+                                while (userAccount.getBorrowedBook().size() > 1) {
+                                    if (userAccount.executeReturn()) {
+                                        borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
+                                        System.out.println(userAccount.getUsername() + " has returned "
+                                                + searchedBook.getName() + " successfully!");
+                                    }
+                                    else {
+                                        System.out.println("Return operation has failed...");
+                                    }
+                                }
+                            }
+                            userAccount.setType(AccountType.USER);
+                            System.out.println("Downgraded account successfully");
+                        } else {
+                            if (requestList.indexOf(userAccount.getUsername()
+                                    + ": Premium account request opened ~" + userAccount.getCity()) != -1) {
+                                System.out.println("Your request is still pending, Please be patient.");
+                                break;
+                            } else if (requestList.indexOf(userAccount.getUsername()
+                                    + ": Premium account request denied ~" + userAccount.getCity()) != -1) {
+                                System.out.println("Your request has been denied!");
+                                System.out.println("Wait until admin reconsiders your request");
+                                break;
+                            }
+                            requestList.add(userAccount.getUsername() + ": Premium account request opened ~" + userAccount.getCity());
+                            System.out.println("Request raised successfully!");
                         }
-                        if (requestList.indexOf(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity()) != -1) {
-                            System.out.println("Your request is still pending, Please be patient.");
-                            break;
-                        } else if (requestList.indexOf(userAccount.getUsername() + ": Request denied ~" + userAccount.getCity()) != -1) {
-                            System.out.println("Your request has been denied!");
-                            System.out.println("Wait until admin reconsiders your request");
-                            break;
-                        }
-                        requestList.add(userAccount.getUsername() + ": Request opened ~" + userAccount.getCity());
-                        System.out.println("Request raised successfully!");
                         storingData(masterData, data, idData, idHistory);
                         break;
 

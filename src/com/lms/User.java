@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -16,7 +15,6 @@ public class User extends Human implements Serializable, UserFunctions {
     private static int numOfUsers = 0;
     private int bookLimit;
     private ArrayList<Book> borrowedBook = new ArrayList<>();
-    private ArrayList<Library> borrowedFrom = new ArrayList<>();
 
     // variables for functions
     private String searchQuery;
@@ -25,12 +23,12 @@ public class User extends Human implements Serializable, UserFunctions {
     }
 
     // constructor
-    User(String username, String password, cityList city, String email, String phNo) {
+    User(String username, String password, cityList city, String email, String phNo, Main.AccountType type) {
         super(username, password, city, email, phNo);
         setId(numOfUsers+1);
         numOfUsers++;
         bookLimit = 1;
-        this.setType(Main.AccountType.USER);
+        this.setType(type);
     }
 
     // necessary functions
@@ -40,9 +38,9 @@ public class User extends Human implements Serializable, UserFunctions {
     @Override
     public String toString() {
         if (this.getUsername().equals("")) {
-            return getPhNo() + " (" + getCity() + ")";
+            return getPhNo() + " (" + getCity() + ", " + getType() + ")";
         }
-        return getUsername() + " (" + getCity() + ")";
+        return getUsername() + " (" + getCity() + ", " + getType() + ")";
     }
     public static int getNumOfUsers() {
         return User.numOfUsers;
@@ -59,14 +57,9 @@ public class User extends Human implements Serializable, UserFunctions {
         return borrowedBook;
     }
 
-    public ArrayList<Library> getBorrowedFrom() {
-        return borrowedFrom;
-    }
-
     public void setBorrowedBook(Book book) {
         if (borrowedBook.size() < bookLimit) {
             borrowedBook.add(book);
-            borrowedFrom.add(book.getLibrary());
         }
     }
     public void showBorrowedBooks() {
@@ -76,7 +69,7 @@ public class User extends Human implements Serializable, UserFunctions {
             System.out.println("None");
             return;
         }
-        Main.dbReader = borrowedFrom.listIterator();
+        Main.dbReader = borrowedBook.listIterator();
         while (Main.dbReader.hasNext()) {
             try {
                 System.out.println(index + 1 + ". " + borrowedBook.get(index).getName());
@@ -280,7 +273,6 @@ public class User extends Human implements Serializable, UserFunctions {
         }
         try {
             borrowedBook.remove(id);
-            borrowedFrom.remove(id);
             return true;
         } catch (Exception e) {
             System.out.println(this.getUsername() + " has no borrowed book at that ID");

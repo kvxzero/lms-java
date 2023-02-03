@@ -38,12 +38,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
 
     private void displayAvailability() {
-//        System.out.println(Main.searchedBook + " | Currently: " + Main.searchedBook.getStock() + " copies left");
-        if (Main.searchedBook.availability()) {
-            System.out.println(Main.searchedBook + " | Currently: all copies are in stock");
-        } else {
-            System.out.println(Main.searchedBook + " | Currently: " + Main.searchedBook.getStock() + " copies left");
-        }
+        System.out.println(Main.searchedBook + " | Currently: " + Main.searchedBook.getStock() + " copies left");
     }
 
     // implements AdminFunctions
@@ -56,10 +51,8 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         System.out.println("List of all the managing libraries:");
         while (Main.dbReader.hasNext()) {
             Library library = (Library) Main.dbReader.next();
-            if (library.getCity().equalsIgnoreCase(this.getCity())) {
-                System.out.println(dbIndex + ". " + library);
+            System.out.println(dbIndex + ". " + library);
                 dbIndex++;
-            }
         }
     }
 
@@ -283,7 +276,6 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                     Main.userAccount = users.get(((Integer) borrowers.next()) - 1);
                     int index = Main.userAccount.getBorrowedBook().indexOf(Main.searchedBook);
                     Main.userAccount.getBorrowedBook().remove(index);
-                    Main.userAccount.getBorrowedFrom().remove(index);
                 } catch (Exception e) {
                     break;
                 }
@@ -302,7 +294,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                     returnBook(users);
                 }
                 Main.dbReader.remove();
-                System.out.println("Deleted from successfully");
+                System.out.println("Deleted from " + Main.selectedLibrary + " successfully");
                 Main.searchFlag = true;
             }
         }
@@ -434,11 +426,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                         if (input.equalsIgnoreCase("y")) {
                             requestList.remove(line);
                             System.out.println("Removed the request");
-                            break;
                         } else {
                             System.out.println("No actions performed");
-                            break;
                         }
+                        break;
                     } else
                         Main.searchFlag = true;
                 }
@@ -451,7 +442,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                 if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
                         && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
                     Main.searchFlag = true;
-                    String request = Main.userAccount.getUsername() + ": Request opened ~" + Main.userAccount.getCity();
+                    String request = Main.userAccount.getUsername() + ": Premium account request opened ~" + Main.userAccount.getCity();
                     System.out.println("Chosen User Request: " + Main.userAccount);
                     System.out.println("1. Approve");
                     System.out.println("2. Deny");
@@ -460,11 +451,11 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                     if (choice == 1) {
                         requestList.remove(request);
                         Main.userAccount.upgradeAccount();
-                        System.out.println("Approved successfully.");
+                        System.out.println("Approved successfully");
                     } else if (choice == 2) {
                         requestList.remove(request);
-                        requestList.add(Main.userAccount.getUsername() + ": Request denied ~" + Main.userAccount.getCity());
-                        System.out.println("Request has been denied.");
+                        requestList.add(Main.userAccount.getUsername() + ": Premium account request denied ~" + Main.userAccount.getCity());
+                        System.out.println("Request has been denied");
                     }
                 }
             }
@@ -473,7 +464,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             }
         }
         else {
-            System.out.println("No requests at the moment ^^");
+            System.out.println("-- No requests at the moment ^^ --");
         }
     }
 

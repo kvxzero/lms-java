@@ -85,7 +85,7 @@ public class LoginHandler {
         }
         return true;
     }
-    private boolean validateCity() {
+    public boolean validateCity() {
         int indexOfCity = 1;
         System.out.println("Select your location: ");
         for (Human.cityList city: Human.cityList.values()) {
@@ -100,7 +100,22 @@ public class LoginHandler {
         Main.userLocation = Human.cityList.values() [indexOfCity - 1];
         return true;
     }
-    public boolean validateInformation(ArrayList users, boolean signUp) {
+    private boolean validateType() {
+        System.out.println("Select your account type: ");
+        System.out.println("1. Regular User");
+        System.out.println("2. Premium User");
+        System.out.print("Choice: ");
+        int index = Main.getInput();
+        if (index == -9999) {
+            System.out.println("Enter a valid input!");
+            return false;
+        } else if (index == 1)
+            Main.userType = Main.AccountType.USER;
+        else if (index == 2)
+            Main.userType = Main.AccountType.PRO;
+        return true;
+     }
+    public boolean validateInformation(ArrayList users) {
         if (!validatePhoneNumber(users)) {
             return false;
         }
@@ -113,19 +128,25 @@ public class LoginHandler {
         if (!validatePassword()) {
             return false;
         }
-        if (signUp) {
-            if (!validateCity()) {
+        if (!validateType()) {
+            return false;
+        }
+        if (!validateCity()) {
                 return false;
-            }
         }
         return true;
     }
-    public boolean inviteUser(ArrayList users) {
+    public boolean inviteUser(ArrayList users, boolean userFlag) {
         if (!validatePhoneNumber(users)) {
             return false;
         }
         if (!validateEmail(users)) {
             return false;
+        }
+        if (userFlag) {
+            if (!validateType()) {
+                return false;
+            }
         }
         return true;
     }
@@ -268,7 +289,7 @@ public class LoginHandler {
         while(dbReader.hasNext()) {
             human = (Human) dbReader.next();
             if (human.getUsername().equals(username)) {
-                return human.getId()-1;
+                return dbReader.nextIndex() - 1;
             }
         }
         return 0;
