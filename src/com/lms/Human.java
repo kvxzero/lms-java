@@ -55,9 +55,6 @@ public class Human implements Serializable {
     public String getCity() {
         return city.toString();
     }
-    public cityList getCityEnum() {
-        return city;
-    }
     public Main.AccountType getType() {
         return type;
     }

@@ -26,38 +26,38 @@ public class LoginHandler {
         Matcher matcher = numberPattern.matcher(String.valueOf(Main.userPhNo));
         if (!matcher.matches()) {
             System.out.println("Invalid phone number! (10 digits)");
-            return false;
+            return true;
         }
         dbReader = users.listIterator();
         while(dbReader.hasNext()) {
             if (((Human) dbReader.next()).getPhNo().equals(Main.userPhNo)) {
                 System.out.println("Phone number already exists!");
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
     public boolean validateEmail(ArrayList users) {
         System.out.print("Enter your email address: ");
         Main.userEmail = Main.sc.next();
         if (Main.userEmail.equals("") | Main.userEmail.equals("\n")) {
             System.out.println("Invalid email address!");
-            return false;
+            return true;
         }
         Pattern emailPattern = Pattern.compile("^[\\w+&&[^_]](\\w+)@([a-z]+)(\\.([a-z]+)){1,2}$");
         Matcher matcher = emailPattern.matcher(String.valueOf(Main.userEmail));
         if (!matcher.matches()) {
             System.out.println("Invalid email address!");
-            return false;
+            return true;
         }
         dbReader = users.listIterator();
         while(dbReader.hasNext()) {
             if (((Human) dbReader.next()).getEmail().equals(Main.userEmail)) {
                 System.out.println("Email already exists!");
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
     private boolean validateUsername(ArrayList users) {
         System.out.print("Enter your username: ");
@@ -108,18 +108,18 @@ public class LoginHandler {
         int index = Main.getInput();
         if (index == -9999) {
             System.out.println("Enter a valid input!");
-            return false;
+            return true;
         } else if (index == 1)
             Main.userType = Main.AccountType.USER;
         else if (index == 2)
             Main.userType = Main.AccountType.PRO;
-        return true;
+        return false;
      }
     public boolean validateInformation(ArrayList users) {
-        if (!validatePhoneNumber(users)) {
+        if (validatePhoneNumber(users)) {
             return false;
         }
-        if (!validateEmail(users)) {
+        if (validateEmail(users)) {
             return false;
         }
         if (!validateUsername(users)) {
@@ -128,26 +128,26 @@ public class LoginHandler {
         if (!validatePassword()) {
             return false;
         }
-        if (!validateType()) {
+        if (validateType()) {
             return false;
         }
         if (!validateCity()) {
-                return false;
+            return false;
         }
         return true;
     }
     public boolean inviteUser(ArrayList users, boolean userFlag) {
-        if (!validatePhoneNumber(users)) {
+        if (validatePhoneNumber(users)) {
             return false;
         }
-        if (!validateEmail(users)) {
+        if (validateEmail(users)) {
             return false;
         }
         if (!validateCity()) {
             return false;
         }
         if (userFlag) {
-            if (!validateType()) {
+            if (validateType()) {
                 return false;
             }
         }
@@ -275,7 +275,7 @@ public class LoginHandler {
         while (dbReader.hasNext()) {
             human = (Human) dbReader.next();
             if (human.getPhNo().equals(phNo)) {
-                if (human.getPassword() == null && human.getUsername() == "") {
+                if (human.getPassword() == null && human.getUsername().equals("")) {
                     return true;
                 }
             }

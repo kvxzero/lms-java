@@ -72,9 +72,6 @@ public class Book implements Serializable {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    public Library getLibrary() {
-        return this.library;
-    }
     public int getStock() {
         return this.stock;
     }

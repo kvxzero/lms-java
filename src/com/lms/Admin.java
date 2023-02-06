@@ -61,9 +61,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public boolean addLibrary (ArrayList<Library> libraries) {
         System.out.print("Enter the library name: ");
         Main.libName = Main.sc.nextLine();
-        ListIterator libReader = libraries.listIterator();
-        while (libReader.hasNext()) {
-            Library lib = (Library) libReader.next();
+        for (Library lib : libraries) {
             if (lib.getName().equalsIgnoreCase(Main.libName)) {
                 System.out.println("Library already exists!");
                 return true;
@@ -80,9 +78,8 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         int index = Main.getInput();
         if (index <= libraries.size()) {
             Main.selectedLibrary = libraries.get(index - 1);
-            ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-            while (bookReader.hasNext()) {
-                Main.searchedBook = (Book) bookReader.next();
+            for (Book book : Main.selectedLibrary.getBooks()) {
+                Main.searchedBook = book;
                 returnBook(users);
             }
             libraries.remove(Main.selectedLibrary);
@@ -99,9 +96,8 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         if (searchLibrary(libraries)) {
             int index = 1;
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-            ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-            while (bookReader.hasNext()) {
-                Main.searchedBook = (Book) bookReader.next();
+            for (Book book : Main.selectedLibrary.getBooks()) {
+                Main.searchedBook = book;
                 System.out.print(index + ". ");
                 displayAvailability();
                 index++;
@@ -135,10 +131,9 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             Main.searchFlag = false;
             Main.selectedLibrary = (Library) Main.dbReader.next();
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-            ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-            while (bookReader.hasNext()) {
-                Main.searchedBook = (Book) bookReader.next();
-                if(Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+            for (Book book : Main.selectedLibrary.getBooks()) {
+                Main.searchedBook = book;
+                if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                     displayAvailability();
                     Main.searchFlag = true;
                 }
@@ -154,10 +149,9 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             Main.searchFlag = false;
             Main.selectedLibrary = (Library) Main.dbReader.next();
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-            ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-            while (bookReader.hasNext()) {
-                Main.searchedBook = (Book) bookReader.next();
-                if(Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+            for (Book book : Main.selectedLibrary.getBooks()) {
+                Main.searchedBook = book;
+                if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                     displayAvailability();
                     Main.searchFlag = true;
                 }
@@ -188,9 +182,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public boolean checkBook() {
         System.out.print("Enter the book name: ");
         Main.bookName = Main.sc.nextLine();
-        ListIterator booksReader = Main.selectedLibrary.getBooks().listIterator();
-        while (booksReader.hasNext()) {
-            Book book = (Book) booksReader.next();
+        for (Book book : Main.selectedLibrary.getBooks()) {
             if (book.getName().equalsIgnoreCase(Main.bookName)) {
                 System.out.println("Book already exists in the library!");
                 return true;
@@ -303,9 +295,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                         Main.userAccount.getBorrowedBook().get(0).getName();
             else {
                 bookStat = "Currently borrowed: ";
-                ListIterator bookReader = Main.userAccount.getBorrowedBook().listIterator();
-                while (bookReader.hasNext()) {
-                    Book book = (Book) bookReader.next();
+                for (Book book : Main.userAccount.getBorrowedBook()) {
                     bookStat = bookStat + book.getName() + " | ";
                 }
             }
@@ -327,7 +317,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         if (index != -9999 && index <= users.size()) {
             Main.userAccount = users.get(index - 1);
             if (!Main.userAccount.hasNoBooks())
-                Main.userAccount.returnAll(libraries);
+                Main.userAccount.returnAll();
             users.remove(Main.userAccount);
             System.out.println("Deleted successfully");
         }

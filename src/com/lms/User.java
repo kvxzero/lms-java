@@ -107,9 +107,8 @@ public class User extends Human implements Serializable, UserFunctions {
                     System.out.println("-- No books --");
                     continue;
                 }
-                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-                while(bookReader.hasNext()) {
-                    Main.searchedBook = (Book) bookReader.next();
+                for (Book book : Main.selectedLibrary.getBooks()) {
+                    Main.searchedBook = book;
                     displayAvailability();
                 }
             }
@@ -122,20 +121,15 @@ public class User extends Human implements Serializable, UserFunctions {
     // case 1: search for books
     // function to search books with options
     public void searchBooks(@NotNull ArrayList<Library> libraries, int option) {
-        switch(option) {
-            case 1:
-                searchByName(libraries);
-                break;
-            case 2:
-                searchByGenre(libraries);
-                break;
-            case 3:
+        switch (option) {
+            case 1 -> searchByName(libraries);
+            case 2 -> searchByGenre(libraries);
+            case 3 -> {
                 searchByName(libraries);
                 System.out.println();
                 searchByGenre(libraries);
-                break;
-            default:
-                System.out.println("!-- Enter a valid input --!");
+            }
+            default -> System.out.println("!-- Enter a valid input --!");
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
@@ -146,10 +140,9 @@ public class User extends Human implements Serializable, UserFunctions {
             Main.selectedLibrary = (Library) Main.dbReader.next();
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-                while (bookReader.hasNext()) {
-                    Main.searchedBook = (Book) bookReader.next();
-                    if(Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                for (Book book : Main.selectedLibrary.getBooks()) {
+                    Main.searchedBook = book;
+                    if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
                         Main.searchFlag = true;
                     }
@@ -167,10 +160,9 @@ public class User extends Human implements Serializable, UserFunctions {
             Main.selectedLibrary = (Library) Main.dbReader.next();
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-                ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-                while (bookReader.hasNext()) {
-                    Main.searchedBook = (Book) bookReader.next();
-                    if(Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
+                for (Book book : Main.selectedLibrary.getBooks()) {
+                    Main.searchedBook = book;
+                    if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
                         Main.searchFlag = true;
                     }
@@ -190,9 +182,8 @@ public class User extends Human implements Serializable, UserFunctions {
         if (borrowedBook.size() < bookLimit) {
             System.out.print("Enter the book to be borrowed: ");
             searchQuery = Main.sc.next();
-            ListIterator libReader = libraries.listIterator();
-            while (libReader.hasNext()) {
-                Main.selectedLibrary = (Library) libReader.next();
+            for (Library library : libraries) {
+                Main.selectedLibrary = library;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
                     Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
                 while (Main.dbReader.hasNext()) {
@@ -218,7 +209,7 @@ public class User extends Human implements Serializable, UserFunctions {
 
     // case 3: return borrowed books
     // functions to return books
-    public void returnAll(ArrayList<Library> libraries) {
+    public void returnAll() {
         if (this.getType() == Main.AccountType.USER) {
             Main.searchedBook = this.getBorrowedBook().get(0);
             if (this.returnBook(0)) {
