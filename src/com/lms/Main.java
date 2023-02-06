@@ -299,19 +299,18 @@ public class Main {
 
                     case 10: // Add a user, ADMIN CASE
                         if (loginObject.inviteUser(users, true)) {
-                            userLocation = adminAccount.getCityEnum();
                             users.add(new User(null, null, userLocation, userEmail, userPhNo, userType));
                             storingData(masterData, data, idData, idHistory);
                             System.out.println("New user created successfully!");
                         }
                         break;
 
-                    case 11: // Delete a user, ADMIN CASE // broken for deleting users with borrowed books
+                    case 11: // Delete a user, ADMIN CASE
                         adminAccount.deleteUser(users, libraries);
                         storingData(masterData, data, idData, idHistory);
                         break;
 
-                    case 12:
+                    case 12: // Manage requests, ADMIN CASE
                         adminAccount.approveRequests(users, requestList);
                         storingData(masterData, data, idData, idHistory);
                         break;
@@ -322,7 +321,6 @@ public class Main {
 
                     case 14: // Add an admin, ADMIN CASE
                         if (loginObject.inviteUser(admins, false)) {
-                            userLocation = adminAccount.getCityEnum();
                             admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
                             storingData(masterData, data, idData, idHistory);
                             System.out.println("New admin created successfully!");

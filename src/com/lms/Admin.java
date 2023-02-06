@@ -338,18 +338,20 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to delete a user (also releases the book if it was borrowed by the user)
     public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
         Main.searchFlag = false;
-        System.out.print("Enter the user to be deleted: ");
+        usersList(users, libraries);
+        System.out.print("\nEnter the user to be deleted: ");
         searchQuery = Main.sc.next();
         Main.dbReader = users.listIterator();
         while (Main.dbReader.hasNext()) {
             Main.userAccount = (User) Main.dbReader.next();
             if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
-                    && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                    || Main.userAccount.getPhNo().equals(searchQuery)) {
                 if (!Main.userAccount.hasNoBooks())
                     Main.userAccount.returnAll(libraries);
                 Main.dbReader.remove();
                 System.out.println("Deleted successfully");
                 Main.searchFlag = true;
+                break;
             }
         }
         if (!Main.searchFlag)
@@ -364,9 +366,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             String line = (String) Main.dbReader.next();
             int i = line.indexOf('~');
             searchQuery = line.substring(i + 1, line.length());
-            if (searchQuery.equalsIgnoreCase(this.getCity())) {
-                System.out.println("> " + line.substring(0, i));
-            }
+            System.out.println("> " + line.substring(0, i));
         }
         if (!requestList.isEmpty()) {
             System.out.print("Choose the request to be managed: ");
@@ -401,8 +401,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                 if (!Main.searchFlag)
                     break;
                 Main.userAccount = (User) Main.dbReader.next();
-                if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
-                        && Main.userAccount.getCity().equalsIgnoreCase(Main.adminAccount.getCity())) {
+                if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
                     Main.searchFlag = true;
                     String request = Main.userAccount.getUsername() + ": Premium account request opened ~" + Main.userAccount.getCity();
                     System.out.println("Chosen User Request: " + Main.userAccount);
@@ -454,7 +453,8 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         Main.dbReader = admins.listIterator();
         while (Main.dbReader.hasNext()) {
             Admin deleteAdminAcc = (Admin) Main.dbReader.next();
-            if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)) {
+            if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)
+                    || deleteAdminAcc.getPhNo().equals(searchQuery)) {
                 Main.searchFlag = true;
                 if (deleteAdminAcc.getUsername().equals(Main.adminAccount.getUsername())) {
                     System.out.println("You cannot delete your own account.");

@@ -143,6 +143,9 @@ public class LoginHandler {
         if (!validateEmail(users)) {
             return false;
         }
+        if (!validateCity()) {
+            return false;
+        }
         if (userFlag) {
             if (!validateType()) {
                 return false;
