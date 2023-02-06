@@ -491,12 +491,12 @@ public class Main {
                             userAccount.setType(AccountType.USER);
                             System.out.println("Downgraded account successfully");
                         } else {
-                            if (requestList.indexOf(userAccount.getUsername()
-                                    + ": Premium account request opened (" + userAccount.getCity() + ")") != -1) {
+                            if (requestList.contains(userAccount.getUsername()
+                                    + ": Premium account request opened (" + userAccount.getCity() + ")")) {
                                 System.out.println("Your request is still pending, Please be patient.");
                                 break;
-                            } else if (requestList.indexOf(userAccount.getUsername()
-                                    + ": Premium account request denied (" + userAccount.getCity() + ")") != -1) {
+                            } else if (requestList.contains(userAccount.getUsername()
+                                    + ": Premium account request denied (" + userAccount.getCity() + ")")) {
                                 System.out.println("Your request has been denied!");
                                 System.out.println("Wait until admin reconsiders your request");
                                 break;
