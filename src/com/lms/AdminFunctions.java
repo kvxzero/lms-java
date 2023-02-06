@@ -26,7 +26,7 @@ public interface AdminFunctions {
     Book newBook();
 
     // case 6: delete a book
-    void deleteBook(ArrayList<User> users);
+    void deleteBook(ArrayList<Library> libraries, ArrayList<User> users);
 
     // case 7: view borrowing history
     void viewBorrowingHistory(ArrayList<String> borrowedHistory);

@@ -220,8 +220,8 @@ public class Main {
                         }
                         sc.nextLine();
                         while(multipleLocation > 0) {
-                            if (!adminAccount.addLibrary(libraries)) {
-                                libraries.add(new Library(libName, adminAccount.getCityEnum()));
+                            if (!adminAccount.addLibrary(libraries) && loginObject.validateCity()) {
+                                libraries.add(new Library(libName, userLocation));
                                 multipleLocation--;
                             }
                         }
@@ -276,10 +276,7 @@ public class Main {
                         break;
 
                     case 6: // Delete a book, ADMIN CASE
-                        if (!adminAccount.searchLibrary(libraries)) {
-                            break;
-                        }
-                        adminAccount.deleteBook(users);
+                        adminAccount.deleteBook(libraries, users);
                         storingData(masterData, data, idData, idHistory);
                         break;
 
