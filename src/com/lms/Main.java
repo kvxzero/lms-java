@@ -209,11 +209,9 @@ public class Main {
 
                 switch (choice) {
                     // Managing libraries //
-                    case 0: // List all libraries available, ADMIN CASE
-                        adminAccount.librariesList(libraries);
-                        break;
-
-                    case 1: // Add a new library, ADMIN CASE
+                    case 0 -> // List all libraries available, ADMIN CASE
+                            adminAccount.librariesList(libraries);
+                    case 1 -> { // Add a new library, ADMIN CASE
                         System.out.print("Enter the number of libraries to be added: ");
                         int multipleLocation = getInput();
                         if (multipleLocation == -9999) {
@@ -221,7 +219,7 @@ public class Main {
                             break;
                         }
                         sc.nextLine();
-                        while(multipleLocation > 0) {
+                        while (multipleLocation > 0) {
                             if (!adminAccount.addLibrary(libraries) && loginObject.validateCity()) {
                                 libraries.add(new Library(libName, userLocation));
                                 multipleLocation--;
@@ -229,19 +227,16 @@ public class Main {
                         }
                         System.out.println("Added successfully!");
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 2: // Remove a library from the db, ADMIN CASE
+                    }
+                    case 2 -> { // Remove a library from the db, ADMIN CASE
                         adminAccount.deleteLibrary(libraries, users);
                         storingData(masterData, data, idData, idHistory);
-                        break;
+                    }
 
                     // Managing books //
-                    case 3: // Display all books, ADMIN CASE
+                    case 3 -> // Display all books, ADMIN CASE
                         adminAccount.displayBooks(libraries, users);
-                        break;
-
-                    case 4: // Search for a book, ADMIN AND USER CASE
+                    case 4 -> { // Search for a book, ADMIN AND USER CASE
                         System.out.println("How do you want to search?");
                         System.out.println("1. By name");
                         System.out.println("2. By genre");
@@ -251,9 +246,8 @@ public class Main {
                         System.out.print("Enter your search query: ");
                         adminAccount.setSearchQuery(sc.next());
                         adminAccount.searchBooks(libraries, searchChoice);
-                        break;
-
-                    case 5: // Add books, ADMIN CASE
+                    }
+                    case 5 -> { // Add books, ADMIN CASE
                         int multipleBooks;
                         searchFlag = false;
                         if (!adminAccount.searchLibrary(libraries)) {
@@ -266,7 +260,7 @@ public class Main {
                             break;
                         }
                         sc.nextLine();
-                        while(multipleBooks > 0) {
+                        while (multipleBooks > 0) {
                             if (!adminAccount.checkBook()) {
                                 selectedLibrary.getBooks().add(adminAccount.newBook());
                                 System.out.println();
@@ -275,76 +269,59 @@ public class Main {
                         }
                         System.out.println("Added to " + selectedLibrary + " successfully!");
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 6: // Delete a book, ADMIN CASE
+                    }
+                    case 6 -> { // Delete a book, ADMIN CASE
                         adminAccount.deleteBook(libraries, users);
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 7: // Borrowing history, ADMIN CASE
+                    }
+                    case 7 -> // Borrowing history, ADMIN CASE
                         adminAccount.viewBorrowingHistory(borrowedHistory);
-                        break;
-
-                    case 8: // Update the books stock in library, ADMIN CASE
+                    case 8 -> { // Update the books stock in library, ADMIN CASE
                         adminAccount.updateCopies(libraries, users);
                         storingData(masterData, data, idData, idHistory);
-                        break;
+                    }
 
                     // Managing people //
-                    case 9: // Display all users, ADMIN CASE
-                        adminAccount.usersList(users, libraries);
-                        break;
-
-                    case 10: // Add a user, ADMIN CASE
+                    case 9 -> // Display all users, ADMIN CASE
+                            adminAccount.usersList(users, libraries);
+                    case 10 -> { // Add a user, ADMIN CASE
                         if (loginObject.inviteUser(users, true)) {
                             users.add(new User(null, null, userLocation, userEmail, userPhNo, userType));
                             storingData(masterData, data, idData, idHistory);
                             System.out.println("New user created successfully!");
                         }
-                        break;
-
-                    case 11: // Delete a user, ADMIN CASE
+                    }
+                    case 11 -> { // Delete a user, ADMIN CASE
                         adminAccount.deleteUser(users, libraries);
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 12: // Manage requests, ADMIN CASE
+                    }
+                    case 12 -> { // Manage requests, ADMIN CASE
                         adminAccount.approveRequests(users, requestList);
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 13: // Display all admins, ADMIN CASE
-                        adminAccount.adminsList(admins);
-                        break;
-
-                    case 14: // Add an admin, ADMIN CASE
+                    }
+                    case 13 -> // Display all admins, ADMIN CASE
+                            adminAccount.adminsList(admins);
+                    case 14 -> { // Add an admin, ADMIN CASE
                         if (loginObject.inviteUser(admins, false)) {
                             admins.add(new Admin(null, null, userLocation, userEmail, userPhNo));
                             storingData(masterData, data, idData, idHistory);
                             System.out.println("New admin created successfully!");
                         }
-                        break;
-
-                    case 15: // Remove an admin, ADMIN CASE
-                        adminAccount.deleteAdmin(admins);
-                        break;
-
-                    case 16: // change the city, ADMIN CASE
+                    }
+                    case 15 -> // Remove an admin, ADMIN CASE
+                            adminAccount.deleteAdmin(admins);
+                    case 16 -> { // change the city, ADMIN CASE
                         if (loginObject.validateCity()) {
                             adminAccount.setCity(userLocation);
                         }
                         System.out.println("City changed successfully!");
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 99: // Log out
+                    }
+                    case 99 -> { // Log out
                         storingData(masterData, data, idData, idHistory);
                         loginFlag = false;
-                        break;
-
-                    default:
-                        System.out.println("!-- Enter a valid input --!");
+                    }
+                    default -> System.out.println("!-- Enter a valid input --!");
                 }
             } while (loginFlag);
         }
@@ -381,11 +358,9 @@ public class Main {
                 choice = getInput();
 
                 switch (choice) {
-                    case 0: // display all books, USER CASE
-                        userAccount.displayBooks(libraries);
-                        break;
-
-                    case 1: // search for a book, USER CASE
+                    case 0 -> // display all books, USER CASE
+                            userAccount.displayBooks(libraries);
+                    case 1 -> { // search for a book, USER CASE
                         System.out.println("How do you want to search?");
                         System.out.println("1. By name");
                         System.out.println("2. By genre");
@@ -395,9 +370,8 @@ public class Main {
                         System.out.print("Enter your search query: ");
                         userAccount.setSearchQuery(sc.next());
                         userAccount.searchBooks(libraries, searchChoice);
-                        break;
-
-                    case 2: // borrow a book, USER CASE
+                    }
+                    case 2 -> { // borrow a book, USER CASE
                         userAccount.displayBooks(libraries);
                         System.out.println();
                         if (userAccount.borrowBook(libraries)) {
@@ -408,10 +382,9 @@ public class Main {
                         } else {
                             System.out.println("Borrow operation has failed...");
                         }
-                        break;
-
-                    case 3: // return a book, USER CASE
-                        if(userAccount.hasNoBooks()) {
+                    }
+                    case 3 -> { // return a book, USER CASE
+                        if (userAccount.hasNoBooks()) {
                             System.out.println(userAccount.getUsername() + " has no book borrowed at the moment");
                             break;
                         }
@@ -420,13 +393,11 @@ public class Main {
                             System.out.println(userAccount.getUsername() + " has returned "
                                     + searchedBook.getName() + " successfully!");
                             storingData(masterData, data, idData, idHistory);
-                        }
-                        else {
+                        } else {
                             System.out.println("Return operation has failed...");
                         }
-                        break;
-
-                    case 4: // view current status of books, USER CASE
+                    }
+                    case 4 -> { // view current status of books, USER CASE
                         System.out.println("Current user: " + userAccount);
                         if (userAccount.getType() == AccountType.USER)
                             userAccount.getStatus(libraries, requestList);
@@ -434,23 +405,18 @@ public class Main {
                             userAccount.showBorrowedBooks();
                             System.out.println("Premium status: Approved");
                         }
-                        break;
-
-                    case 5: // find nearby Libraries, USER CASE
+                    }
+                    case 5 -> { // find nearby Libraries, USER CASE
                         System.out.println("Libraries near you: ");
                         userAccount.nearbyLibraries(libraries);
-                        break;
-
-                    case 6: // change the user-password for login
+                    }
+                    case 6 -> { // change the user-password for login
                         userAccount.changePassword();
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 7: // view the user's borrowing history
-                        userAccount.viewUserHistory(borrowedHistory);
-                        break;
-
-                    case 8: // change current city
+                    }
+                    case 7 -> // view the user's borrowing history
+                            userAccount.viewUserHistory(borrowedHistory);
+                    case 8 -> { // change current city
                         if (userAccount.getBorrowedBook().size() != 0) {
                             System.out.println("Please return your books before switching cities");
                             while (userAccount.getBorrowedBook().size() != 0) {
@@ -459,8 +425,7 @@ public class Main {
                                     System.out.println(userAccount.getUsername() + " has returned "
                                             + searchedBook.getName() + " successfully!");
                                     storingData(masterData, data, idData, idHistory);
-                                }
-                                else {
+                                } else {
                                     System.out.println("Return operation has failed...");
                                 }
                             }
@@ -471,9 +436,8 @@ public class Main {
                         }
                         System.out.println("City changed successfully!");
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 9: // upgrade or downgrade account to premium
+                    }
+                    case 9 -> { // upgrade or downgrade account to premium
                         if (userAccount.getType() == AccountType.PRO) {
                             if (userAccount.getBorrowedBook().size() > 1) {
                                 System.out.println("Please return your books before trying to downgrade");
@@ -482,8 +446,7 @@ public class Main {
                                         borrowedHistory.add(userAccount.getUsername() + " has returned " + searchedBook.getName());
                                         System.out.println(userAccount.getUsername() + " has returned "
                                                 + searchedBook.getName() + " successfully!");
-                                    }
-                                    else {
+                                    } else {
                                         System.out.println("Return operation has failed...");
                                     }
                                 }
@@ -505,14 +468,10 @@ public class Main {
                             System.out.println("Request raised successfully!");
                         }
                         storingData(masterData, data, idData, idHistory);
-                        break;
-
-                    case 99: // log out
-                        loginFlag = false;
-                        break;
-
-                    default:
-                        System.out.println("!-- Enter a valid input --!");
+                    }
+                    case 99 -> // log out
+                            loginFlag = false;
+                    default -> System.out.println("!-- Enter a valid input --!");
                 }
             } while (loginFlag);
         }
