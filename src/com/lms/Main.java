@@ -138,39 +138,35 @@ public class Main {
             choice = getInput();
 
             switch (choice) {
-                case 1:
+                case 1 -> {
                     accountType = AccountType.ADMIN;
                     loginFlag = loginObject.initiateLogin(accountType);
                     storingData(masterData, data, idData, idHistory);
-                    break;
-
-                case 2:
+                }
+                case 2 -> {
                     accountType = AccountType.USER;
                     loginFlag = loginObject.initiateLogin(accountType);
                     storingData(masterData, data, idData, idHistory);
-                    break;
-
-                case 3:
-                    if(loginObject.validateInformation(users)) {
+                }
+                case 3 -> {
+                    if (loginObject.validateInformation(users)) {
                         users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo, userType));
                         System.out.println("Signed up successfully! ^^");
                         storingData(masterData, data, idData, idHistory);
                     }
-                    break;
+                }
 
 //                TEST CODE TO ADD NEW ADMIN (ONLY FOR DEVS IN CASE OF .DAT FILE IS UNREADABLE OR DESTROYED)
-                case 4:
+                case 4 -> {
                     System.out.println("!-- WARNING --!");
                     System.out.println("!-- PROCEED WITH CAUTION --!");
-                    if(loginObject.validateInformation(admins)) {
+                    if (loginObject.validateInformation(admins)) {
                         admins.add(new Admin(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("New admin created successfully!");
                         storingData(masterData, data, idData, idHistory);
                     }
-                    break;
-
-                default:
-                    System.out.println("!-- Enter a valid input --!");
+                }
+                default -> System.out.println("!-- Enter a valid input --!");
             }
         } while (!loginFlag);
         if (accountType == AccountType.ADMIN) {
