@@ -104,7 +104,7 @@ public class LoginHandler {
         System.out.println("Select your account type: ");
         System.out.println("1. Regular User");
         System.out.println("2. Premium User");
-        System.out.print("Choice: ");
+        System.out.print("\nChoice: ");
         int index = Main.getInput();
         if (index == -9999) {
             System.out.println("Enter a valid input!");

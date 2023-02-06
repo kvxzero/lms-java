@@ -27,8 +27,11 @@ public class User extends Human implements Serializable, UserFunctions {
         super(username, password, city, email, phNo);
         setId(numOfUsers+1);
         numOfUsers++;
-        bookLimit = 1;
         this.setType(type);
+        if (type == Main.AccountType.USER)
+            this.bookLimit = 1;
+        else if (type == Main.AccountType.PRO)
+            this.bookLimit = 3;
     }
 
     // necessary functions
@@ -181,6 +184,9 @@ public class User extends Human implements Serializable, UserFunctions {
     // case 2: borrow a book
     // function to borrow books
     public boolean borrowBook (ArrayList<Library> libraries) {
+        if (!Main.searchFlag) {
+            return false;
+        }
         if (borrowedBook.size() < bookLimit) {
             System.out.print("Enter the book to be borrowed: ");
             searchQuery = Main.sc.next();
@@ -222,17 +228,15 @@ public class User extends Human implements Serializable, UserFunctions {
         if (this.getType() == Main.AccountType.PRO) {
             this.showBorrowedBooks();
             int dbIndex = 0;
-            while (dbIndex < 3) {
-                try {
-                    Main.searchedBook = getBorrowedBook().get(dbIndex);
-                    if (this.returnBook(dbIndex)) {
-                        Main.searchedBook.bookReturned(this);
-                    }
-                    dbIndex++;
-                } catch (Exception e) {
-                    break;
+            while (true) {
+                Main.searchedBook = getBorrowedBook().get(dbIndex);
+                if (this.returnBook(dbIndex)) {
+                    Main.searchedBook.bookReturned(this);
                 }
+                if (getBorrowedBook().size() == 0)
+                    break;
             }
+            System.out.println("\nReturned all of the borrowed books successfully!");
         }
     }
     public boolean hasNoBooks() {
@@ -370,7 +374,10 @@ public class User extends Human implements Serializable, UserFunctions {
             System.out.println("-- No records to display --");
     }
 
-    // case 8: upgrade account to premium
+    // case 8: change city
+    // function to change the city is in the parent class
+
+    // case 9: upgrade account to premium
     // function to upgrade the account
     public void upgradeAccount() {
         setType(Main.AccountType.PRO);

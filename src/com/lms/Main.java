@@ -199,7 +199,9 @@ public class Main {
                 System.out.println("9. View users\t\t\t 13. View admins");
                 System.out.println("10. Add new user\t\t 14. Add new admin");
                 System.out.println("11. Remove a user\t\t 15. Remove an admin");
-                System.out.printf("12. Manage requests\t\t 99. Logout\n\n");
+                System.out.println("12. Manage requests\t\t 16. Update current city");
+                System.out.println("\n--------------------");
+                System.out.println("99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
@@ -285,10 +287,7 @@ public class Main {
                         break;
 
                     case 8: // Update the books stock in library, ADMIN CASE
-                        if (!adminAccount.searchLibrary(libraries)) {
-                            break;
-                        }
-                        adminAccount.updateCopies();
+                        adminAccount.updateCopies(libraries, users);
                         storingData(masterData, data, idData, idHistory);
                         break;
 
@@ -331,7 +330,16 @@ public class Main {
                         adminAccount.deleteAdmin(admins);
                         break;
 
+                    case 16: // change the city, ADMIN CASE
+                        if (loginObject.validateCity()) {
+                            adminAccount.setCity(userLocation);
+                        }
+                        System.out.println("City changed successfully!");
+                        storingData(masterData, data, idData, idHistory);
+                        break;
+
                     case 99: // Log out
+                        storingData(masterData, data, idData, idHistory);
                         loginFlag = false;
                         break;
 
@@ -365,7 +373,8 @@ public class Main {
                     System.out.println(" 9. Upgrade my account");
                 else
                     System.out.println(" 9. Downgrade my account");
-                System.out.println("\n\t\t\t\t\t99. Logout\n");
+                System.out.println("\n--------------------");
+                System.out.println("99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
@@ -461,6 +470,7 @@ public class Main {
                             userAccount.setCity(userLocation);
                         }
                         System.out.println("City changed successfully!");
+                        storingData(masterData, data, idData, idHistory);
                         break;
 
                     case 9: // upgrade or downgrade account to premium

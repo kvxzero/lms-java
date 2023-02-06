@@ -78,9 +78,8 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         librariesList(libraries);
         System.out.print("\nChoose index of the library to be deleted: ");
         int index = Main.getInput();
-        index--;
-        if (index < libraries.size()) {
-            Main.selectedLibrary = libraries.get(index);
+        if (index <= libraries.size()) {
+            Main.selectedLibrary = libraries.get(index - 1);
             ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
             while (bookReader.hasNext()) {
                 Main.searchedBook = (Book) bookReader.next();
@@ -98,11 +97,14 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to display all books
     public void displayBooks(@NotNull ArrayList<Library> libraries, ArrayList<User> users) {
         if (searchLibrary(libraries)) {
+            int index = 1;
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
             ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
             while (bookReader.hasNext()) {
                 Main.searchedBook = (Book) bookReader.next();
+                System.out.print(index + ". ");
                 displayAvailability();
+                index++;
             }
         }
     }
@@ -176,12 +178,11 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         librariesList(libraries);
         System.out.print("\nChoose index of the library to be managed: ");
         int index = Main.getInput();
-        index--;
         if (index > libraries.size()) {
             System.out.println("!-- Enter a valid input --!");
             return false;
         }
-        Main.selectedLibrary = libraries.get(index);
+        Main.selectedLibrary = libraries.get(index - 1);
         return true;
     }
     public boolean checkBook() {
@@ -240,22 +241,15 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
     public void deleteBook(ArrayList<Library> libraries, ArrayList<User> users) {
         displayBooks(libraries, users);
-        System.out.print("\nEnter the book to be deleted: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
-        while (Main.dbReader.hasNext()) {
-            Main.searchedBook = (Book) Main.dbReader.next();
-            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
-                    returnBook(users);
-                }
-                Main.dbReader.remove();
-                System.out.println("Deleted from " + Main.selectedLibrary + " successfully");
-                Main.searchFlag = true;
-            }
+        System.out.print("\nChoose the index of the book to be deleted: ");
+        int index = Main.getInput();
+        if (index != -9999 && index < Main.selectedLibrary.getBooks().size()) {
+            Main.searchedBook = Main.selectedLibrary.getBooks().get(index - 1);
+            System.out.println("Successfully deleted " + Main.searchedBook.getName() + " from " + Main.selectedLibrary.getName() + "!");
+            Main.selectedLibrary.getBooks().remove(Main.searchedBook);
         }
-        if (!Main.searchFlag)
-            System.out.println("Requested book doesn't exist in the records");
+        else
+            System.out.println("!-- Enter a valid input --!");
     }
 
     // case 7: view borrowing history
@@ -276,31 +270,20 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 8: update number of copies
     // function to change the number of copies left in the library
-    public void updateCopies() {
-        System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-        ListIterator bookReader = Main.selectedLibrary.getBooks().listIterator();
-        while (bookReader.hasNext()) {
-            Main.searchedBook = (Book) bookReader.next();
-            displayAvailability();
+    public void updateCopies(ArrayList<Library> libraries, ArrayList<User> users) {
+        displayBooks(libraries, users);
+        System.out.print("\nChoose the index of the book to be updated: ");
+        int index = Main.getInput();
+        if (index != -9999 && index <= Main.selectedLibrary.getBooks().size()) {
+            Main.searchedBook = Main.selectedLibrary.getBooks().get(index - 1);
+            System.out.println("\nUpdating: " + Main.searchedBook.getName());
+            System.out.println("Current stock left: " + Main.searchedBook.getStock());
+            System.out.print("\nEnter the updated stock: ");
+            Main.searchedBook.setStock(Main.sc.nextInt());
+            System.out.println("Updated successfully");
         }
-        Main.searchFlag = false;
-        System.out.print("\nEnter the book to be updated: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = Main.selectedLibrary.getBooks().listIterator();
-        while (Main.dbReader.hasNext()) {
-            Main.searchedBook = (Book) Main.dbReader.next();
-            if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
-                System.out.println("\nUpdating: " + Main.searchedBook.getName());
-                System.out.println("Current stock left: " + Main.searchedBook.getStock());
-                System.out.print("\nEnter the updated stock: ");
-                Main.searchedBook.setStock(Main.sc.nextInt());
-                System.out.println("Updated successfully");
-                Main.searchFlag = true;
-                break;
-            }
-        }
-        if (!Main.searchFlag)
-            System.out.println("Book doesn't exist in the records");
+        else
+            System.out.println("!-- Enter a valid input --!");
     }
 
     // case 9: list all the users
@@ -339,23 +322,17 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
         Main.searchFlag = false;
         usersList(users, libraries);
-        System.out.print("\nEnter the user to be deleted: ");
-        searchQuery = Main.sc.next();
-        Main.dbReader = users.listIterator();
-        while (Main.dbReader.hasNext()) {
-            Main.userAccount = (User) Main.dbReader.next();
-            if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)
-                    || Main.userAccount.getPhNo().equals(searchQuery)) {
-                if (!Main.userAccount.hasNoBooks())
-                    Main.userAccount.returnAll(libraries);
-                Main.dbReader.remove();
-                System.out.println("Deleted successfully");
-                Main.searchFlag = true;
-                break;
-            }
+        System.out.print("\nChoose the index of the user to be deleted: ");
+        int index = Main.getInput();
+        if (index != -9999 && index <= users.size()) {
+            Main.userAccount = users.get(index - 1);
+            if (!Main.userAccount.hasNoBooks())
+                Main.userAccount.returnAll(libraries);
+            users.remove(Main.userAccount);
+            System.out.println("Deleted successfully");
         }
-        if (!Main.searchFlag)
-            System.out.println("User doesn't exist in the records");
+        else
+            System.out.println("!-- Enter a valid input --!");
     }
 
     // case 12: approve requests

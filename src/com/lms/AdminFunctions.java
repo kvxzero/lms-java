@@ -32,7 +32,7 @@ public interface AdminFunctions {
     void viewBorrowingHistory(ArrayList<String> borrowedHistory);
 
     // case 8: update the stock of existing books
-    void updateCopies();
+    void updateCopies(ArrayList<Library> libraries, ArrayList<User> users);
 
     // case 9: list all the users
     void usersList(ArrayList<User> users, ArrayList<Library> libraries);
