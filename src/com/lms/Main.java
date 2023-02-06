@@ -186,7 +186,7 @@ public class Main {
             }
             do {
                 // looped admin dashboard
-                System.out.println("\n--- Admin dashboard ---");
+                System.out.println("\n// Admin dashboard //\n");
                 System.out.println("--- Manage libraries ---");
                 System.out.println("0. View libraries");
                 System.out.println("1. Add a new library");
@@ -196,10 +196,10 @@ public class Main {
                 System.out.println("4. Search books\t\t\t 7. Books history");
                 System.out.println("5. Add books\t\t\t 8. Update book stock");
                 System.out.println("\n--- Manage users ---");
-                System.out.println("9. View users\t\t\t 13. View admins");
-                System.out.println("10. Add new user\t\t 14. Add new admin");
-                System.out.println("11. Remove a user\t\t 15. Remove an admin");
-                System.out.println("12. Manage requests\t\t 16. Update current city");
+                System.out.println("9. View users\t\t\t\t 13. View admins");
+                System.out.println("10. Add new user\t\t\t 14. Add new admin");
+                System.out.println("11. Remove a user\t\t\t 15. Remove an admin");
+                System.out.println("12. Subscription requests\t 16. Update current city");
                 System.out.println("\n--------------------");
                 System.out.println("99. Logout\n");
 
@@ -363,7 +363,7 @@ public class Main {
 
             do {
                 // looped user dashboard
-                System.out.println("\n--- User dashboard ---\n");
+                System.out.println("\n// User dashboard //\n");
                 System.out.println("0. Display all books\t\t 5. Libraries in my location");
                 System.out.println("1. Search for books\t\t\t 6. Change password");
                 System.out.println("2. Borrow a book\t\t\t 7. View my history");
@@ -492,16 +492,16 @@ public class Main {
                             System.out.println("Downgraded account successfully");
                         } else {
                             if (requestList.indexOf(userAccount.getUsername()
-                                    + ": Premium account request opened ~" + userAccount.getCity()) != -1) {
+                                    + ": Premium account request opened (" + userAccount.getCity() + ")") != -1) {
                                 System.out.println("Your request is still pending, Please be patient.");
                                 break;
                             } else if (requestList.indexOf(userAccount.getUsername()
-                                    + ": Premium account request denied ~" + userAccount.getCity()) != -1) {
+                                    + ": Premium account request denied (" + userAccount.getCity() + ")") != -1) {
                                 System.out.println("Your request has been denied!");
                                 System.out.println("Wait until admin reconsiders your request");
                                 break;
                             }
-                            requestList.add(userAccount.getUsername() + ": Premium account request opened ~" + userAccount.getCity());
+                            requestList.add(userAccount.getUsername() + ": Premium account request opened (" + userAccount.getCity() + ")");
                             System.out.println("Request raised successfully!");
                         }
                         storingData(masterData, data, idData, idHistory);

@@ -338,71 +338,67 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 12: approve requests
     // function to read the requests AL and handle the requests
     public void approveRequests(ArrayList<User> users, ArrayList<String> requestList) {
-        Main.dbReader = requestList.listIterator();
-        while (Main.dbReader.hasNext()) {
-            String line = (String) Main.dbReader.next();
-            int i = line.indexOf('~');
-            searchQuery = line.substring(i + 1, line.length());
-            System.out.println("> " + line.substring(0, i));
-        }
         if (!requestList.isEmpty()) {
-            System.out.print("Choose the request to be managed: ");
-            searchQuery = Main.sc.next();
-            Main.searchFlag = false;
             Main.dbReader = requestList.listIterator();
+            int index = 1;
             while (Main.dbReader.hasNext()) {
                 String line = (String) Main.dbReader.next();
-                int i = line.indexOf(':');
-                String requestUser = line.substring(0, i);
-                if (requestUser.equalsIgnoreCase(searchQuery)) {
-                    int j = line.indexOf('~');
-                    if (line.substring(j - 7, j - 1).equalsIgnoreCase("Denied")) {
-                        Main.searchFlag = false;
-                        System.out.println("Already denied the request!");
-                        System.out.println("Remove request from the list? (Y/N)");
-                        System.out.print("Choice: ");
-                        String input = Main.sc.next();
-                        if (input.equalsIgnoreCase("y")) {
-                            requestList.remove(line);
-                            System.out.println("Removed the request");
-                        } else {
-                            System.out.println("No actions performed");
-                        }
-                        break;
-                    } else
-                        Main.searchFlag = true;
-                }
+                System.out.println(index + ". " + line);
             }
-            Main.dbReader = users.listIterator();
-            while (Main.dbReader.hasNext()) {
-                if (!Main.searchFlag)
-                    break;
-                Main.userAccount = (User) Main.dbReader.next();
-                if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
-                    Main.searchFlag = true;
-                    String request = Main.userAccount.getUsername() + ": Premium account request opened ~" + Main.userAccount.getCity();
-                    System.out.println("Chosen User Request: " + Main.userAccount);
-                    System.out.println("1. Approve");
-                    System.out.println("2. Deny");
+            System.out.print("Choose the subscription request to be managed: ");
+            index = Main.getInput();
+            if (index != -9999 && index <= requestList.size()) {
+                Main.searchFlag = false;
+                String line = requestList.get(index - 1);
+                int i = line.indexOf(':');
+                searchQuery = line.substring(0, i);
+                int j = line.indexOf('(');
+                if (line.substring(j - 7, j - 1).equalsIgnoreCase("Denied")) {
+                    Main.searchFlag = false;
+                    System.out.println("Already denied the request!");
+                    System.out.println("Remove request from the list? (Y/N)");
                     System.out.print("Choice: ");
-                    int choice = Main.sc.nextInt();
-                    if (choice == 1) {
-                        requestList.remove(request);
-                        Main.userAccount.upgradeAccount();
-                        System.out.println("Approved successfully");
-                    } else if (choice == 2) {
-                        requestList.remove(request);
-                        requestList.add(Main.userAccount.getUsername() + ": Premium account request denied ~" + Main.userAccount.getCity());
-                        System.out.println("Request has been denied");
+                    String input = Main.sc.next();
+                    if (input.equalsIgnoreCase("y")) {
+                        requestList.remove(line);
+                        System.out.println("Removed the request");
+                    } else {
+                        System.out.println("No actions performed");
+                    }
+                } else
+                    Main.searchFlag = true;
+
+                Main.dbReader = users.listIterator();
+                while (Main.dbReader.hasNext()) {
+                    if (!Main.searchFlag)
+                        break;
+                    Main.userAccount = (User) Main.dbReader.next();
+                    if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
+                        Main.searchFlag = true;
+                        System.out.println("Chosen User Request: " + Main.userAccount);
+                        System.out.println("1. Approve");
+                        System.out.println("2. Deny");
+                        System.out.print("Choice: ");
+                        int choice = Main.sc.nextInt();
+                        if (choice == 1) {
+                            requestList.remove(index - 1);
+                            Main.userAccount.upgradeAccount();
+                            System.out.println("Approved successfully");
+                        } else if (choice == 2) {
+                            requestList.remove(index - 1);
+                            requestList.add(Main.userAccount.getUsername() + ": Premium account request denied ("
+                                    + Main.userAccount.getCity() + ")");
+                            System.out.println("Request has been denied");
+                        }
                     }
                 }
             }
-            if (Main.searchFlag = false) {
-                System.out.println("-- Invalid request selected! --");
+            else {
+                System.out.println("!-- Enter a valid input --!");
             }
         }
         else {
-            System.out.println("-- No requests at the moment ^^ --");
+            System.out.println("-- No subscription requests at the moment ^^ --");
         }
     }
 
