@@ -108,20 +108,15 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 4: search books
     // functions to search books along with borrowers name
     public void searchBooks(@NotNull ArrayList<Library> libraries, int option) {
-        switch(option) {
-            case 1:
-                searchByName(libraries);
-                break;
-            case 2:
-                searchByGenre(libraries);
-                break;
-            case 3:
+        switch (option) {
+            case 1 -> searchByName(libraries);
+            case 2 -> searchByGenre(libraries);
+            case 3 -> {
                 searchByName(libraries);
                 System.out.println();
                 searchByGenre(libraries);
-                break;
-            default:
-                System.out.println("!-- Enter a valid input --!");
+            }
+            default -> System.out.println("!-- Enter a valid input --!");
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
