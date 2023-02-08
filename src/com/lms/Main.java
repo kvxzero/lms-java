@@ -35,7 +35,7 @@ public class Main {
     // variables to read thru .dat
     private static ListIterator displayReader;
 
-    // function to handle exception handling while getting menu input
+    // function to handle exception handling while getting integer input
     public static int getInput() {
         int choice;
         try {

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 
 public class User extends Human implements Serializable, UserFunctions {
