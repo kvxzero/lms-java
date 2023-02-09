@@ -170,8 +170,7 @@ public class Main {
             }
         } while (!loginFlag);
         if (accountType == AccountType.ADMIN) {
-            // get the logged-in user account for this session via ID
-            // convert the below code to a function that facilitates both admins and users
+            // get the logged-in admin account for this session via ID
             displayReader = admins.listIterator();
             while (displayReader.hasNext()) {
                 adminAccount = (Admin) displayReader.next();
@@ -324,7 +323,6 @@ public class Main {
 
         else {
             // get the logged-in user account for this session via ID
-            // convert the below code to a function that facilitates both admins and users
             displayReader = users.listIterator();
             while (displayReader.hasNext()) {
                 userAccount = (User) displayReader.next();
