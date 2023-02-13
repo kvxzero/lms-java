@@ -320,7 +320,6 @@ public class Main {
                 }
             } while (loginFlag);
         }
-
         else {
             // get the logged-in user account for this session via ID
             displayReader = users.listIterator();
