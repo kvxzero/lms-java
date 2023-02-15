@@ -58,7 +58,6 @@ public class Main {
 
         // variables for various functions
         Admin adminAccount = null;
-        ListIterator displayReader;
         int choice;
         sc.useDelimiter("\n");
 
@@ -162,9 +161,8 @@ public class Main {
         } while (!loginFlag);
         if (accountType == AccountType.ADMIN) {
             // get the logged-in admin account for this session via ID
-            displayReader = admins.listIterator();
-            while (displayReader.hasNext()) {
-                adminAccount = (Admin) displayReader.next();
+            for (Admin admin : admins) {
+                adminAccount = admin;
                 if (adminAccount.getUsername().equals(admins.get(loginId).getUsername())) {
                     System.out.println("\nWelcome " + adminAccount);
                     break;
@@ -313,9 +311,8 @@ public class Main {
         }
         else {
             // get the logged-in user account for this session via ID
-            displayReader = users.listIterator();
-            while (displayReader.hasNext()) {
-                userAccount = (User) displayReader.next();
+            for (User user : users) {
+                userAccount = user;
                 if (userAccount.getUsername().equals(users.get(loginId).getUsername())) {
                     System.out.println("\nWelcome " + userAccount);
                     break;
