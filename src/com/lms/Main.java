@@ -139,7 +139,7 @@ public class Main {
                     storingData(masterData, data, idData, idHistory);
                 }
                 case 3 -> {
-                    if (loginObject.validateInformation(users)) {
+                    if (loginObject.validateInformation(users, true)) {
                         users.add(new User(userName, userPassword, userLocation, userEmail, userPhNo, userType));
                         System.out.println("Signed up successfully! ^^");
                         storingData(masterData, data, idData, idHistory);
@@ -150,7 +150,7 @@ public class Main {
                 case 4 -> {
                     System.out.println("!-- WARNING --!");
                     System.out.println("!-- PROCEED WITH CAUTION --!");
-                    if (loginObject.validateInformation(admins)) {
+                    if (loginObject.validateInformation(admins, false)) {
                         admins.add(new Admin(userName, userPassword, userLocation, userEmail, userPhNo));
                         System.out.println("New admin created successfully!");
                         storingData(masterData, data, idData, idHistory);

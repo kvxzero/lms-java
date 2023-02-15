@@ -274,29 +274,34 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 9: list all the users
     // function to list all available users
     public void usersList(ArrayList<User> users, ArrayList<Library> libraries) {
-        int dbIndex = 1;
-        StringBuilder bookStat;
-        System.out.println("List of all the available users:");
-        for (User user : users) {
-            Main.userAccount = user;
-            if (Main.userAccount.getBorrowedBookId() == -9999)
-                bookStat = new StringBuilder("Currently no borrowed books");
-            else if (Main.userAccount.getType() == Main.AccountType.USER)
-                bookStat = new StringBuilder("Currently borrowed: " +
-                        Main.userAccount.getBorrowedBook().get(0).getName());
-            else {
-                bookStat = new StringBuilder("Currently borrowed: ");
-                int len = Main.userAccount.getBorrowedBook().size();
-                for (Book book : Main.userAccount.getBorrowedBook()) {
-                    bookStat.append(book.getName());
-                    --len;
-                    if (len > 0) {
-                        bookStat.append(" | ");
+        if (users.size() != 0) {
+            int dbIndex = 1;
+            StringBuilder bookStat;
+            System.out.println("List of all the available users:");
+            for (User user : users) {
+                Main.userAccount = user;
+                if (Main.userAccount.getBorrowedBookId() == -9999)
+                    bookStat = new StringBuilder("Currently no borrowed books");
+                else if (Main.userAccount.getType() == Main.AccountType.USER)
+                    bookStat = new StringBuilder("Currently borrowed: " +
+                            Main.userAccount.getBorrowedBook().get(0).getName());
+                else {
+                    bookStat = new StringBuilder("Currently borrowed: ");
+                    int len = Main.userAccount.getBorrowedBook().size();
+                    for (Book book : Main.userAccount.getBorrowedBook()) {
+                        bookStat.append(book.getName());
+                        --len;
+                        if (len > 0) {
+                            bookStat.append(" | ");
+                        }
                     }
                 }
+                System.out.println(dbIndex + ". " + Main.userAccount + " | " + bookStat);
+                dbIndex++;
             }
-            System.out.println(dbIndex + ". " + Main.userAccount + " | " + bookStat);
-            dbIndex++;
+        }
+        else {
+            System.out.println("!-- No registered users in the system --!");
         }
     }
 

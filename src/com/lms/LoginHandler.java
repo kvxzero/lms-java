@@ -111,7 +111,7 @@ public class LoginHandler {
             Main.userType = Main.AccountType.PRO;
         return false;
      }
-    public boolean validateInformation(ArrayList users) {
+    public boolean validateInformation(ArrayList users, boolean flag) {
         if (validatePhoneNumber(users)) {
             return false;
         }
@@ -124,8 +124,10 @@ public class LoginHandler {
         if (!validatePassword()) {
             return false;
         }
-        if (validateType()) {
-            return false;
+        if (flag) {
+            if (validateType()) {
+                return false;
+            }
         }
         if (!validateCity()) {
             return false;
