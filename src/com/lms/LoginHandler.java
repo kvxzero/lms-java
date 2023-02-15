@@ -9,8 +9,7 @@ public class LoginHandler {
     // vars for login handling
     private final ArrayList<User> users;
     private final ArrayList<Admin> admins;
-    // var for iterating the arraylist
-//    private static ListIterator dbReader;
+
     // constructor for the object
     LoginHandler(ArrayList<User> users, ArrayList<Admin> admins) {
         this.users = users;

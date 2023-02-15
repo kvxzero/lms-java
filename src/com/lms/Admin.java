@@ -42,6 +42,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
 
     // implements AdminFunctions
+
     // Managing libraries //
     // case 0: list all libraries
     // function to list all libraries
@@ -70,6 +71,21 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 2: delete a library
     // function to delete a library location
+    private void returnBook(ArrayList<User> users) {
+        if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
+            ArrayList<Integer> borrowedUsers = Main.searchedBook.getBorrowedUser();
+            ListIterator<Integer> borrowers = borrowedUsers.listIterator();
+            while (true) {
+                try {
+                    Main.userAccount = users.get(borrowers.next() - 1);
+                    int index = Main.userAccount.getBorrowedBook().indexOf(Main.searchedBook);
+                    Main.userAccount.getBorrowedBook().remove(index);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+    }
     public void deleteLibrary (ArrayList<Library> libraries, ArrayList<User> users) {
         librariesList(libraries);
         System.out.print("\nChoose index of the library to be deleted: ");
@@ -209,21 +225,6 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 6: delete a book
     // function to delete a book (also removes the user associated with the book)
-    private void returnBook(ArrayList<User> users) {
-        if (!Main.searchedBook.getBorrowedUser().isEmpty()) {
-            ArrayList<Integer> borrowedUsers = Main.searchedBook.getBorrowedUser();
-            ListIterator<Integer> borrowers = borrowedUsers.listIterator();
-            while (true) {
-                try {
-                    Main.userAccount = users.get(borrowers.next() - 1);
-                    int index = Main.userAccount.getBorrowedBook().indexOf(Main.searchedBook);
-                    Main.userAccount.getBorrowedBook().remove(index);
-                } catch (Exception e) {
-                    break;
-                }
-            }
-        }
-    }
     public void deleteBook(ArrayList<Library> libraries, ArrayList<User> users) {
         displayBooks(libraries, users);
         System.out.print("\nChoose the index of the book to be deleted: ");
@@ -274,19 +275,24 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to list all available users
     public void usersList(ArrayList<User> users, ArrayList<Library> libraries) {
         int dbIndex = 1;
-        String bookStat;
+        StringBuilder bookStat;
         System.out.println("List of all the available users:");
         for (User user : users) {
             Main.userAccount = user;
             if (Main.userAccount.getBorrowedBookId() == -9999)
-                bookStat = "Currently no borrowed books";
+                bookStat = new StringBuilder("Currently no borrowed books");
             else if (Main.userAccount.getType() == Main.AccountType.USER)
-                bookStat = "Currently borrowed: " +
-                        Main.userAccount.getBorrowedBook().get(0).getName();
+                bookStat = new StringBuilder("Currently borrowed: " +
+                        Main.userAccount.getBorrowedBook().get(0).getName());
             else {
-                bookStat = "Currently borrowed: ";
+                bookStat = new StringBuilder("Currently borrowed: ");
+                int len = Main.userAccount.getBorrowedBook().size();
                 for (Book book : Main.userAccount.getBorrowedBook()) {
-                    bookStat = bookStat + book.getName() + " | ";
+                    bookStat.append(book.getName());
+                    --len;
+                    if (len > 0) {
+                        bookStat.append(" | ");
+                    }
                 }
             }
             System.out.println(dbIndex + ". " + Main.userAccount + " | " + bookStat);
