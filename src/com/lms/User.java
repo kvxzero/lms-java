@@ -70,7 +70,7 @@ public class User extends Human implements Serializable, UserFunctions {
             System.out.println("None");
             return;
         }
-        ListIterator dbReader = borrowedBook.listIterator();
+        ListIterator<Book> dbReader = borrowedBook.listIterator();
         while (dbReader.hasNext()) {
             try {
                 System.out.println(index + 1 + ". " + borrowedBook.get(index).getName());
@@ -95,9 +95,8 @@ public class User extends Human implements Serializable, UserFunctions {
     }
     public void displayBooks(@NotNull ArrayList<Library> libraries) {
         Main.searchFlag = false;
-        ListIterator dbReader = libraries.listIterator();
-        while (dbReader.hasNext()) {
-            Main.selectedLibrary = (Library) dbReader.next();
+        for (Library library : libraries) {
+            Main.selectedLibrary = library;
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
                 Main.searchFlag = true;
@@ -131,11 +130,11 @@ public class User extends Human implements Serializable, UserFunctions {
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
-        ListIterator dbReader = libraries.listIterator();
+        ListIterator<Library> dbReader = libraries.listIterator();
         System.out.println("--- Searching by genre ---");
         while (dbReader.hasNext()) {
             Main.searchFlag = false;
-            Main.selectedLibrary = (Library) dbReader.next();
+            Main.selectedLibrary = dbReader.next();
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
                 for (Book book : Main.selectedLibrary.getBooks()) {
@@ -151,11 +150,10 @@ public class User extends Human implements Serializable, UserFunctions {
         }
     }
     private void searchByName(@NotNull ArrayList<Library> libraries) {
-        ListIterator dbReader = libraries.listIterator();
         System.out.println("--- Searching by name ---");
-        while (dbReader.hasNext()) {
+        for (Library library : libraries) {
             Main.searchFlag = false;
-            Main.selectedLibrary = (Library) dbReader.next();
+            Main.selectedLibrary = library;
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
                 for (Book book : Main.selectedLibrary.getBooks()) {
@@ -183,9 +181,8 @@ public class User extends Human implements Serializable, UserFunctions {
             for (Library library : libraries) {
                 Main.selectedLibrary = library;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                    ListIterator dbReader = Main.selectedLibrary.getBooks().listIterator();
-                    while (dbReader.hasNext()) {
-                        Main.searchedBook = (Book) dbReader.next();
+                    for (Book book : Main.selectedLibrary.getBooks()) {
+                        Main.searchedBook = book;
                         if (Main.searchedBook.getName().equalsIgnoreCase(searchQuery)) {
                             if (Main.searchedBook.setBorrowedUser(this)) {
                                 Main.userAccount.setBorrowedBook(Main.searchedBook);
@@ -218,14 +215,12 @@ public class User extends Human implements Serializable, UserFunctions {
         if (this.getType() == Main.AccountType.PRO) {
             this.showBorrowedBooks();
             int dbIndex = 0;
-            while (true) {
+            do {
                 Main.searchedBook = getBorrowedBook().get(dbIndex);
                 if (this.returnBook(dbIndex)) {
                     Main.searchedBook.bookReturned(this);
                 }
-                if (getBorrowedBook().size() == 0)
-                    break;
-            }
+            } while (getBorrowedBook().size() != 0);
             System.out.println("\nReturned all of the borrowed books successfully!");
         }
     }
@@ -282,10 +277,10 @@ public class User extends Human implements Serializable, UserFunctions {
         else {
             System.out.println("Current book: " + borrowedBook.get(0));
         }
-        ListIterator dbReader = requestList.listIterator();
+        ListIterator<String> dbReader = requestList.listIterator();
         String line;
         while (dbReader.hasNext()) {
-            line = (String) dbReader.next();
+            line = dbReader.next();
             int i = line.indexOf(':');
             searchQuery = line.substring(0, i);
             if (searchQuery.equalsIgnoreCase(this.getUsername())) {
@@ -298,20 +293,18 @@ public class User extends Human implements Serializable, UserFunctions {
 
     // case 5: nearby libraries
     // function to find out nearby libraries
-    public void nearbyLibraries(ArrayList<Library> locations) {
+    public void nearbyLibraries(ArrayList<Library> libraries) {
         Main.searchFlag = false;
         int dbIndex = 1;
-        ListIterator dbReader = locations.listIterator();
-        while(dbReader.hasNext()) {
-            Main.selectedLibrary = (Library) dbReader.next();
+        for (Library library : libraries) {
+            Main.selectedLibrary = library;
             if (this.getType() == Main.AccountType.USER) {
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                     Main.searchFlag = true;
                     System.out.println(dbIndex + ". " + Main.selectedLibrary);
                     dbIndex++;
                 }
-            }
-            else {
+            } else {
                 Main.searchFlag = true;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                     System.out.println(dbIndex + ". " + Main.selectedLibrary + " (Nearby)");
@@ -350,10 +343,8 @@ public class User extends Human implements Serializable, UserFunctions {
         Main.searchFlag = false;
         int dbIndex;
         System.out.println(this.getUsername() + "'s borrowing history:");
-        ListIterator dbReader = history.listIterator();
         dbIndex = 1;
-        while (dbReader.hasNext()) {
-            String line = (String) dbReader.next();
+        for (String line : history) {
             if (line.indexOf(this.getUsername()) == 0) {
                 System.out.println(dbIndex + ". " + line);
                 dbIndex++;

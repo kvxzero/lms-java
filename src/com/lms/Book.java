@@ -17,7 +17,6 @@ public class Book implements Serializable {
     private static int numOfBooks = 0;
     private String name, author;
     private Library library;
-//    private String genre;
     private genreLists genre;
     private int stock;
     private ArrayList<Integer> borrowedUser = new ArrayList<>();
