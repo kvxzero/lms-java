@@ -30,9 +30,6 @@ public class Main {
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
 
-    // variables to read thru .dat
-    private static ListIterator displayReader;
-
     // function to handle exception while getting integer input
     public static int getInput() {
         int choice;
@@ -67,6 +64,7 @@ public class Main {
         ObjectInputStream loadData;
 
         // variables for various functions
+        ListIterator displayReader;
         int choice;
         sc.useDelimiter("\n");
 
