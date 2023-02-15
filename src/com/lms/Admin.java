@@ -13,9 +13,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     private static int numOfAdmins = 0;
     // variables for functions
     private String searchQuery;
-    public void setSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
+    private ListIterator dbReader;
     Admin(String username, String password, cityList city, String email, String phNo) {
         super(username, password, city, email, phNo);
         setId(numOfAdmins+1);
@@ -23,6 +21,9 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         setType(Main.AccountType.ADMIN);
     }
     // necessary functions
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
     @Override
     public String toString() {
         if (this.getUsername().equals("")) {
@@ -47,10 +48,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to list all libraries
     public void librariesList(ArrayList<Library> libraries) {
         int dbIndex = 1;
-        Main.dbReader = libraries.listIterator();
+        dbReader = libraries.listIterator();
         System.out.println("List of all the managing libraries:");
-        while (Main.dbReader.hasNext()) {
-            Library library = (Library) Main.dbReader.next();
+        while (dbReader.hasNext()) {
+            Library library = (Library) dbReader.next();
             System.out.println(dbIndex + ". " + library);
                 dbIndex++;
         }
@@ -120,11 +121,11 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
-        Main.dbReader = libraries.listIterator();
+        dbReader = libraries.listIterator();
         System.out.println("--- Searching by genre ---");
-        while (Main.dbReader.hasNext()) {
+        while (dbReader.hasNext()) {
             Main.searchFlag = false;
-            Main.selectedLibrary = (Library) Main.dbReader.next();
+            Main.selectedLibrary = (Library) dbReader.next();
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
             for (Book book : Main.selectedLibrary.getBooks()) {
                 Main.searchedBook = book;
@@ -138,11 +139,11 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         }
     }
     private void searchByName(@NotNull ArrayList<Library> libraries) {
-        Main.dbReader = libraries.listIterator();
+        dbReader = libraries.listIterator();
         System.out.println("--- Searching by name ---");
-        while (Main.dbReader.hasNext()) {
+        while (dbReader.hasNext()) {
             Main.searchFlag = false;
-            Main.selectedLibrary = (Library) Main.dbReader.next();
+            Main.selectedLibrary = (Library) dbReader.next();
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
             for (Book book : Main.selectedLibrary.getBooks()) {
                 Main.searchedBook = book;
@@ -244,10 +245,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public void viewBorrowingHistory(ArrayList<String> history) {
         int dbIndex;
         System.out.println("Borrowing history:");
-        Main.dbReader = history.listIterator();
+        dbReader = history.listIterator();
         dbIndex = 1;
-        while (Main.dbReader.hasNext()) {
-            System.out.println(dbIndex + ". " + Main.dbReader.next());
+        while (dbReader.hasNext()) {
+            System.out.println(dbIndex + ". " + dbReader.next());
             dbIndex++;
         }
         if (history.isEmpty()) {
@@ -278,10 +279,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     public void usersList(ArrayList<User> users, ArrayList<Library> libraries) {
         int dbIndex = 1;
         String bookStat;
-        Main.dbReader = users.listIterator();
+        dbReader = users.listIterator();
         System.out.println("List of all the available users:");
-        while (Main.dbReader.hasNext()) {
-            Main.userAccount = (User) Main.dbReader.next();
+        while (dbReader.hasNext()) {
+            Main.userAccount = (User) dbReader.next();
             if(Main.userAccount.getBorrowedBookId() == -9999)
                 bookStat = "Currently no borrowed books";
             else
@@ -324,10 +325,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to read the requests AL and handle the requests
     public void approveRequests(ArrayList<User> users, ArrayList<String> requestList) {
         if (!requestList.isEmpty()) {
-            Main.dbReader = requestList.listIterator();
+            dbReader = requestList.listIterator();
             int index = 1;
-            while (Main.dbReader.hasNext()) {
-                String line = (String) Main.dbReader.next();
+            while (dbReader.hasNext()) {
+                String line = (String) dbReader.next();
                 System.out.println(index + ". " + line);
             }
             System.out.print("Choose the subscription request to be managed: ");
@@ -353,11 +354,11 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                 } else
                     Main.searchFlag = true;
 
-                Main.dbReader = users.listIterator();
-                while (Main.dbReader.hasNext()) {
+                dbReader = users.listIterator();
+                while (dbReader.hasNext()) {
                     if (!Main.searchFlag)
                         break;
-                    Main.userAccount = (User) Main.dbReader.next();
+                    Main.userAccount = (User) dbReader.next();
                     if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
                         Main.searchFlag = true;
                         System.out.println("Chosen User Request: " + Main.userAccount);
@@ -391,10 +392,10 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // function to list all available admins
     public void adminsList(ArrayList<Admin> admins) {
         int dbIndex = 1;
-        Main.dbReader = admins.listIterator();
+        dbReader = admins.listIterator();
         System.out.println("List of all the available admins:");
-        while (Main.dbReader.hasNext()) {
-            System.out.println(dbIndex + ". " + Main.dbReader.next());
+        while (dbReader.hasNext()) {
+            System.out.println(dbIndex + ". " + dbReader.next());
             dbIndex++;
         }
     }
@@ -408,9 +409,9 @@ public class Admin extends Human implements Serializable, AdminFunctions {
         Main.searchFlag = false;
         System.out.print("Enter the admin to be deleted: ");
         searchQuery = Main.sc.next();
-        Main.dbReader = admins.listIterator();
-        while (Main.dbReader.hasNext()) {
-            Admin deleteAdminAcc = (Admin) Main.dbReader.next();
+        dbReader = admins.listIterator();
+        while (dbReader.hasNext()) {
+            Admin deleteAdminAcc = (Admin) dbReader.next();
             if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)
                     || deleteAdminAcc.getPhNo().equals(searchQuery)) {
                 Main.searchFlag = true;
@@ -418,7 +419,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                     System.out.println("You cannot delete your own account.");
                     break;
                 }
-                Main.dbReader.remove();
+                dbReader.remove();
                 System.out.println("Deleted successfully");
             }
         }

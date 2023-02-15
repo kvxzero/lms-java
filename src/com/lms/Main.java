@@ -18,7 +18,6 @@ public class Main {
     protected static Admin adminAccount;
     protected static User userAccount;
     protected static Library selectedLibrary;
-    protected static ListIterator dbReader;
 
     // id of the logged-in user
     protected static int loginId;
@@ -35,7 +34,7 @@ public class Main {
     // variables to read thru .dat
     private static ListIterator displayReader;
 
-    // function to handle exception handling while getting integer input
+    // function to handle exception while getting integer input
     public static int getInput() {
         int choice;
         try {
