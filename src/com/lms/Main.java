@@ -12,7 +12,7 @@ public class Main {
     // public scanner for all the functions
     public static Scanner sc = new Scanner(System.in);
 
-    // class objects for data inputs
+    // class objects for data inputs and handling
     protected static Book searchedBook;
     protected static Admin adminAccount;
     protected static User userAccount;
