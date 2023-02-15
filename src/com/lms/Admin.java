@@ -350,7 +350,6 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                         break;
                     Main.userAccount = user;
                     if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
-                        searchFlag = true;
                         System.out.println("Chosen User Request: " + Main.userAccount);
                         System.out.println("1. Approve");
                         System.out.println("2. Deny");
