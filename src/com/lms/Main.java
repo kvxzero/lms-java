@@ -25,7 +25,7 @@ public class Main {
     protected static Main.AccountType userType;
 
     // flags for loops
-    protected static boolean searchFlag;
+//    protected static boolean searchFlag;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
@@ -241,7 +241,6 @@ public class Main {
                     }
                     case 5 -> { // Add books, ADMIN CASE
                         int multipleBooks;
-                        searchFlag = false;
                         if (!adminAccount.searchLibrary(libraries)) {
                             break;
                         }

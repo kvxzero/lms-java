@@ -94,12 +94,12 @@ public class User extends Human implements Serializable, UserFunctions {
         }
     }
     public void displayBooks(@NotNull ArrayList<Library> libraries) {
-        Main.searchFlag = false;
+        boolean searchFlag = false;
         for (Library library : libraries) {
             Main.selectedLibrary = library;
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
-                Main.searchFlag = true;
+                searchFlag = true;
                 if (Main.selectedLibrary.getBooks().size() == 0) {
                     System.out.println("-- No books --");
                     continue;
@@ -110,7 +110,7 @@ public class User extends Human implements Serializable, UserFunctions {
                 }
             }
         }
-        if (!Main.searchFlag) {
+        if (!searchFlag) {
             System.out.println("--- No libraries found in your location! ---");
         }
     }
@@ -130,29 +130,30 @@ public class User extends Human implements Serializable, UserFunctions {
         }
     }
     private void searchByGenre(ArrayList<Library> libraries) {
-        ListIterator<Library> dbReader = libraries.listIterator();
         System.out.println("--- Searching by genre ---");
-        while (dbReader.hasNext()) {
-            Main.searchFlag = false;
-            Main.selectedLibrary = dbReader.next();
+        boolean searchFlag;
+        for (Library library : libraries) {
+            searchFlag = false;
+            Main.selectedLibrary = library;
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
                 for (Book book : Main.selectedLibrary.getBooks()) {
                     Main.searchedBook = book;
                     if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
-                        Main.searchFlag = true;
+                        searchFlag = true;
                     }
                 }
             }
-            if (!Main.searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+            if (!searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
                 System.out.println("No results found!");
         }
     }
     private void searchByName(@NotNull ArrayList<Library> libraries) {
         System.out.println("--- Searching by name ---");
+        boolean searchFlag;
         for (Library library : libraries) {
-            Main.searchFlag = false;
+            searchFlag = false;
             Main.selectedLibrary = library;
             if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                 System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
@@ -160,11 +161,11 @@ public class User extends Human implements Serializable, UserFunctions {
                     Main.searchedBook = book;
                     if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                         displayAvailability();
-                        Main.searchFlag = true;
+                        searchFlag = true;
                     }
                 }
             }
-            if (!Main.searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
+            if (!searchFlag && Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity()))
                 System.out.println("No results found!");
         }
     }
@@ -172,9 +173,6 @@ public class User extends Human implements Serializable, UserFunctions {
     // case 2: borrow a book
     // function to borrow books
     public boolean borrowBook (ArrayList<Library> libraries) {
-        if (!Main.searchFlag) {
-            return false;
-        }
         if (borrowedBook.size() < bookLimit) {
             System.out.print("Enter the book to be borrowed: ");
             searchQuery = Main.sc.next();
@@ -294,18 +292,18 @@ public class User extends Human implements Serializable, UserFunctions {
     // case 5: nearby libraries
     // function to find out nearby libraries
     public void nearbyLibraries(ArrayList<Library> libraries) {
-        Main.searchFlag = false;
+        boolean searchFlag = false;
         int dbIndex = 1;
         for (Library library : libraries) {
             Main.selectedLibrary = library;
             if (this.getType() == Main.AccountType.USER) {
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
-                    Main.searchFlag = true;
+                    searchFlag = true;
                     System.out.println(dbIndex + ". " + Main.selectedLibrary);
                     dbIndex++;
                 }
             } else {
-                Main.searchFlag = true;
+                searchFlag = true;
                 if (Main.selectedLibrary.getCity().equalsIgnoreCase(this.getCity())) {
                     System.out.println(dbIndex + ". " + Main.selectedLibrary + " (Nearby)");
                     dbIndex++;
@@ -315,7 +313,7 @@ public class User extends Human implements Serializable, UserFunctions {
                 dbIndex++;
             }
         }
-        if (!Main.searchFlag) {
+        if (!searchFlag) {
             System.out.println("--- No libraries found in your location! ---");
         }
     }
@@ -340,7 +338,7 @@ public class User extends Human implements Serializable, UserFunctions {
     // case 7: view borrowing history
     // function to view user borrowing history
     public void viewUserHistory(ArrayList<String> history) {
-        Main.searchFlag = false;
+        boolean searchFlag = false;
         int dbIndex;
         System.out.println(this.getUsername() + "'s borrowing history:");
         dbIndex = 1;
@@ -348,10 +346,10 @@ public class User extends Human implements Serializable, UserFunctions {
             if (line.indexOf(this.getUsername()) == 0) {
                 System.out.println(dbIndex + ". " + line);
                 dbIndex++;
-                Main.searchFlag = true;
+                searchFlag = true;
             }
         }
-        if (!Main.searchFlag)
+        if (!searchFlag)
             System.out.println("-- No records to display --");
     }
 

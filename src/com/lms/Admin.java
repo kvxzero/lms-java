@@ -119,35 +119,37 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     }
     private void searchByGenre(ArrayList<Library> libraries) {
         System.out.println("--- Searching by genre ---");
+        boolean searchFlag;
         for (Library library : libraries) {
-            Main.searchFlag = false;
+            searchFlag = false;
             Main.selectedLibrary = library;
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
             for (Book book : Main.selectedLibrary.getBooks()) {
                 Main.searchedBook = book;
                 if (Main.searchedBook.getGenre().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                     displayAvailability();
-                    Main.searchFlag = true;
+                    searchFlag = true;
                 }
             }
-            if (!Main.searchFlag)
+            if (!searchFlag)
                 System.out.println("No results found!");
         }
     }
     private void searchByName(@NotNull ArrayList<Library> libraries) {
         System.out.println("--- Searching by name ---");
+        boolean searchFlag;
         for (Library library : libraries) {
-            Main.searchFlag = false;
+            searchFlag = false;
             Main.selectedLibrary = library;
             System.out.println("\nBooks from: " + Main.selectedLibrary.getName());
             for (Book book : Main.selectedLibrary.getBooks()) {
                 Main.searchedBook = book;
                 if (Main.searchedBook.getName().toLowerCase().indexOf(searchQuery.toLowerCase()) == 0) {
                     displayAvailability();
-                    Main.searchFlag = true;
+                    searchFlag = true;
                 }
             }
-            if (!Main.searchFlag)
+            if (!searchFlag)
                 System.out.println("No results found!");
         }
     }
@@ -298,7 +300,6 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 11: remove a user
     // function to delete a user (also releases the book if it was borrowed by the user)
     public void deleteUser(ArrayList<User> users, ArrayList<Library> libraries) {
-        Main.searchFlag = false;
         usersList(users, libraries);
         System.out.print("\nChoose the index of the user to be deleted: ");
         int index = Main.getInput();
@@ -316,6 +317,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 12: approve requests
     // function to read the requests AL and handle the requests
     public void approveRequests(ArrayList<User> users, ArrayList<String> requestList) {
+        boolean searchFlag;
         if (!requestList.isEmpty()) {
             int index = 1;
             for (String line : requestList) {
@@ -324,13 +326,12 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             System.out.print("Choose the subscription request to be managed: ");
             index = Main.getInput();
             if (index != -9999 && index <= requestList.size()) {
-                Main.searchFlag = false;
                 String line = requestList.get(index - 1);
                 int i = line.indexOf(':');
                 searchQuery = line.substring(0, i);
                 int j = line.indexOf('(');
                 if (line.substring(j - 7, j - 1).equalsIgnoreCase("Denied")) {
-                    Main.searchFlag = false;
+                    searchFlag = false;
                     System.out.println("Already denied the request!");
                     System.out.println("Remove request from the list? (Y/N)");
                     System.out.print("Choice: ");
@@ -342,14 +343,14 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                         System.out.println("No actions performed");
                     }
                 } else
-                    Main.searchFlag = true;
+                    searchFlag = true;
 
                 for (User user : users) {
-                    if (!Main.searchFlag)
+                    if (!searchFlag)
                         break;
                     Main.userAccount = user;
                     if (Main.userAccount.getUsername().equalsIgnoreCase(searchQuery)) {
-                        Main.searchFlag = true;
+                        searchFlag = true;
                         System.out.println("Chosen User Request: " + Main.userAccount);
                         System.out.println("1. Approve");
                         System.out.println("2. Deny");
@@ -394,7 +395,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
     // case 15: delete an admin
     // function to delete an admin
     public void deleteAdmin(ArrayList<Admin> admins) {
-        Main.searchFlag = false;
+        boolean searchFlag = false;
         System.out.print("Enter the admin to be deleted: ");
         searchQuery = Main.sc.next();
         ListIterator<Admin> dbReader = admins.listIterator();
@@ -402,7 +403,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             Admin deleteAdminAcc = dbReader.next();
             if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)
                     || deleteAdminAcc.getPhNo().equals(searchQuery)) {
-                Main.searchFlag = true;
+                searchFlag = true;
                 if (deleteAdminAcc.getUsername().equals(Main.adminAccount.getUsername())) {
                     System.out.println("You cannot delete your own account.");
                     break;
@@ -411,7 +412,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
                 System.out.println("Deleted successfully");
             }
         }
-        if (!Main.searchFlag)
+        if (!searchFlag)
             System.out.println("Admin doesn't exist in the records");
     }
 }
