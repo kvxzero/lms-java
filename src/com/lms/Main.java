@@ -185,7 +185,7 @@ public class Main {
                 System.out.println("11. Remove a user\t\t\t 15. Remove an admin");
                 System.out.println("12. Subscription requests\t 16. Update current city");
                 System.out.println("\n--------------------");
-                System.out.println("99. Logout\n");
+                System.out.println("17. My Account\t\t\t 99. Logout\n");
 
                 // switch case ladder
                 System.out.print("Choice: ");
@@ -303,6 +303,10 @@ public class Main {
                         System.out.println("City changed successfully!");
                         storingData(masterData, data, idData, idHistory);
                     }
+                    case 17 -> {
+                        System.out.println("-- Admin account --");
+                        adminAccount.getDetails();
+                    }
                     case 99 -> { // Log out
                         storingData(masterData, data, idData, idHistory);
                         loginFlag = false;
@@ -381,12 +385,12 @@ public class Main {
                         }
                     }
                     case 4 -> { // view current status of books, USER CASE
-                        System.out.println("Current user: " + userAccount);
+                        userAccount.getDetails();
                         if (userAccount.getType() == AccountType.USER)
                             userAccount.getStatus(libraries, requestList);
                         else {
                             userAccount.showBorrowedBooks();
-                            System.out.println("Premium status: Approved");
+                            System.out.println("Premium status : Approved");
                         }
                     }
                     case 5 -> { // find nearby Libraries, USER CASE

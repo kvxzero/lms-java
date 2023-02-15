@@ -65,11 +65,12 @@ public class User extends Human implements Serializable, UserFunctions {
     }
     public void showBorrowedBooks() {
         int index = 0;
-        System.out.println("Books borrowed at the moment: ");
+        System.out.print("Books borrowed : ");
         if (borrowedBook.size() == 0) {
             System.out.println("None");
             return;
         }
+        System.out.println();
         ListIterator<Book> dbReader = borrowedBook.listIterator();
         while (dbReader.hasNext()) {
             try {
@@ -271,9 +272,9 @@ public class User extends Human implements Serializable, UserFunctions {
     // function to get user's status
     public void getStatus(ArrayList<Library> libraries, ArrayList<String> requestList) {
         if(this.getBorrowedBookId() == -9999)
-            System.out.println("Current book: null");
+            System.out.println("Current book : null");
         else {
-            System.out.println("Current book: " + borrowedBook.get(0));
+            System.out.println("Current book : " + borrowedBook.get(0));
         }
         ListIterator<String> dbReader = requestList.listIterator();
         String line;
@@ -282,7 +283,7 @@ public class User extends Human implements Serializable, UserFunctions {
             int i = line.indexOf(':');
             searchQuery = line.substring(0, i);
             if (searchQuery.equalsIgnoreCase(this.getUsername())) {
-                System.out.print("Premium status: ");
+                System.out.print("Premium status : ");
                 System.out.println(line.substring(i + 2, line.indexOf("~")));
                 break;
             }

@@ -65,6 +65,12 @@ public class Human implements Serializable {
     public String getEmail() {
         return email;
     }
+    public void getDetails() {
+        System.out.println("Username       : " + getUsername());
+        System.out.println("City           : " + getCity());
+        System.out.println("Email          : " + getEmail());
+        System.out.println("Phone no       : " + getPhNo());
+    }
 
     // static function to log in
     public static boolean validateLogin(Human human, String password) {

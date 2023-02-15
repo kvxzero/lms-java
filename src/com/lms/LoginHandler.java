@@ -75,8 +75,8 @@ public class LoginHandler {
     private boolean validatePassword() {
         System.out.print("Enter your password: ");
         Main.userPassword = Main.sc.next();
-        if(Main.userPassword.length() < 5) {
-            System.out.println("Password must be at least 5 characters long!");
+        if(Main.userPassword.length() < 4) {
+            System.out.println("Password must be at least 4 characters long!");
             return false;
         }
         return true;
