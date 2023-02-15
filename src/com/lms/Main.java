@@ -14,7 +14,6 @@ public class Main {
 
     // class objects for data inputs and handling
     protected static Book searchedBook;
-    protected static Admin adminAccount;
     protected static User userAccount;
     protected static Library selectedLibrary;
 
@@ -23,12 +22,6 @@ public class Main {
     protected static String userName, userPassword, userEmail, userPhNo, bookName, libName;
     protected static User.cityList userLocation;
     protected static Main.AccountType userType;
-
-    // flags for loops
-//    protected static boolean searchFlag;
-
-    // object serialization object for saving data
-    private static ObjectOutputStream saveData;
 
     // function to handle exception while getting integer input
     public static int getInput() {
@@ -45,7 +38,7 @@ public class Main {
 
     // functions for storing and reading files
     public static void storingData(File masterFile, ArrayList[] inputData, File idFile, int[] idHistory) throws IOException {
-        saveData = new ObjectOutputStream(new FileOutputStream(masterFile));
+        ObjectOutputStream saveData = new ObjectOutputStream(new FileOutputStream(masterFile));
         saveData.writeObject(inputData);
         saveData.close();
         idHistory[0] = User.getNumOfUsers();
@@ -64,6 +57,7 @@ public class Main {
         ObjectInputStream loadData;
 
         // variables for various functions
+        Admin adminAccount = null;
         ListIterator displayReader;
         int choice;
         sc.useDelimiter("\n");
@@ -198,6 +192,7 @@ public class Main {
                 // switch case ladder
                 System.out.print("Choice: ");
                 choice = getInput();
+                assert adminAccount != null;
 
                 switch (choice) {
                     // Managing libraries //
