@@ -220,7 +220,7 @@ public class Main {
 
                     // Managing books //
                     case 3 -> // Display all books, ADMIN CASE
-                        adminAccount.displayBooks(libraries, users);
+                            adminAccount.displayBooks(libraries, users);
                     case 4 -> { // Search for a book, ADMIN AND USER CASE
                         System.out.println("How do you want to search?");
                         System.out.println("1. By name");
@@ -259,7 +259,7 @@ public class Main {
                         storingData(masterData, data, idData, idHistory);
                     }
                     case 7 -> // Borrowing history, ADMIN CASE
-                        adminAccount.viewBorrowingHistory(borrowedHistory);
+                            adminAccount.viewBorrowingHistory(borrowedHistory);
                     case 8 -> { // Update the books stock in library, ADMIN CASE
                         adminAccount.updateCopies(libraries, users);
                         storingData(masterData, data, idData, idHistory);
@@ -292,8 +292,10 @@ public class Main {
                             System.out.println("New admin created successfully!");
                         }
                     }
-                    case 15 -> // Remove an admin, ADMIN CASE
+                    case 15 -> {// Remove an admin, ADMIN CASE
                             adminAccount.deleteAdmin(admins, adminAccount.getUsername());
+                            storingData(masterData, data, idData, idHistory);
+                    }
                     case 16 -> { // change the city, ADMIN CASE
                         if (loginObject.validateCity()) {
                             adminAccount.setCity(userLocation);
