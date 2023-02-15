@@ -230,17 +230,18 @@ public class LoginHandler {
                         flag = validateUsername(users);
                     }
                     if (flag && validatePassword()) {
+                        Human loginAccount;
                         if(accountType == Main.AccountType.ADMIN)
                             dbReader = admins.listIterator();
                         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
                             dbReader = users.listIterator();
                         while (dbReader.hasNext()){
-                            Main.loginAccount = (Human) dbReader.next();
-                            if (Main.loginAccount.getPhNo().equals(Main.userPhNo)) {
-                                Main.loginAccount.setUsername(Main.userName);
-                                Main.loginAccount.setPassword(Main.userPassword);
+                            loginAccount = (Human) dbReader.next();
+                            if (loginAccount.getPhNo().equals(Main.userPhNo)) {
+                                loginAccount.setUsername(Main.userName);
+                                loginAccount.setPassword(Main.userPassword);
                                 System.out.println();
-                                System.out.println(Main.loginAccount);
+                                System.out.println(loginAccount);
                                 System.out.println("\nInitial login was successful!");
                                 if (userLoginRequest(Main.userName, Main.userPassword, accountType)) {
                                     Main.loginId = this.getLoginID(Main.userName, accountType);

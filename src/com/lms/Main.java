@@ -13,7 +13,6 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
 
     // class objects for data inputs
-    protected static Human loginAccount;
     protected static Book searchedBook;
     protected static Admin adminAccount;
     protected static User userAccount;
@@ -26,7 +25,7 @@ public class Main {
     protected static Main.AccountType userType;
 
     // flags for loops
-    protected static boolean searchFlag, loginFlag = false;
+    protected static boolean searchFlag;
 
     // object serialization object for saving data
     private static ObjectOutputStream saveData;
@@ -123,6 +122,7 @@ public class Main {
         // LoginHandler object and enum variable for account type
         LoginHandler loginObject = new LoginHandler(users, admins);
         AccountType accountType = null;
+        boolean loginFlag = false;
 
         // Start of the UI
         System.out.println("--- Welcome to LMS ---");
