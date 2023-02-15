@@ -293,7 +293,7 @@ public class Main {
                         }
                     }
                     case 15 -> // Remove an admin, ADMIN CASE
-                            adminAccount.deleteAdmin(admins);
+                            adminAccount.deleteAdmin(admins, adminAccount.getUsername());
                     case 16 -> { // change the city, ADMIN CASE
                         if (loginObject.validateCity()) {
                             adminAccount.setCity(userLocation);

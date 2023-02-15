@@ -394,7 +394,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
 
     // case 15: delete an admin
     // function to delete an admin
-    public void deleteAdmin(ArrayList<Admin> admins) {
+    public void deleteAdmin(ArrayList<Admin> admins, String currentAdmin) {
         boolean searchFlag = false;
         System.out.print("Enter the admin to be deleted: ");
         searchQuery = Main.sc.next();
@@ -404,7 +404,7 @@ public class Admin extends Human implements Serializable, AdminFunctions {
             if (deleteAdminAcc.getUsername().equalsIgnoreCase(searchQuery)
                     || deleteAdminAcc.getPhNo().equals(searchQuery)) {
                 searchFlag = true;
-                if (deleteAdminAcc.getUsername().equals(Main.adminAccount.getUsername())) {
+                if (deleteAdminAcc.getUsername().equals(currentAdmin)) {
                     System.out.println("You cannot delete your own account.");
                     break;
                 }

@@ -50,5 +50,5 @@ public interface AdminFunctions {
     // just the constructor of this class
 
     // case 14: delete an admin
-    void deleteAdmin(ArrayList<Admin> admins);
+    void deleteAdmin(ArrayList<Admin> admins, String currentAdmin);
 }
