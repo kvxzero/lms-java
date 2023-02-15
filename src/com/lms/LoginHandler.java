@@ -10,9 +10,9 @@ public class LoginHandler {
     private final ArrayList<User> users;
     private final ArrayList<Admin> admins;
     // var for iterating the arraylist
-    private static ListIterator dbReader;
+//    private static ListIterator dbReader;
     // constructor for the object
-    LoginHandler(ArrayList users, ArrayList admins) {
+    LoginHandler(ArrayList<User> users, ArrayList<Admin> admins) {
         this.users = users;
         this.admins = admins;
     }
@@ -28,9 +28,8 @@ public class LoginHandler {
             System.out.println("Invalid phone number! (10 digits)");
             return true;
         }
-        dbReader = users.listIterator();
-        while(dbReader.hasNext()) {
-            if (((Human) dbReader.next()).getPhNo().equals(Main.userPhNo)) {
+        for (Object user : users) {
+            if (((Human) user).getPhNo().equals(Main.userPhNo)) {
                 System.out.println("Phone number already exists!");
                 return true;
             }
@@ -50,9 +49,8 @@ public class LoginHandler {
             System.out.println("Invalid email address!");
             return true;
         }
-        dbReader = users.listIterator();
-        while(dbReader.hasNext()) {
-            if (((Human) dbReader.next()).getEmail().equals(Main.userEmail)) {
+        for (Object user : users) {
+            if (((Human) user).getEmail().equals(Main.userEmail)) {
                 System.out.println("Email already exists!");
                 return true;
             }
@@ -66,9 +64,8 @@ public class LoginHandler {
             System.out.println("Invalid username!");
             return false;
         }
-        dbReader = users.listIterator();
-        while(dbReader.hasNext()) {
-            String username = ((Human) dbReader.next()).getUsername();
+        for (Object user : users) {
+            String username = ((Human) user).getUsername();
             if (username.equals(Main.userName)) {
                 System.out.println("Username already exists!");
                 return false;
@@ -147,9 +144,7 @@ public class LoginHandler {
             return false;
         }
         if (userFlag) {
-            if (validateType()) {
-                return false;
-            }
+            return !validateType();
         }
         return true;
     }
@@ -157,6 +152,7 @@ public class LoginHandler {
     // function to handle login auth
     public boolean userLoginRequest(String username, String password, Main.AccountType accountType) {
         Human human;
+        ListIterator dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -179,6 +175,7 @@ public class LoginHandler {
     // function to log in with phone number
     public boolean phoneLoginRequest(String phNo, String password, Main.AccountType accountType) {
         Human human;
+        ListIterator dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -206,7 +203,7 @@ public class LoginHandler {
         System.out.print("\nChoice: ");
         int loginChoice = Main.getInput();
         switch (loginChoice) {
-            case 1:
+            case 1 -> {
                 System.out.print("Enter your username: ");
                 Main.userName = Main.sc.next();
                 System.out.print("Enter your password: ");
@@ -215,13 +212,12 @@ public class LoginHandler {
                     Main.loginId = this.getLoginID(Main.userName, accountType);
                     return true;
                 }
-                break;
-
-            case 2:
+            }
+            case 2 -> {
                 boolean flag;
                 System.out.print("Enter your phone number: ");
                 Main.userPhNo = Main.sc.next();
-                if(this.initialLoginCheck(Main.userPhNo, accountType)) {
+                if (this.initialLoginCheck(Main.userPhNo, accountType)) {
                     System.out.println("\nWelcome! You are logging in for the first time.");
                     System.out.println("-- Fill in the following --\n");
                     if (accountType == Main.AccountType.ADMIN) {
@@ -231,11 +227,12 @@ public class LoginHandler {
                     }
                     if (flag && validatePassword()) {
                         Human loginAccount;
-                        if(accountType == Main.AccountType.ADMIN)
+                        ListIterator dbReader;
+                        if (accountType == Main.AccountType.ADMIN)
                             dbReader = admins.listIterator();
                         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
                             dbReader = users.listIterator();
-                        while (dbReader.hasNext()){
+                        while (dbReader.hasNext()) {
                             loginAccount = (Human) dbReader.next();
                             if (loginAccount.getPhNo().equals(Main.userPhNo)) {
                                 loginAccount.setUsername(Main.userName);
@@ -250,8 +247,7 @@ public class LoginHandler {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.print("Enter your password: ");
                     Main.userPassword = Main.sc.next();
                     if (this.phoneLoginRequest(Main.userPhNo, Main.userPassword, accountType)) {
@@ -259,16 +255,15 @@ public class LoginHandler {
                         return true;
                     }
                 }
-                break;
-
-            default:
-                System.out.println("!-- Enter a valid input --!");
+            }
+            default -> System.out.println("!-- Enter a valid input --!");
         }
         return false;
     }
 
     public boolean initialLoginCheck(String phNo, Main.AccountType accountType) {
         Human human;
+        ListIterator dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -285,6 +280,7 @@ public class LoginHandler {
     }
     // function to get the user id after auth
     public int getLoginID(String username, Main.AccountType accountType) {
+        ListIterator dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER is true
