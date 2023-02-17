@@ -272,9 +272,9 @@ public class User extends Human implements Serializable, UserFunctions {
     // function to get user's status
     public void getStatus(ArrayList<Library> libraries, ArrayList<String> requestList) {
         if(this.getBorrowedBookId() == -9999)
-            System.out.println("Current book : null");
+            System.out.println("Current book   : null");
         else {
-            System.out.println("Current book : " + borrowedBook.get(0));
+            System.out.println("Current book   : " + borrowedBook.get(0));
         }
         ListIterator<String> dbReader = requestList.listIterator();
         String line;

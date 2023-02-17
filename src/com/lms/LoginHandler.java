@@ -17,7 +17,7 @@ public class LoginHandler {
     }
 
     // validation functions
-    public boolean validatePhoneNumber(ArrayList users) {
+    public boolean validatePhoneNumber(ArrayList<?> users) {
         System.out.print("Enter your phone number: ");
         Main.sc.nextLine();
         Main.userPhNo = Main.sc.next();
@@ -35,7 +35,7 @@ public class LoginHandler {
         }
         return false;
     }
-    public boolean validateEmail(ArrayList users) {
+    public boolean validateEmail(ArrayList<?> users) {
         System.out.print("Enter your email address: ");
         Main.userEmail = Main.sc.next();
         if (Main.userEmail.equals("") | Main.userEmail.equals("\n")) {
@@ -56,7 +56,7 @@ public class LoginHandler {
         }
         return false;
     }
-    private boolean validateUsername(ArrayList users) {
+    private boolean validateUsername(ArrayList<?> users) {
         System.out.print("Enter your username: ");
         Main.userName = Main.sc.next();
         if (Main.userName.equals("") | Main.userName.equals("\n")) {
@@ -111,7 +111,7 @@ public class LoginHandler {
             Main.userType = Main.AccountType.PRO;
         return false;
      }
-    public boolean validateInformation(ArrayList users, boolean flag) {
+    public boolean validateInformation(ArrayList<?> users, boolean flag) {
         if (validatePhoneNumber(users)) {
             return false;
         }
@@ -134,7 +134,7 @@ public class LoginHandler {
         }
         return true;
     }
-    public boolean inviteUser(ArrayList users, boolean userFlag) {
+    public boolean inviteUser(ArrayList<?> users, boolean userFlag) {
         if (validatePhoneNumber(users)) {
             return false;
         }
@@ -153,7 +153,7 @@ public class LoginHandler {
     // function to handle login auth
     public boolean userLoginRequest(String username, String password, Main.AccountType accountType) {
         Human human;
-        ListIterator dbReader;
+        ListIterator<?> dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -176,7 +176,7 @@ public class LoginHandler {
     // function to log in with phone number
     public boolean phoneLoginRequest(String phNo, String password, Main.AccountType accountType) {
         Human human;
-        ListIterator dbReader;
+        ListIterator<?> dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -228,7 +228,7 @@ public class LoginHandler {
                     }
                     if (flag && validatePassword()) {
                         Human loginAccount;
-                        ListIterator dbReader;
+                        ListIterator<?> dbReader;
                         if (accountType == Main.AccountType.ADMIN)
                             dbReader = admins.listIterator();
                         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -264,7 +264,7 @@ public class LoginHandler {
 
     public boolean initialLoginCheck(String phNo, Main.AccountType accountType) {
         Human human;
-        ListIterator dbReader;
+        ListIterator<?> dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER or Main.AccountType.PRO is true
@@ -281,7 +281,7 @@ public class LoginHandler {
     }
     // function to get the user id after auth
     public int getLoginID(String username, Main.AccountType accountType) {
-        ListIterator dbReader;
+        ListIterator<?> dbReader;
         if(accountType == Main.AccountType.ADMIN)
             dbReader = admins.listIterator();
         else // accountType == Main.AccountType.USER is true

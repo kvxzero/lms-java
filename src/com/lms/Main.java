@@ -37,7 +37,7 @@ public class Main {
     }
 
     // functions for storing and reading files
-    public static void storingData(File masterFile, ArrayList[] inputData, File idFile, int[] idHistory) throws IOException {
+    public static void storingData(File masterFile, ArrayList<?>[] inputData, File idFile, int[] idHistory) throws IOException {
         ObjectOutputStream saveData = new ObjectOutputStream(new FileOutputStream(masterFile));
         saveData.writeObject(inputData);
         saveData.close();
@@ -67,7 +67,7 @@ public class Main {
         ArrayList<Library> libraries;
         ArrayList<String> borrowedHistory, requestList;
         int[] idHistory;
-        ArrayList[] data;
+        ArrayList<?>[] data;
 
         // .dat file in which the data is stored
         File masterData = new File("src/com/lms/res/masterData.dat");
@@ -75,12 +75,12 @@ public class Main {
 
         if (masterData.isFile()) {
             loadData = new ObjectInputStream(new FileInputStream(masterData));
-            data = (ArrayList[]) loadData.readObject();
-            admins = data[0];
-            users = data[1];
-            libraries = data[2];
-            borrowedHistory = data[3];
-            requestList = data[4];
+            data = (ArrayList<?>[]) loadData.readObject();
+            admins = (ArrayList<Admin>) data[0];
+            users = (ArrayList<User>) data[1];
+            libraries = (ArrayList<Library>) data[2];
+            borrowedHistory = (ArrayList<String>) data[3];
+            requestList = (ArrayList<String>) data[4];
             loadData.close();
         } else {
             admins = new ArrayList<>();
